@@ -34,19 +34,17 @@ const useStyles = makeStyles((theme: Theme) => ({
 		flexDirection: 'column',
 		alignItems: 'center',
 	},
-	avatar: {
-		margin: theme.spacing(1),
-		backgroundColor: theme.palette.secondary.main,
-	},
+
 	form: {
 		width: '100%', // Fix IE 11 issue.
 		marginTop: theme.spacing(3),
 	},
 	textField: {
-		margin: theme.spacing(0),
+		margin: theme.spacing(0.7),
 	},
 	submit: {
-		margin: theme.spacing(3, 0, 2),
+		margin: theme.spacing(2, 0, 2),
+		height: '45px',
 	},
 }));
 
@@ -61,9 +59,7 @@ export default function SignIn() {
 			<Container component='main' maxWidth='xs'>
 				<CssBaseline />
 				<div className={classes.paper}>
-					<Avatar className={classes.avatar}>
-						<LockOutlinedIcon />
-					</Avatar>
+					<img src='./images/icon.png' />
 
 					<form className={classes.form} noValidate>
 						<TextField
@@ -88,6 +84,7 @@ export default function SignIn() {
 							type='password'
 							id='password'
 							autoComplete='current-password'
+							className={classes.textField}
 						/>
 						{/* <FormControlLabel
 						control={<Checkbox value='remember' color='primary' />}
@@ -99,13 +96,13 @@ export default function SignIn() {
 							variant='contained'
 							color='primary'
 							className={classes.submit}>
-							로그인하기
+							로그인
 						</Button>
 						<Grid container>
 							<Grid item xs></Grid>
 							<Grid item>
 								<Link href='sign-up' variant='body2'>
-									{'회원이 아니신가요? 지금 가입하세요'}
+									{'회원이 아니신가요? 3초만에 가입하기'}
 								</Link>
 							</Grid>
 						</Grid>

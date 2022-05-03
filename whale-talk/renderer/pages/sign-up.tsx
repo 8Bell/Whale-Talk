@@ -9,7 +9,7 @@ import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { makeStyles, Theme, withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import fbase from './fbase';
 
@@ -33,16 +33,22 @@ const useStyles = makeStyles((theme: Theme) => ({
 		flexDirection: 'column',
 		alignItems: 'center',
 	},
-	avatar: {
-		margin: theme.spacing(1),
-		backgroundColor: theme.palette.secondary.main,
-	},
+
 	form: {
 		width: '100%', // Fix IE 11 issue.
 		marginTop: theme.spacing(0),
 	},
+	textField: {
+		marginTop: theme.spacing(-1),
+	},
 	submit: {
-		margin: theme.spacing(3, 0, 2),
+		margin: theme.spacing(2, 0, 2),
+		height: '45px',
+	},
+	title: {
+		margin: theme.spacing(-2, 0, 3, 0),
+		fontSize: '20px',
+		color: '#44546A',
 	},
 }));
 
@@ -53,10 +59,8 @@ export default function SignUp() {
 		<Container component='main' maxWidth='xs'>
 			<CssBaseline />
 			<div className={classes.paper}>
-				<Avatar className={classes.avatar}>
-					<LockOutlinedIcon />
-				</Avatar>
-				<Typography component='h1' variant='h5'>
+				<img src='./images/icon.png' />
+				<Typography component='h1' variant='h5' className={classes.title}>
 					가입하기
 				</Typography>
 				<form className={classes.form} noValidate>
@@ -70,6 +74,7 @@ export default function SignUp() {
 								label='성함'
 								name='Name'
 								autoComplete='lname'
+								className={classes.textField}
 							/>
 						</Grid>
 						<Grid item xs={12}>
@@ -81,6 +86,7 @@ export default function SignUp() {
 								label='이메일을 입력하세요'
 								name='email'
 								autoComplete='email'
+								className={classes.textField}
 							/>
 						</Grid>
 						<Grid item xs={12}>
@@ -93,6 +99,7 @@ export default function SignUp() {
 								type='password'
 								id='password'
 								autoComplete='current-password'
+								className={classes.textField}
 							/>
 						</Grid>
 						{/* <Grid item xs={12}>

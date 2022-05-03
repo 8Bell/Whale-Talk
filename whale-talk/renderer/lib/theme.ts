@@ -4,7 +4,7 @@ import red from '@material-ui/core/colors/red';
 export const theme = createTheme({
 	palette: {
 		primary: {
-			main: '#556cd6',
+			main: '#44546A',
 		},
 		secondary: {
 			main: '#19857b',
@@ -13,7 +13,7 @@ export const theme = createTheme({
 			main: red.A400,
 		},
 		background: {
-			default: '#fbfbfb',
+			default: '#fafafa',
 		},
 	},
 });
