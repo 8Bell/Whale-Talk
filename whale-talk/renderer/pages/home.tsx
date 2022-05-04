@@ -14,6 +14,9 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { authService } from './fbase';
 import { Checkbox, FormControlLabel, Switch, withStyles } from '@material-ui/core';
+import router, { useRouter } from 'next/router';
+import { Router } from '@material-ui/icons';
+import next from 'next';
 
 function Copyright() {
 	return (
@@ -59,10 +62,19 @@ const useStyles = makeStyles((theme: Theme) => ({
 export default function SignIn() {
 	const classes = useStyles();
 
-	const [auth, setAuth] = React.useState(authService.currentUser);
-	setInterval(() => {
-		console.log(authService.currentUser);
-	}, 5000);
+	const [init, setInit] = useState(false);
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
+	React.useEffect(() => {
+		authService.onAuthStateChanged((user) => {
+			if (user) {
+				setIsLoggedIn(true);
+				router.push('/friends');
+			} else {
+				setIsLoggedIn(false);
+			}
+			setInit(true);
+		});
+	}, []);
 
 	const [email, setEmail] = React.useState('');
 	const [password, setPassword] = React.useState('');
@@ -80,7 +92,6 @@ export default function SignIn() {
 
 	const onSubmit = async (e) => {
 		e.preventDefault();
-
 		try {
 			let data = await authService.signInWithEmailAndPassword(email, password);
 			console.log(data);

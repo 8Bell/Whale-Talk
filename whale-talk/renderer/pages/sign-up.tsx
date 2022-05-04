@@ -13,6 +13,7 @@ import { makeStyles, Theme, withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { authService } from './fbase';
 import { userInfo } from 'os';
+import router from 'next/router';
 
 function Copyright() {
 	return (
@@ -59,6 +60,20 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export default function SignUp() {
 	const classes = useStyles();
+
+	const [init, setInit] = React.useState(false);
+	const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+	React.useEffect(() => {
+		authService.onAuthStateChanged((user) => {
+			if (user) {
+				setIsLoggedIn(true);
+				router.push('/friends');
+			} else {
+				setIsLoggedIn(false);
+			}
+			setInit(true);
+		});
+	}, []);
 
 	const [userName, setUserName] = React.useState('');
 	const [email, setEmail] = React.useState('');

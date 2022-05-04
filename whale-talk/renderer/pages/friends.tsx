@@ -21,6 +21,8 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import NavBottom from './navBottom';
 import NavTop from './navTop';
+import { authService } from './fbase';
+import router from 'next/router';
 
 const useStyles = makeStyles((theme: Theme) => ({
 	paper: {
@@ -33,6 +35,20 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export default function SignIn() {
 	const classes = useStyles();
+
+	const [init, setInit] = React.useState(false);
+	const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+	React.useEffect(() => {
+		authService.onAuthStateChanged((user) => {
+			if (user) {
+				setIsLoggedIn(true);
+			} else {
+				setIsLoggedIn(false);
+				router.push('/home');
+			}
+			setInit(true);
+		});
+	}, []);
 
 	return (
 		<React.Fragment>
