@@ -11,7 +11,6 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles, Theme, withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import fbase from './fbase';
 
 function Copyright() {
 	return (
@@ -32,6 +31,10 @@ const useStyles = makeStyles((theme: Theme) => ({
 		display: 'flex',
 		flexDirection: 'column',
 		alignItems: 'center',
+	},
+	icon: {
+		width: 200,
+		height: 200,
 	},
 
 	form: {
@@ -59,7 +62,7 @@ export default function SignUp() {
 		<Container component='main' maxWidth='xs'>
 			<CssBaseline />
 			<div className={classes.paper}>
-				<img src='./images/icon.png' />
+				<img src='./images/icon.png' className={classes.icon} />
 				<Typography component='h1' variant='h5' className={classes.title}>
 					가입하기
 				</Typography>

@@ -1,6 +1,6 @@
 {
 	"private": true,
-	"name": "Whale Talk",
+	"name": "whale-talk",
 	"description": "Whale Talk",
 	"version": "1.2.0",
 	"author": "Whale Talk",
@@ -14,7 +14,7 @@
 		"@material-ui/icons": "^4.11.3",
 		"electron-serve": "^1.1.0",
 		"electron-store": "^8.0.1",
-		"firebase": "^9.6.1"
+		"firebase": "^8.8.0"
 	},
 	"devDependencies": {
 		"@material-ui/core": "^4.12.4",
