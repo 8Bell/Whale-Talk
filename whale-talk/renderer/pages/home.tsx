@@ -13,6 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { authService } from './fbase';
+import { Checkbox, FormControlLabel, Switch, withStyles } from '@material-ui/core';
 
 function Copyright() {
 	return (
@@ -47,8 +48,11 @@ const useStyles = makeStyles((theme: Theme) => ({
 		margin: theme.spacing(0.7),
 	},
 	submit: {
-		margin: theme.spacing(2, 0, 2),
+		margin: theme.spacing(2, 0, 2, 0.6),
 		height: '45px',
+	},
+	checkBox: {
+		marginLeft: -4,
 	},
 }));
 
@@ -56,9 +60,104 @@ export default function SignIn() {
 	const classes = useStyles();
 
 	const [auth, setAuth] = React.useState(authService.currentUser);
+	setInterval(() => {
+		console.log(authService.currentUser);
+	}, 5000);
 
 	const [email, setEmail] = React.useState('');
-	const [passworld, setPassworld] = React.useState('');
+	const [password, setPassword] = React.useState('');
+
+	const onChange = (e) => {
+		const {
+			target: { id, value },
+		} = e;
+		if (id === 'email') {
+			setEmail(value);
+		} else if (id === 'password') {
+			setPassword(value);
+		}
+	};
+
+	const onSubmit = async (e) => {
+		e.preventDefault();
+
+		try {
+			let data = await authService.signInWithEmailAndPassword(email, password);
+			console.log(data);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	//Toggle Switch //
+	const IOSSwitch = withStyles((theme: Theme) => ({
+		root: {
+			width: 38,
+			height: 22,
+			padding: 0,
+			margin: theme.spacing(1),
+		},
+		switchBase: {
+			padding: 1,
+			'&$checked': {
+				transform: 'translateX(16px)',
+				color: theme.palette.common.white,
+				'& + $track': {
+					backgroundColor: '#44546A',
+					opacity: 1,
+					border: 'none',
+				},
+			},
+			'&$focusVisible $thumb': {
+				color: '#44546A',
+				border: '6px solid #fff',
+			},
+		},
+		thumb: {
+			width: 20,
+			height: 20,
+		},
+		track: {
+			borderRadius: 26 / 2,
+			border: `1px solid ${theme.palette.grey[400]}`,
+			backgroundColor: theme.palette.grey[50],
+			opacity: 1,
+			transition: theme.transitions.create(['background-color', 'border']),
+		},
+		checked: {},
+		focusVisible: {},
+	}))(({ classes, ...props }: Props) => {
+		return (
+			<Switch
+				focusVisibleClassName={classes.focusVisible}
+				disableRipple
+				classes={{
+					root: classes.root,
+					switchBase: classes.switchBase,
+					thumb: classes.thumb,
+					track: classes.track,
+					checked: classes.checked,
+				}}
+				{...props}
+			/>
+		);
+	});
+
+	const [toggleChecked, setToggleChecked] = React.useState({
+		togglecheck: false,
+	});
+
+	const handleChange = (e) => {
+		setToggleChecked({ ...toggleChecked, [e.target.name]: e.target.checked });
+		console.log(toggleChecked);
+		if (toggleChecked == false) {
+			authService.setPersistence(authService.Auth.Persistence.LOCAL);
+		} else if (toggleChecked == true) {
+			authService.setPersistence(firebase.auth.Auth.Persistence.SESSION);
+		}
+		console.log(authService);
+	};
+	//End Toggle Switch//
 
 	return (
 		<React.Fragment>
@@ -70,7 +169,7 @@ export default function SignIn() {
 				<div className={classes.paper}>
 					<img src='./images/icon.png' className={classes.icon} />
 
-					<form className={classes.form} noValidate>
+					<form className={classes.form} noValidate onSubmit={onSubmit}>
 						<TextField
 							variant='outlined'
 							margin='normal'
@@ -82,6 +181,8 @@ export default function SignIn() {
 							autoComplete='email'
 							autoFocus
 							className={classes.textField}
+							value={email}
+							onChange={onChange}
 						/>
 						<TextField
 							variant='outlined'
@@ -94,18 +195,27 @@ export default function SignIn() {
 							id='password'
 							autoComplete='current-password'
 							className={classes.textField}
+							value={password}
+							onChange={onChange}
 						/>
-						{/* <FormControlLabel
-						control={<Checkbox value='remember' color='primary' />}
-						label='Remember me'
-					/> */}
+
+						<FormControlLabel
+							label='자동 로그인'
+							control={
+								<IOSSwitch
+									checked={toggleChecked.togglecheck}
+									onChange={handleChange}
+									name='togglecheck'
+								/>
+							}
+							className={classes.checkBox}
+						/>
 						<Button
 							type='submit'
 							fullWidth
 							variant='contained'
 							color='primary'
-							className={classes.submit}
-							href='/friends'>
+							className={classes.submit}>
 							로그인
 						</Button>
 						<Grid container>

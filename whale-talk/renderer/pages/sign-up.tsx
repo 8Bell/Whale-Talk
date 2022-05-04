@@ -11,6 +11,8 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles, Theme, withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import { authService } from './fbase';
+import { userInfo } from 'os';
 
 function Copyright() {
 	return (
@@ -58,6 +60,58 @@ const useStyles = makeStyles((theme: Theme) => ({
 export default function SignUp() {
 	const classes = useStyles();
 
+	const [userName, setUserName] = React.useState('');
+	const [email, setEmail] = React.useState('');
+	const [password, setPassword] = React.useState('');
+	const [rePassword, setRePassword] = React.useState('');
+
+	const onChange = (e) => {
+		const {
+			target: { id, value },
+		} = e;
+		if (id === 'email') {
+			setEmail(value);
+		} else if (id === 'password') {
+			setPassword(value);
+		} else if (id === 'rePassword') {
+			setRePassword(value);
+		} else if (id === 'Name') setUserName(value);
+	};
+
+	const onSubmit = async (e) => {
+		e.preventDefault();
+		try {
+			if (password == rePassword) {
+				let data = await authService.createUserWithEmailAndPassword(
+					email,
+					password
+				);
+				await data.user.updateProfile({
+					displayName: userName,
+				});
+				console.log(data);
+			} else {
+				alert('확인 비밀번호가 일치하지 않습니다.');
+			}
+		} catch (error) {
+			console.log(error);
+			switch (error.code) {
+				case 'auth/email-already-in-use':
+					alert('이미 사용중인 이메일 입니다.');
+					break;
+				case 'auth/invalid-email':
+					alert('유효하지 않은 메일입니다');
+					break;
+				case 'auth/operation-not-allowed':
+					alert('이메일 가입이 중지되었습니다.');
+					break;
+				case 'auth/weak-password':
+					alert('비밀번호를 6자리 이상 필요합니다');
+					break;
+			}
+		}
+	};
+
 	return (
 		<Container component='main' maxWidth='xs'>
 			<CssBaseline />
@@ -66,7 +120,7 @@ export default function SignUp() {
 				<Typography component='h1' variant='h5' className={classes.title}>
 					가입하기
 				</Typography>
-				<form className={classes.form} noValidate>
+				<form className={classes.form} onSubmit={onSubmit} noValidate>
 					<Grid container spacing={2}>
 						<Grid item xs={12}>
 							<TextField
@@ -78,6 +132,8 @@ export default function SignUp() {
 								name='Name'
 								autoComplete='lname'
 								className={classes.textField}
+								value={userName}
+								onChange={onChange}
 							/>
 						</Grid>
 						<Grid item xs={12}>
@@ -90,6 +146,8 @@ export default function SignUp() {
 								name='email'
 								autoComplete='email'
 								className={classes.textField}
+								value={email}
+								onChange={onChange}
 							/>
 						</Grid>
 						<Grid item xs={12}>
@@ -103,6 +161,23 @@ export default function SignUp() {
 								id='password'
 								autoComplete='current-password'
 								className={classes.textField}
+								value={password}
+								onChange={onChange}
+							/>
+						</Grid>
+						<Grid item xs={12}>
+							<TextField
+								variant='outlined'
+								required
+								fullWidth
+								name='rePassword'
+								label='비밀번호 확인'
+								type='password'
+								id='rePassword'
+								autoComplete='current-password'
+								className={classes.textField}
+								value={rePassword}
+								onChange={onChange}
 							/>
 						</Grid>
 						{/* <Grid item xs={12}>
@@ -125,15 +200,15 @@ export default function SignUp() {
 						className={classes.submit}>
 						가입하기
 					</Button>
-					<Grid container justifyContent='flex-end'>
-						<Grid item xs></Grid>
-						<Grid item>
-							<Link href='/home' variant='body2'>
-								회원이신가요? 로그인하기
-							</Link>
-						</Grid>
-					</Grid>
 				</form>
+				<Grid container justifyContent='flex-end'>
+					<Grid item xs></Grid>
+					<Grid item>
+						<Link href='/home' variant='body2'>
+							회원이신가요? 로그인하기
+						</Link>
+					</Grid>
+				</Grid>
 			</div>
 			<Box mt={5}>
 				<Copyright />
