@@ -7,7 +7,7 @@ import NavTop from './navTop';
 import { authService, dbService } from './fbase';
 import router from 'next/router';
 import { Avatar, Checkbox, Grid, Radio, Typography, Zoom } from '@material-ui/core';
-import { green } from '@material-ui/core/colors';
+import { deepOrange, green } from '@material-ui/core/colors';
 import { withStyles } from '@material-ui/styles';
 import FormDialog from './addfriends';
 
@@ -28,6 +28,10 @@ const useStyles = makeStyles((theme: Theme) => ({
 		left: 10,
 		width: 60,
 		height: 60,
+		color: theme.palette.getContrastText(theme.palette.primary.main),
+		backgroundColor: theme.palette.primary.main,
+		fontWeight: 400,
+		fontSize: 30,
 	},
 	profileName: {
 		marginTop: 23,
@@ -62,7 +66,11 @@ const useStyles = makeStyles((theme: Theme) => ({
 		left: 10,
 		width: 50,
 		height: 50,
+		color: theme.palette.getContrastText(theme.palette.primary.main),
+		backgroundColor: theme.palette.primary.main,
+		fontWeight: 500,
 	},
+
 	friendName: {
 		marginTop: 15,
 		marginLeft: 26,
@@ -86,18 +94,9 @@ export default function SignIn() {
 	const [myAccount, setMyAccount] = useState({});
 
 	useEffect(() => {
-		console.log(1);
-		authService.onAuthStateChanged((user) => {
+		const dbMyAccount = authService.onAuthStateChanged((user) => {
 			if (user) {
 				setIsLoggedIn(true);
-				setMyAccount({
-					displayName: user.displayName,
-					email: user.email,
-					photoURL: user.photoURL,
-					emailVerified: user.emailVerified,
-					uid: user.uid,
-					user: user,
-				});
 			} else {
 				setIsLoggedIn(false);
 				router.push('/home');
@@ -110,6 +109,21 @@ export default function SignIn() {
 
 	const [user, setUser] = useState('');
 	const [users, setUsers] = useState([]);
+
+	const getMyAccount = async () => {
+		const dbMyAccount = await authService.onAuthStateChanged((user) => {
+			if (user) {
+				setMyAccount({
+					displayName: user.displayName,
+					email: user.email,
+					photoURL: user.photoURL,
+					emailVerified: user.emailVerified,
+					uid: user.uid,
+					user: user,
+				});
+			}
+		});
+	};
 
 	const getUsers = async () => {
 		const dbUsers = await dbService.collection('users').get();
@@ -131,6 +145,7 @@ export default function SignIn() {
 
 	useMemo(() => {
 		getUsers();
+		getMyAccount();
 	}, []);
 
 	//체크 박스
@@ -150,9 +165,10 @@ export default function SignIn() {
 	// 친구 추가하기 - 모달창 열기
 	const [addFriendState, setAddFriendState] = useState(false);
 
-	useEffect(() => {
-		setCheckedState(new Array(users.length).fill(false));
-	}, [addFriendState]);
+	//채팅 시작 시 체크박스 초기화
+	// useEffect(() => {
+	// 	setCheckedState(new Array(users.length).fill(false));
+	// }, [addFriendState]);
 
 	return (
 		<React.Fragment>
@@ -169,7 +185,10 @@ export default function SignIn() {
 					<Grid item>
 						<Avatar
 							src={myAccount.photoURL}
-							className={classes.profileAvatar}></Avatar>
+							className={classes.profileAvatar}>
+							{/* {myAccount.photoURL == null &&
+								myAccount.displayName.charAt(0)} */}
+						</Avatar>
 					</Grid>
 					<Grid item xs>
 						<Typography variant='h5' className={classes.profileName}>
@@ -196,9 +215,20 @@ export default function SignIn() {
 									className={classes.friend}>
 									<Grid item>
 										<Avatar
+											style={{
+												backgroundColor: `${
+													'#' +
+													Math.floor(
+														Math.random() *
+															16777215
+													).toString(16)
+												}`,
+											}}
 											src={user.profileImg}
-											className={classes.friendAvatar}
-										/>
+											className={classes.friendAvatar}>
+											{user.profileImg == null &&
+												user.userName.charAt(0)}
+										</Avatar>
 									</Grid>
 									<Grid item xs color='secondery'>
 										<Typography

@@ -26,6 +26,9 @@ export default function NavBottom() {
 	const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
 		setValue(newValue);
 	};
+	const onClick = () => {
+		authService.signOut();
+	};
 
 	return (
 		<BottomNavigation value={value} onChange={handleChange} className={classes.root}>
@@ -44,7 +47,7 @@ export default function NavBottom() {
 			/>
 
 			<BottomNavigationAction
-				onClick={authService.signOut}
+				onClick={onClick}
 				label='더보기'
 				value='more'
 				icon={<MenuRoundedIcon />}
