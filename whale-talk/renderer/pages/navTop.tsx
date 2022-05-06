@@ -14,7 +14,14 @@ import AddRoundedIcon from '@material-ui/icons/AddRounded';
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		root: {
-			flexGrow: 1,
+			width: '100vw',
+			height: 60,
+			position: 'fixed',
+			top: 0,
+			left: '50%',
+			transform: 'translate(-50%, 0)',
+			backgroundColor: '#eeeeee',
+			zIndex: 1,
 		},
 		menuButton: {
 			marginRight: theme.spacing(2),

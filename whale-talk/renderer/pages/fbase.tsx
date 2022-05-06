@@ -22,6 +22,7 @@ const firebaseConfig = {
 !firebase.apps.length ? firebase.initializeApp(firebaseConfig) : firebase.app();
 
 export const authService = firebase.auth();
+export const cuttentUser = firebase.auth().currentUser;
 export const authLocal = firebase.auth.Auth.Persistence.LOCAL;
 export const authSession = firebase.auth.Auth.Persistence.SESSION;
 
