@@ -12,7 +12,7 @@ import { Grid } from '@material-ui/core';
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		img: {
-			marginTop: '300px',
+			marginTop: 300,
 		},
 	})
 );

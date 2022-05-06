@@ -10,6 +10,11 @@ import FormGroup from '@material-ui/core/FormGroup';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import AddRoundedIcon from '@material-ui/icons/AddRounded';
+import ArrowForwardRoundedIcon from '@material-ui/icons/ArrowForwardRounded';
+import CheckCircleRoundedIcon from '@material-ui/icons/CheckCircleRounded';
+import OfflinePinRoundedIcon from '@material-ui/icons/OfflinePinRounded';
+import AddCommentRoundedIcon from '@material-ui/icons/AddCommentRounded';
+import { Zoom } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -29,10 +34,23 @@ const useStyles = makeStyles((theme: Theme) =>
 		title: {
 			flexGrow: 1,
 		},
+		plusIconBtn: {
+			position: 'absolute',
+			zIndex: 2,
+			top: 4,
+			right: 4,
+		},
+		nextIconBtn: {
+			position: 'absolute',
+			zIndex: 2,
+			top: 4,
+			right: 4,
+			color: 'green',
+		},
 	})
 );
 
-export default function NavTop() {
+export default function NavTop({ chatMakingState, setChatMakingState }) {
 	const classes = useStyles();
 	const [auth, setAuth] = React.useState(true);
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -48,6 +66,11 @@ export default function NavTop() {
 
 	const handleClose = () => {
 		setAnchorEl(null);
+		setChatMakingState(!chatMakingState);
+	};
+
+	const handleAddFriend = () => {
+		prompt('친구를 추가하시겠습니까?');
 	};
 
 	return (
@@ -60,14 +83,25 @@ export default function NavTop() {
 					</Typography>
 					{auth && (
 						<div>
-							<IconButton
-								aria-label='account of current user'
-								aria-controls='menu-appbar'
-								aria-haspopup='true'
-								onClick={handleMenu}
-								color='inherit'>
-								<AddRoundedIcon />
-							</IconButton>
+							<Zoom in={!chatMakingState}>
+								<IconButton
+									aria-label='account of current user'
+									aria-controls='menu-appbar'
+									aria-haspopup='true'
+									onClick={handleMenu}
+									color='inherit'
+									className={classes.plusIconBtn}>
+									<AddRoundedIcon />
+								</IconButton>
+							</Zoom>
+							<Zoom in={chatMakingState}>
+								<IconButton
+									onClick={handleClose}
+									className={classes.nextIconBtn}>
+									<AddCommentRoundedIcon />
+								</IconButton>
+							</Zoom>
+
 							<Menu
 								id='menu-appbar'
 								anchorEl={anchorEl}
@@ -83,10 +117,10 @@ export default function NavTop() {
 								open={open}
 								onClose={handleClose}>
 								<MenuItem onClick={handleClose}>
-									친구 추가하기
-								</MenuItem>
-								<MenuItem onClick={handleClose}>
 									채팅 추가하기
+								</MenuItem>
+								<MenuItem onClick={handleAddFriend}>
+									친구 추가하기
 								</MenuItem>
 							</Menu>
 						</div>

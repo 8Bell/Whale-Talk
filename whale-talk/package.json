@@ -12,6 +12,8 @@
 	},
 	"dependencies": {
 		"@material-ui/icons": "^4.11.3",
+		"electron-reload": "^2.0.0-alpha.1",
+		"electron-reloader": "^1.2.3",
 		"electron-serve": "^1.1.0",
 		"electron-store": "^8.0.1",
 		"firebase": "^8.8.0"
