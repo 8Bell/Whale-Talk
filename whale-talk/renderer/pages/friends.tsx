@@ -9,6 +9,7 @@ import router from 'next/router';
 import { Avatar, Checkbox, Grid, Radio, Typography, Zoom } from '@material-ui/core';
 import { green } from '@material-ui/core/colors';
 import { withStyles } from '@material-ui/styles';
+import FormDialog from './addfriends';
 
 const useStyles = makeStyles((theme: Theme) => ({
 	paper: {
@@ -144,14 +145,24 @@ export default function SignIn() {
 	};
 
 	// 채팅 추가하기 - 체크박스 숨김 여부
-
 	const [chatMakingState, setChatMakingState] = useState(false);
+
+	// 친구 추가하기 - 모달창 열기
+	const [addFriendState, setAddFriendState] = useState(false);
+
+	useEffect(() => {
+		setCheckedState(new Array(users.length).fill(false));
+	}, [addFriendState]);
 
 	return (
 		<React.Fragment>
 			<NavTop
 				chatMakingState={chatMakingState}
 				setChatMakingState={setChatMakingState}
+				setAddFriendState={setAddFriendState}
+				setCheckedState={setCheckedState}
+				checkedState={checkedState}
+				users={users}
 			/>
 			<Grid className={classes.paper}>
 				<Grid container className={classes.profile}>
@@ -173,7 +184,7 @@ export default function SignIn() {
 					<Grid className={classes.friendsTitleBox}>
 						<Typography className={classes.friendsTitle}>
 							{' '}
-							친구 {users.length}
+							모든 유저 {users.length}
 						</Typography>
 					</Grid>
 					{users.map((user, index) => {
@@ -221,6 +232,10 @@ export default function SignIn() {
 					})}
 				</Grid>
 			</Grid>
+			<FormDialog
+				addFriendState={addFriendState}
+				setAddFriendState={setAddFriendState}
+			/>
 			<NavBottom />
 		</React.Fragment>
 	);

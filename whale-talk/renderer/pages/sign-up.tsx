@@ -17,7 +17,16 @@ import router from 'next/router';
 
 function Copyright() {
 	return (
-		<Typography variant='body2' color='textSecondary' align='center'>
+		<Typography
+			variant='body2'
+			color='textSecondary'
+			align='center'
+			style={{
+				position: 'absolute',
+				bottom: '30px',
+				left: '50%',
+				transform: 'translateX(-50%)',
+			}}>
 			{'Copyright © '}
 			<Link color='inherit' href='/home'>
 				Whale Talk

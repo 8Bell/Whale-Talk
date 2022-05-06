@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -10,10 +10,13 @@ import FormGroup from '@material-ui/core/FormGroup';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import AddRoundedIcon from '@material-ui/icons/AddRounded';
+import AddCircleRoundedIcon from '@material-ui/icons/AddCircleRounded';
 import ArrowForwardRoundedIcon from '@material-ui/icons/ArrowForwardRounded';
 import CheckCircleRoundedIcon from '@material-ui/icons/CheckCircleRounded';
 import OfflinePinRoundedIcon from '@material-ui/icons/OfflinePinRounded';
 import AddCommentRoundedIcon from '@material-ui/icons/AddCommentRounded';
+import ArrowForwardIosRoundedIcon from '@material-ui/icons/ArrowForwardIosRounded';
+import ChevronRightRoundedIcon from '@material-ui/icons/ChevronRightRounded';
 import { Zoom } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -37,23 +40,34 @@ const useStyles = makeStyles((theme: Theme) =>
 		plusIconBtn: {
 			position: 'absolute',
 			zIndex: 2,
-			top: 4,
-			right: 4,
+			top: 3,
+			right: 10,
 		},
 		nextIconBtn: {
 			position: 'absolute',
 			zIndex: 2,
-			top: 4,
-			right: 4,
-			color: 'green',
+			top: 2,
+			right: 10,
+		},
+		nextIconText: {
+			marginRight: 5,
+			fontSize: 22,
+			fontWeight: 500,
 		},
 	})
 );
 
-export default function NavTop({ chatMakingState, setChatMakingState }) {
+export default function NavTop({
+	chatMakingState,
+	setChatMakingState,
+	setAddFriendState,
+	setCheckedState,
+	checkedState,
+	users,
+}) {
 	const classes = useStyles();
-	const [auth, setAuth] = React.useState(true);
-	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+	const [auth, setAuth] = useState(true);
+	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,11 +80,18 @@ export default function NavTop({ chatMakingState, setChatMakingState }) {
 
 	const handleClose = () => {
 		setAnchorEl(null);
-		setChatMakingState(!chatMakingState);
 	};
 
+	const handleAddChat = () => {
+		setAnchorEl(null);
+		setChatMakingState(!chatMakingState);
+	};
+	const handleStartChat = () => {
+		setChatMakingState(!chatMakingState);
+	};
 	const handleAddFriend = () => {
-		prompt('친구를 추가하시겠습니까?');
+		setAnchorEl(null);
+		setAddFriendState(true);
 	};
 
 	return (
@@ -91,14 +112,18 @@ export default function NavTop({ chatMakingState, setChatMakingState }) {
 									onClick={handleMenu}
 									color='inherit'
 									className={classes.plusIconBtn}>
-									<AddRoundedIcon />
+									<AddRoundedIcon style={{ fontSize: 30 }} />
 								</IconButton>
 							</Zoom>
 							<Zoom in={chatMakingState}>
 								<IconButton
-									onClick={handleClose}
+									color='primary'
+									onClick={handleStartChat}
 									className={classes.nextIconBtn}>
-									<AddCommentRoundedIcon />
+									<Typography className={classes.nextIconText}>
+										채팅
+									</Typography>
+									<ArrowForwardIosRoundedIcon />
 								</IconButton>
 							</Zoom>
 
@@ -116,7 +141,7 @@ export default function NavTop({ chatMakingState, setChatMakingState }) {
 								}}
 								open={open}
 								onClose={handleClose}>
-								<MenuItem onClick={handleClose}>
+								<MenuItem onClick={handleAddChat}>
 									채팅 추가하기
 								</MenuItem>
 								<MenuItem onClick={handleAddFriend}>

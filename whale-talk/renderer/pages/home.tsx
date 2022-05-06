@@ -15,12 +15,21 @@ import Container from '@material-ui/core/Container';
 import { authService } from './fbase';
 import { Checkbox, FormControlLabel, Switch, withStyles } from '@material-ui/core';
 import router from 'next/router';
-import { Router } from '@material-ui/icons';
+import { Router, Translate } from '@material-ui/icons';
 import next from 'next';
 
 function Copyright() {
 	return (
-		<Typography variant='body2' color='textSecondary' align='center'>
+		<Typography
+			variant='body2'
+			color='textSecondary'
+			align='center'
+			style={{
+				position: 'absolute',
+				bottom: '30px',
+				left: '50%',
+				transform: 'translateX(-50%)',
+			}}>
 			{'Copyright © '}
 			<Link color='inherit' href='/home'>
 				Whale Talk

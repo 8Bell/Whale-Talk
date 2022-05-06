@@ -5,6 +5,7 @@ import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import ChatRoundedIcon from '@material-ui/icons/ChatRounded';
 import PeopleAltRoundedIcon from '@material-ui/icons/PeopleAltRounded';
 import MenuRoundedIcon from '@material-ui/icons/MenuRounded';
+import { authService } from './fbase';
 
 const useStyles = makeStyles({
 	root: {
@@ -42,7 +43,12 @@ export default function NavBottom() {
 				href='/chats'
 			/>
 
-			<BottomNavigationAction label='더보기' value='more' icon={<MenuRoundedIcon />} />
+			<BottomNavigationAction
+				onClick={authService.signOut}
+				label='더보기'
+				value='more'
+				icon={<MenuRoundedIcon />}
+			/>
 		</BottomNavigation>
 	);
 }
