@@ -22,3 +22,8 @@ const firebaseConfig = {
 !firebase.apps.length ? firebase.initializeApp(firebaseConfig) : firebase.app();
 
 export const authService = firebase.auth();
+export const authLocal = firebase.auth.Auth.Persistence.LOCAL;
+export const authSession = firebase.auth.Auth.Persistence.SESSION;
+
+export const dbService = firebase.firestore();
+export const Timestamp = firebase.firestore.Timestamp.fromDate(new Date());

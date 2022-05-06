@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 
 import Button from '@material-ui/core/Button';
@@ -14,7 +14,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { authService } from './fbase';
 import { Checkbox, FormControlLabel, Switch, withStyles } from '@material-ui/core';
-import router, { useRouter } from 'next/router';
+import router from 'next/router';
 import { Router } from '@material-ui/icons';
 import next from 'next';
 
@@ -64,7 +64,7 @@ export default function SignIn() {
 
 	const [init, setInit] = useState(false);
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
-	React.useEffect(() => {
+	useEffect(() => {
 		authService.onAuthStateChanged((user) => {
 			if (user) {
 				setIsLoggedIn(true);
@@ -76,8 +76,8 @@ export default function SignIn() {
 		});
 	}, []);
 
-	const [email, setEmail] = React.useState('');
-	const [password, setPassword] = React.useState('');
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
 
 	const onChange = (e) => {
 		const {
@@ -95,8 +95,23 @@ export default function SignIn() {
 		try {
 			let data = await authService.signInWithEmailAndPassword(email, password);
 			console.log(data);
+			console.log(authService);
 		} catch (error) {
 			console.log(error);
+			switch (error.code) {
+				case 'auth/wrong-password':
+					alert('아이디 혹은 비밀번호가 틀렸습니다.');
+					break;
+				case 'auth/user-not-found':
+					alert('아이디 혹은 비밀번호가 틀렸습니다.');
+					break;
+				case 'auth/invalid-email':
+					alert('이메일 양식이 올바르지 않습니다.');
+					break;
+				case 'auth/too-many-requests':
+					alert('잠시 뒤 다시 시도해주세요');
+					break;
+			}
 		}
 	};
 
@@ -158,15 +173,17 @@ export default function SignIn() {
 		togglecheck: false,
 	});
 
+	// authService.setPersistence(authService.Auth.Persistence.SESSION);
+
 	const handleChange = (e) => {
 		setToggleChecked({ ...toggleChecked, [e.target.name]: e.target.checked });
 		console.log(toggleChecked);
-		if (toggleChecked == false) {
-			authService.setPersistence(authService.Auth.Persistence.LOCAL);
-		} else if (toggleChecked == true) {
-			authService.setPersistence(firebase.auth.Auth.Persistence.SESSION);
-		}
-		console.log(authService);
+		// if (toggleChecked.togglecheck == false) {
+		// 	authService.setPersistence(authService.Auth.Persistence.LOCAL);
+		// } else if (toggleChecked.togglecheck == true) {
+		// 	authService.setPersistence(authService.Auth.Persistence.SESSION);
+		// }
+		// console.log(authService);
 	};
 	//End Toggle Switch//
 
@@ -210,7 +227,7 @@ export default function SignIn() {
 							onChange={onChange}
 						/>
 
-						<FormControlLabel
+						{/* <FormControlLabel
 							label='자동 로그인'
 							control={
 								<IOSSwitch
@@ -220,7 +237,7 @@ export default function SignIn() {
 								/>
 							}
 							className={classes.checkBox}
-						/>
+						/> */}
 						<Button
 							type='submit'
 							fullWidth

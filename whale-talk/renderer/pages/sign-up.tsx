@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -7,12 +7,12 @@ import TextField from '@material-ui/core/TextField';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+
 import Typography from '@material-ui/core/Typography';
 import { makeStyles, Theme, withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import { authService } from './fbase';
-import { userInfo } from 'os';
+import { authService, dbService, Timestamp } from './fbase';
+
 import router from 'next/router';
 
 function Copyright() {
@@ -61,9 +61,9 @@ const useStyles = makeStyles((theme: Theme) => ({
 export default function SignUp() {
 	const classes = useStyles();
 
-	const [init, setInit] = React.useState(false);
-	const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-	React.useEffect(() => {
+	const [init, setInit] = useState(false);
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
+	useEffect(() => {
 		authService.onAuthStateChanged((user) => {
 			if (user) {
 				setIsLoggedIn(true);
@@ -75,10 +75,10 @@ export default function SignUp() {
 		});
 	}, []);
 
-	const [userName, setUserName] = React.useState('');
-	const [email, setEmail] = React.useState('');
-	const [password, setPassword] = React.useState('');
-	const [rePassword, setRePassword] = React.useState('');
+	const [userName, setUserName] = useState('');
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
+	const [rePassword, setRePassword] = useState('');
 
 	const onChange = (e) => {
 		const {
@@ -105,6 +105,16 @@ export default function SignUp() {
 					displayName: userName,
 				});
 				console.log(data);
+
+				await dbService.collection('users').doc(data.user.uid).set({
+					uid: data.user.uid,
+					email,
+					userName,
+					createdAt: Date.now(),
+					createdDate: Timestamp,
+					isOnline: true,
+					profileImg: null,
+				});
 			} else {
 				alert('확인 비밀번호가 일치하지 않습니다.');
 			}
@@ -121,7 +131,7 @@ export default function SignUp() {
 					alert('이메일 가입이 중지되었습니다.');
 					break;
 				case 'auth/weak-password':
-					alert('비밀번호를 6자리 이상 필요합니다');
+					alert('비밀번호를 6자리 이상 입력해주세요');
 					break;
 			}
 		}
