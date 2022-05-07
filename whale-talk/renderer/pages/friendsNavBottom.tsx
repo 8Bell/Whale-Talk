@@ -19,7 +19,7 @@ const useStyles = makeStyles({
 	},
 });
 
-export default function NavBottom() {
+export default function FriendsNavBottom() {
 	const classes = useStyles();
 	const [value, setValue] = React.useState('friends');
 

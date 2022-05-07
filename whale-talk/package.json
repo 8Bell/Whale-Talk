@@ -12,6 +12,7 @@
 	},
 	"dependencies": {
 		"@material-ui/icons": "^4.11.3",
+		"@material-ui/lab": "^4.0.0-alpha.61",
 		"electron-reload": "^2.0.0-alpha.1",
 		"electron-reloader": "^1.2.3",
 		"electron-serve": "^1.1.0",

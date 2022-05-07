@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
-import NavBottom from './navBottom';
-import NavTop from './navTop';
+import NavBottom from './friends/friendsNavBottom';
+import NavTop from './friendsNavTop';
 import { authService, dbService } from './fbase';
 import router from 'next/router';
 import { Avatar, Grid, Typography } from '@material-ui/core';

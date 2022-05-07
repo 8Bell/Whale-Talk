@@ -2,8 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
-import NavBottom from './navBottom';
-import NavTop from './navTop';
+import NavBottom from './friendsNavBottom';
 import { authService, dbService } from './fbase';
 import router from 'next/router';
 import { Avatar, Checkbox, Grid, Radio, Typography, Zoom } from '@material-ui/core';
@@ -11,10 +10,12 @@ import { deepOrange, green } from '@material-ui/core/colors';
 import { withStyles } from '@material-ui/styles';
 import FormDialog from './addfriends';
 import AvatarGroup from '@material-ui/lab/AvatarGroup';
+import FriendsNavTop from './friendsNavTop';
+import FriendsNavBottom from './friendsNavBottom';
 
 const useStyles = makeStyles((theme: Theme) => ({
 	paper: {
-		minWidth: 330,
+		minWidth: 500,
 		marginLeft: 10,
 		marginRight: 10,
 	},
@@ -45,6 +46,17 @@ const useStyles = makeStyles((theme: Theme) => ({
 		fontWeight: 400,
 		color: 'gray',
 	},
+	groupAvatars: {
+		marginTop: 30,
+		marginRight: 10,
+		zIndex: 0,
+	},
+	groupAvatar: {
+		width: theme.spacing(7),
+		height: theme.spacing(7),
+
+		fontWeight: 500,
+	},
 	friends: {
 		marginBottom: 60,
 	},
@@ -70,6 +82,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 		color: theme.palette.getContrastText(theme.palette.primary.main),
 		backgroundColor: theme.palette.primary.main,
 		fontWeight: 500,
+		zIndex: 0,
 	},
 
 	friendName: {
@@ -90,11 +103,14 @@ const useStyles = makeStyles((theme: Theme) => ({
 export default function SignIn() {
 	const classes = useStyles();
 
+	// 내 아이디 가져오기
 	const [init, setInit] = useState(false);
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [myAccount, setMyAccount] = useState({});
 
 	useEffect(() => {
+		getUsers();
+		getMyAccount();
 		const dbMyAccount = authService.onAuthStateChanged((user) => {
 			if (user) {
 				setIsLoggedIn(true);
@@ -105,11 +121,6 @@ export default function SignIn() {
 			setInit(true);
 		});
 	}, []);
-
-	// 친구 목록 가져오기
-
-	const [user, setUser] = useState('');
-	const [users, setUsers] = useState([]);
 
 	const getMyAccount = async () => {
 		const dbMyAccount = await authService.onAuthStateChanged((user) => {
@@ -126,15 +137,22 @@ export default function SignIn() {
 		});
 	};
 
+	// 친구 목록 가져오기
+
+	const [user, setUser] = useState('');
+	const [users, setUsers] = useState([]);
+	const [usersLength, setUsersLength] = useState(1);
+
 	const getUsers = async () => {
 		const dbUsers = await dbService.collection('users').get();
-		console.log(2, dbUsers.docs);
 		dbUsers.forEach((document) => {
 			const userObject = {
 				...document.data(),
 				id: document.id,
 				checked: false,
 			};
+			setUsersLength(dbUsers.docs.length);
+			console.log(usersLength);
 			if (users.length < dbUsers.docs.length) {
 				setUsers((prev) => [...prev, userObject]);
 			}
@@ -144,21 +162,21 @@ export default function SignIn() {
 	console.log(myAccount);
 	console.log(users);
 
-	useMemo(() => {
-		getUsers();
-		getMyAccount();
-	}, []);
-
 	//체크 박스
 
 	const [checkedState, setCheckedState] = useState(new Array(users.length).fill(false));
+	useEffect(() => {
+		setCheckedState(new Array(users.length).fill(false));
+	}, [users]);
 
 	const handleChecked = (position) => {
+		console.log(position);
 		const updateCheckedState = checkedState.map((item, index) =>
 			index === position ? !item : item
 		);
 		setCheckedState(updateCheckedState);
 	};
+	console.log('checkedState', checkedState);
 
 	// 채팅 추가하기 - 체크박스 숨김 여부
 	const [chatMakingState, setChatMakingState] = useState(false);
@@ -167,18 +185,15 @@ export default function SignIn() {
 	const [addFriendState, setAddFriendState] = useState(false);
 
 	//채팅 시작 시 체크박스 초기화
-	// useEffect(() => {
-	// 	setCheckedState(new Array(users.length).fill(false));
-	// }, [addFriendState]);
 
 	return (
 		<React.Fragment>
-			<NavTop
+			<FriendsNavTop
 				chatMakingState={chatMakingState}
 				setChatMakingState={setChatMakingState}
 				setAddFriendState={setAddFriendState}
-				setCheckedState={setCheckedState}
 				checkedState={checkedState}
+				setCheckedState={setCheckedState}
 				users={users}
 			/>
 			<Grid className={classes.paper}>
@@ -199,8 +214,34 @@ export default function SignIn() {
 							{myAccount.email}
 						</Typography>
 					</Grid>
-					<Grid>
-						<AvatarGroup></AvatarGroup>
+					<Grid item className={classes.groupAvatars}>
+						<AvatarGroup max={4}>
+							{users.map((user, index) => {
+								if (checkedState[index] === true) {
+									return (
+										<Zoom
+											in={checkedState[index]}
+											key={index}>
+											<Avatar
+												style={{
+													backgroundColor:
+														user.personalColor,
+													filter: 'saturate(40%) grayscale(20%) brightness(130%)',
+												}}
+												src={user.profileImg}
+												className={
+													classes.groupAvatar
+												}>
+												{user.profileImg == null &&
+													user.userName.charAt(
+														0
+													)}
+											</Avatar>
+										</Zoom>
+									);
+								}
+							})}
+						</AvatarGroup>
 					</Grid>
 				</Grid>
 				<Grid className={classes.friends}>
@@ -248,7 +289,9 @@ export default function SignIn() {
 												checked={
 													checkedState[index]
 												}
-												onClick={handleChecked}
+												onClick={() =>
+													handleChecked(index)
+												}
 												value={checkedState[index]}
 												className={
 													classes.friendCheckbox
@@ -266,7 +309,7 @@ export default function SignIn() {
 				addFriendState={addFriendState}
 				setAddFriendState={setAddFriendState}
 			/>
-			<NavBottom />
+			<FriendsNavBottom />
 		</React.Fragment>
 	);
 }

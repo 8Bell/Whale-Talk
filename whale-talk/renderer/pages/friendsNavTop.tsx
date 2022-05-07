@@ -57,12 +57,12 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-export default function NavTop({
+export default function FriendsNavTop({
 	chatMakingState,
 	setChatMakingState,
 	setAddFriendState,
-	setCheckedState,
 	checkedState,
+	setCheckedState,
 	users,
 }) {
 	const classes = useStyles();
@@ -88,6 +88,8 @@ export default function NavTop({
 	};
 	const handleStartChat = () => {
 		setChatMakingState(!chatMakingState);
+		setCheckedState(new Array(users.length).fill(false));
+		console.log(checkedState);
 	};
 	const handleAddFriend = () => {
 		setAnchorEl(null);
