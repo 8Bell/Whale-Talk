@@ -18,6 +18,8 @@ import AddCommentRoundedIcon from '@material-ui/icons/AddCommentRounded';
 import ArrowForwardIosRoundedIcon from '@material-ui/icons/ArrowForwardIosRounded';
 import ChevronRightRoundedIcon from '@material-ui/icons/ChevronRightRounded';
 import { Zoom } from '@material-ui/core';
+import { useRouter } from 'next/router';
+import { dbService, Timestamp } from './fbase';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -63,8 +65,10 @@ export default function FriendsNavTop({
 	setAddFriendState,
 	checkedState,
 	setCheckedState,
+	myAccount,
 	users,
 }) {
+	const router = useRouter();
 	const classes = useStyles();
 	const [auth, setAuth] = useState(true);
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -86,10 +90,32 @@ export default function FriendsNavTop({
 		setAnchorEl(null);
 		setChatMakingState(!chatMakingState);
 	};
-	const handleStartChat = () => {
+	const handleStartChat = async () => {
 		setChatMakingState(!chatMakingState);
+
+		const mydata = users.filter((user) => user.id == myAccount.uid);
+		const userArr = users.filter((user) => user.id !== myAccount.uid);
+		const memberArr = userArr
+			.filter((user, index) => checkedState[index] === true)
+			.concat(mydata);
+
+		const memberUidArr = memberArr.map((member) => member.id);
+		console.log(memberUidArr);
+
+		await dbService.collection('chats').add({
+			id: myAccount.uid,
+			createdAt: Date.now(),
+			createdDate: Timestamp,
+			host: myAccount.displayName,
+			memberUid: memberUidArr,
+			member: memberArr,
+		});
+
 		setCheckedState(new Array(users.length).fill(false));
-		console.log(checkedState);
+		router.push({
+			pathname: '/chats',
+			query: { memberArr: { memberArr }, memberUidArr: { memberUidArr } },
+		});
 	};
 	const handleAddFriend = () => {
 		setAnchorEl(null);

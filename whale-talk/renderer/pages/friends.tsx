@@ -162,8 +162,13 @@ export default function SignIn() {
 	console.log(myAccount);
 	console.log(users);
 
-	//체크 박스
+	// 친구 추가하기 - 모달창 열기
+	const [addFriendState, setAddFriendState] = useState(false);
 
+	// 채팅 추가하기 클릭시 체크박스 나타나게
+	const [chatMakingState, setChatMakingState] = useState(false);
+
+	//체크 박스 작동
 	const [checkedState, setCheckedState] = useState(new Array(users.length).fill(false));
 	useEffect(() => {
 		setCheckedState(new Array(users.length).fill(false));
@@ -178,14 +183,6 @@ export default function SignIn() {
 	};
 	console.log('checkedState', checkedState);
 
-	// 채팅 추가하기 - 체크박스 숨김 여부
-	const [chatMakingState, setChatMakingState] = useState(false);
-
-	// 친구 추가하기 - 모달창 열기
-	const [addFriendState, setAddFriendState] = useState(false);
-
-	//채팅 시작 시 체크박스 초기화
-
 	return (
 		<React.Fragment>
 			<FriendsNavTop
@@ -194,6 +191,7 @@ export default function SignIn() {
 				setAddFriendState={setAddFriendState}
 				checkedState={checkedState}
 				setCheckedState={setCheckedState}
+				myAccount={myAccount}
 				users={users}
 			/>
 			<Grid className={classes.paper}>

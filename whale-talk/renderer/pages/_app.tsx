@@ -4,6 +4,7 @@ import { ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { theme } from '../lib/theme';
 import type { AppProps } from 'next/app';
+import Link from 'next/link';
 
 export default function (props: AppProps) {
 	const { Component, pageProps } = props;
@@ -26,6 +27,10 @@ export default function (props: AppProps) {
 			<ThemeProvider theme={theme}>
 				<CssBaseline />
 				<Component {...pageProps} />
+				{/* <Link href='/home' />
+				<Link href='/sign-up' />
+				<Link href='/friends' />
+				<Link href='/chats' /> */}
 			</ThemeProvider>
 		</React.Fragment>
 	);

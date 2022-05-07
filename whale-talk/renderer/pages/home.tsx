@@ -5,7 +5,6 @@ import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 
-import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 
@@ -14,9 +13,10 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { authService } from './fbase';
 import { Checkbox, FormControlLabel, Switch, withStyles } from '@material-ui/core';
-import router from 'next/router';
+import { useRouter } from 'next/router';
 import { Router, Translate } from '@material-ui/icons';
 import next from 'next';
+import Link from '../components/Link';
 
 function Copyright() {
 	return (
@@ -70,6 +70,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export default function SignIn() {
 	const classes = useStyles();
+	const router = useRouter();
 
 	const [init, setInit] = useState(false);
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -258,7 +259,7 @@ export default function SignIn() {
 						<Grid container>
 							<Grid item xs></Grid>
 							<Grid item>
-								<Link href='sign-up' variant='body2'>
+								<Link href='/sign-up' variant='body2'>
 									{'회원이 아니신가요? 3초만에 가입하기'}
 								</Link>
 							</Grid>

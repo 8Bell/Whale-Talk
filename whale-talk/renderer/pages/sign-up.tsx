@@ -4,7 +4,6 @@ import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 
-import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 
@@ -14,6 +13,7 @@ import Container from '@material-ui/core/Container';
 import { authService, dbService, Timestamp } from './fbase';
 
 import router from 'next/router';
+import Link from '../components/Link';
 
 function Copyright() {
 	return (
@@ -155,74 +155,75 @@ export default function SignUp() {
 	};
 
 	return (
-		<Container component='main' maxWidth='xs'>
-			<CssBaseline />
-			<div className={classes.paper}>
-				<img src='./images/icon.png' className={classes.icon} />
-				<Typography component='h1' variant='h5' className={classes.title}>
-					가입하기
-				</Typography>
-				<form className={classes.form} onSubmit={onSubmit} noValidate>
-					<Grid container spacing={2}>
-						<Grid item xs={12}>
-							<TextField
-								variant='outlined'
-								required
-								fullWidth
-								id='Name'
-								label='성함'
-								name='Name'
-								autoComplete='lname'
-								className={classes.textField}
-								value={userName}
-								onChange={onChange}
-							/>
-						</Grid>
-						<Grid item xs={12}>
-							<TextField
-								variant='outlined'
-								required
-								fullWidth
-								id='email'
-								label='이메일을 입력하세요'
-								name='email'
-								autoComplete='email'
-								className={classes.textField}
-								value={email}
-								onChange={onChange}
-							/>
-						</Grid>
-						<Grid item xs={12}>
-							<TextField
-								variant='outlined'
-								required
-								fullWidth
-								name='password'
-								label='비밀번호를 입력하세요'
-								type='password'
-								id='password'
-								autoComplete='current-password'
-								className={classes.textField}
-								value={password}
-								onChange={onChange}
-							/>
-						</Grid>
-						<Grid item xs={12}>
-							<TextField
-								variant='outlined'
-								required
-								fullWidth
-								name='rePassword'
-								label='비밀번호 확인'
-								type='password'
-								id='rePassword'
-								autoComplete='current-password'
-								className={classes.textField}
-								value={rePassword}
-								onChange={onChange}
-							/>
-						</Grid>
-						{/* <Grid item xs={12}>
+		<React.Fragment>
+			<Container component='main' maxWidth='xs'>
+				<CssBaseline />
+				<div className={classes.paper}>
+					<img src='./images/icon.png' className={classes.icon} />
+					<Typography component='h1' variant='h5' className={classes.title}>
+						가입하기
+					</Typography>
+					<form className={classes.form} onSubmit={onSubmit} noValidate>
+						<Grid container spacing={2}>
+							<Grid item xs={12}>
+								<TextField
+									variant='outlined'
+									required
+									fullWidth
+									id='Name'
+									label='성함'
+									name='Name'
+									autoComplete='lname'
+									className={classes.textField}
+									value={userName}
+									onChange={onChange}
+								/>
+							</Grid>
+							<Grid item xs={12}>
+								<TextField
+									variant='outlined'
+									required
+									fullWidth
+									id='email'
+									label='이메일을 입력하세요'
+									name='email'
+									autoComplete='email'
+									className={classes.textField}
+									value={email}
+									onChange={onChange}
+								/>
+							</Grid>
+							<Grid item xs={12}>
+								<TextField
+									variant='outlined'
+									required
+									fullWidth
+									name='password'
+									label='비밀번호를 입력하세요'
+									type='password'
+									id='password'
+									autoComplete='current-password'
+									className={classes.textField}
+									value={password}
+									onChange={onChange}
+								/>
+							</Grid>
+							<Grid item xs={12}>
+								<TextField
+									variant='outlined'
+									required
+									fullWidth
+									name='rePassword'
+									label='비밀번호 확인'
+									type='password'
+									id='rePassword'
+									autoComplete='current-password'
+									className={classes.textField}
+									value={rePassword}
+									onChange={onChange}
+								/>
+							</Grid>
+							{/* <Grid item xs={12}>
 							<FormControlLabel
 								control={
 									<Checkbox
@@ -233,28 +234,29 @@ export default function SignUp() {
 								label='I want to receive inspiration, marketing promotions and updates via email.'
 							/>
 						</Grid> */}
+						</Grid>
+						<Button
+							type='submit'
+							fullWidth
+							variant='contained'
+							color='primary'
+							className={classes.submit}>
+							가입하기
+						</Button>
+					</form>
+					<Grid container justifyContent='flex-end'>
+						<Grid item xs></Grid>
+						<Grid item>
+							<Link href='/home' variant='body2'>
+								회원이신가요? 로그인하기
+							</Link>
+						</Grid>
 					</Grid>
-					<Button
-						type='submit'
-						fullWidth
-						variant='contained'
-						color='primary'
-						className={classes.submit}>
-						가입하기
-					</Button>
-				</form>
-				<Grid container justifyContent='flex-end'>
-					<Grid item xs></Grid>
-					<Grid item>
-						<Link href='/home' variant='body2'>
-							회원이신가요? 로그인하기
-						</Link>
-					</Grid>
-				</Grid>
-			</div>
-			<Box mt={5}>
-				<Copyright />
-			</Box>
-		</Container>
+				</div>
+				<Box mt={5}>
+					<Copyright />
+				</Box>
+			</Container>
+		</React.Fragment>
 	);
 }

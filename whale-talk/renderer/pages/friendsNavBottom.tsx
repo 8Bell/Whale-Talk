@@ -7,6 +7,7 @@ import PeopleAltRoundedIcon from '@material-ui/icons/PeopleAltRounded';
 import MenuRoundedIcon from '@material-ui/icons/MenuRounded';
 import { authService } from './fbase';
 import Link from '../components/Link';
+import { useRouter } from 'next/router';
 
 const useStyles = makeStyles({
 	root: {
@@ -21,6 +22,7 @@ const useStyles = makeStyles({
 });
 
 export default function FriendsNavBottom() {
+	const router = useRouter();
 	const classes = useStyles();
 	const [value, setValue] = React.useState('friends');
 
@@ -36,18 +38,17 @@ export default function FriendsNavBottom() {
 			<BottomNavigationAction
 				label='친구'
 				value='friends'
-				icon={<PeopleAltRoundedIcon />}
-				href='/friends'>
-				<Link href='/friends' as='/friends' />
+				icon={<PeopleAltRoundedIcon />}>
+				<Link href='/friends'></Link>
 			</BottomNavigationAction>
 
 			<BottomNavigationAction
+				onClick={() => {
+					router.push('/chats');
+				}}
 				label='채팅'
 				value='chats'
-				icon={<ChatRoundedIcon />}
-				href='/chats'>
-				<Link href='/chats' as='/chats' />
-			</BottomNavigationAction>
+				icon={<ChatRoundedIcon />}></BottomNavigationAction>
 
 			<BottomNavigationAction
 				onClick={onClick}
