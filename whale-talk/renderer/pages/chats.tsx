@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
-import NavBottom from './friends/friendsNavBottom';
-import NavTop from './friendsNavTop';
 import { authService, dbService } from './fbase';
 import router from 'next/router';
 import { Avatar, Grid, Typography } from '@material-ui/core';
+import ChatsNavTop from './chatsNavTop copy';
+import ChatsNavBottom from './chatsNavBottom';
 
 const useStyles = makeStyles((theme: Theme) => ({
 	paper: {
@@ -95,7 +95,7 @@ export default function SignIn() {
 
 	return (
 		<React.Fragment>
-			<NavTop />
+			<ChatsNavTop />
 			<Grid container className={classes.profile}>
 				<Grid item xs>
 					<Avatar className={classes.profileAvatar}></Avatar>
@@ -120,7 +120,7 @@ export default function SignIn() {
 					</Grid>
 				))}
 			</Grid>
-			<NavBottom />
+			<ChatsNavBottom />
 		</React.Fragment>
 	);
 }

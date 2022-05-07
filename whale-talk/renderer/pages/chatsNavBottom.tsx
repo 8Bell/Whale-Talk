@@ -20,9 +20,9 @@ const useStyles = makeStyles({
 	},
 });
 
-export default function FriendsNavBottom() {
+export default function ChatsNavBottom() {
 	const classes = useStyles();
-	const [value, setValue] = React.useState('friends');
+	const [value, setValue] = React.useState('chats');
 
 	const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
 		setValue(newValue);
