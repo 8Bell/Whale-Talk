@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
 import { authService, dbService } from './fbase';
-import router from 'next/router';
+import router, { useRouter, withRouter } from 'next/router';
 import { Avatar, Checkbox, Grid, Typography, Zoom } from '@material-ui/core';
 import ChatsNavTop from './chatsNavTop copy';
 import ChatsNavBottom from './chatsNavBottom';
@@ -53,6 +53,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 		fontWeight: 500,
 	},
 	friends: {
+		marginTop: 75,
 		marginBottom: 60,
 	},
 	friendsTitleBox: {
@@ -95,11 +96,16 @@ const useStyles = makeStyles((theme: Theme) => ({
 	},
 }));
 
-export default function SignIn({ memberArr }) {
+export default function Chats() {
 	const classes = useStyles();
+	const router = useRouter();
 
-	const [init, setInit] = React.useState(false);
-	const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+	withRouter;
+
+	//로그아웃
+
+	const [init, setInit] = useState(false);
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	useEffect(() => {
 		authService.onAuthStateChanged((user) => {
 			if (user) {
@@ -112,42 +118,29 @@ export default function SignIn({ memberArr }) {
 		});
 	}, []);
 
-	// 현재 로그인 계정 정보 가저오기
-	const [myAccount, setMyAccount] = useState([]);
-	const getMyAccount = async () => {
-		const dbMyAccount = await authService.currentUser;
-		if (dbMyAccount !== null) {
-			setMyAccount({
-				displayName: dbMyAccount.displayName,
-				email: dbMyAccount.email,
-				photoURL: dbMyAccount.photoURL,
-				emailVerified: dbMyAccount.emailVerified,
-				uid: dbMyAccount.uid,
-			});
-		}
-	};
-	console.log(myAccount);
+	// 채팅 목록 가져오기
 
-	// 친구 목록 가져오기
-	const [user, setUser] = useState('');
-	const [users, setUsers] = useState([]);
+	const [chats, setChats] = useState([]);
+	const [chatsLength, setChatsLength] = useState(0);
 
-	const getUsers = async () => {
-		const dbUsers = await dbService.collection('users').get();
-		dbUsers.forEach((document) => {
-			console.log(document.id);
-			const userObject = {
+	const getChats = async () => {
+		const dbChats = await dbService.collection('chats').get();
+		dbChats.forEach((document) => {
+			// console.log(document.id);
+			const chatsObject = {
 				...document.data(),
 				id: document.id,
 			};
-			setUsers((prev) => [userObject, ...prev]);
+			setChatsLength(dbChats.docs.length);
+			if (chats.length < dbChats.docs.length) {
+				setChats((prev) => [chatsObject, ...prev]);
+			}
 		});
 	};
-	console.log(users);
+	// console.log(chats);
 
 	useEffect(() => {
-		getMyAccount();
-		getUsers();
+		getChats();
 	}, []);
 
 	return (
@@ -158,56 +151,50 @@ export default function SignIn({ memberArr }) {
 					<Grid className={classes.friendsTitleBox}>
 						<Typography className={classes.friendsTitle}>
 							{' '}
-							모든 유저 {users.length - 1}
+							모든 채팅 {chats.length}
 						</Typography>
 					</Grid>
-					{users.map((user, index) => {
-						if (user.id !== myAccount.uid) {
-							return (
-								<Grid
-									container
-									key={index}
-									className={classes.friend}>
-									<Grid item>
-										<Avatar
-											style={{
-												backgroundColor:
-													user.personalColor,
-												filter: 'saturate(40%) grayscale(20%) brightness(130%) ',
-											}}
-											src={user.profileImg}
-											className={classes.friendAvatar}>
-											{user.profileImg == null &&
-												user.userName.charAt(0)}
-										</Avatar>
-									</Grid>
-									<Grid item xs color='secondery'>
-										<Typography
-											variant='h6'
-											className={classes.friendName}>
-											{user.userName}
-										</Typography>
-										<Typography
-											className={classes.friendEmail}>
-											{user.email}
-										</Typography>
-									</Grid>
-									<Grid>
-										<Zoom in={true}>
-											<Checkbox
-												color='primary'
-												checked={false}
-												value={false}
+					<Grid>
+						{/* {chats.map((chat, index) => {
+							if (chat.memberUidArr.includes(myAccountUid)) {
+								return (
+									<Grid
+										container
+										key={index}
+										className={classes.friend}>
+										<Grid item></Grid>
+										<Grid item xs color='secondery'>
+											<Typography
+												variant='h6'
 												className={
-													classes.friendCheckbox
-												}
-											/>
-										</Zoom>
+													classes.friendName
+												}>
+												{chat.host + '님의 채팅방'}
+											</Typography>
+											<Typography
+												className={
+													classes.friendEmail
+												}>
+												{chat.memberNameArr.join()}
+											</Typography>
+										</Grid>
+										<Grid>
+											<Zoom in={true}>
+												<Checkbox
+													color='primary'
+													checked={false}
+													value={false}
+													className={
+														classes.friendCheckbox
+													}
+												/>
+											</Zoom>
+										</Grid>
 									</Grid>
-								</Grid>
-							);
-						}
-					})}
+								);
+							}
+						})} */}
+					</Grid>
 				</Grid>
 			</Grid>
 			<ChatsNavBottom />

@@ -100,7 +100,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 	},
 }));
 
-export default function SignIn() {
+export default function Friends() {
 	const classes = useStyles();
 
 	// 내 아이디 가져오기
@@ -152,15 +152,15 @@ export default function SignIn() {
 				checked: false,
 			};
 			setUsersLength(dbUsers.docs.length);
-			console.log(usersLength);
+			// console.log(usersLength);
 			if (users.length < dbUsers.docs.length) {
 				setUsers((prev) => [...prev, userObject]);
 			}
 		});
 	};
 
-	console.log(myAccount);
-	console.log(users);
+	// console.log(myAccount);
+	// console.log(users);
 
 	// 친구 추가하기 - 모달창 열기
 	const [addFriendState, setAddFriendState] = useState(false);
