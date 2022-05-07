@@ -115,15 +115,23 @@ export default function SignUp() {
 				});
 				console.log(data);
 
-				await dbService.collection('users').doc(data.user.uid).set({
-					uid: data.user.uid,
-					email,
-					userName,
-					createdAt: Date.now(),
-					createdDate: Timestamp,
-					isOnline: true,
-					profileImg: null,
-				});
+				await dbService
+					.collection('users')
+					.doc(data.user.uid)
+					.set({
+						uid: data.user.uid,
+						email,
+						userName,
+						createdAt: Date.now(),
+						createdDate: Timestamp,
+						isOnline: true,
+						profileImg: null,
+						personalColor:
+							'#' +
+							(Math.floor(Math.random() * 80) + 50).toString(16) +
+							(Math.floor(Math.random() * 80) + 50).toString(16) +
+							(Math.floor(Math.random() * 156) + 100).toString(16),
+					});
 			} else {
 				alert('확인 비밀번호가 일치하지 않습니다.');
 			}

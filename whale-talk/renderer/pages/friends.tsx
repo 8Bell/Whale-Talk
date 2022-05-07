@@ -10,6 +10,7 @@ import { Avatar, Checkbox, Grid, Radio, Typography, Zoom } from '@material-ui/co
 import { deepOrange, green } from '@material-ui/core/colors';
 import { withStyles } from '@material-ui/styles';
 import FormDialog from './addfriends';
+import AvatarGroup from '@material-ui/lab/AvatarGroup';
 
 const useStyles = makeStyles((theme: Theme) => ({
 	paper: {
@@ -198,12 +199,15 @@ export default function SignIn() {
 							{myAccount.email}
 						</Typography>
 					</Grid>
+					<Grid>
+						<AvatarGroup></AvatarGroup>
+					</Grid>
 				</Grid>
 				<Grid className={classes.friends}>
 					<Grid className={classes.friendsTitleBox}>
 						<Typography className={classes.friendsTitle}>
 							{' '}
-							모든 유저 {users.length}
+							모든 유저 {users.length - 1}
 						</Typography>
 					</Grid>
 					{users.map((user, index) => {
@@ -216,13 +220,9 @@ export default function SignIn() {
 									<Grid item>
 										<Avatar
 											style={{
-												backgroundColor: `${
-													'#' +
-													Math.floor(
-														Math.random() *
-															16777215
-													).toString(16)
-												}`,
+												backgroundColor:
+													user.personalColor,
+												filter: 'saturate(40%) grayscale(20%) brightness(130%) ',
 											}}
 											src={user.profileImg}
 											className={classes.friendAvatar}>
