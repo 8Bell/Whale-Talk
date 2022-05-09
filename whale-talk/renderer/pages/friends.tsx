@@ -139,7 +139,6 @@ export default function Friends() {
 
 	// 친구 목록 가져오기
 
-	const [user, setUser] = useState('');
 	const [users, setUsers] = useState([]);
 	const [usersLength, setUsersLength] = useState(1);
 
@@ -307,7 +306,7 @@ export default function Friends() {
 				addFriendState={addFriendState}
 				setAddFriendState={setAddFriendState}
 			/>
-			<FriendsNavBottom />
+			<FriendsNavBottom myAccount={myAccount} />
 		</React.Fragment>
 	);
 }

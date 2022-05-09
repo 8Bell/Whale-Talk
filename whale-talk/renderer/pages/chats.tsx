@@ -100,14 +100,15 @@ export default function Chats() {
 	const classes = useStyles();
 	const router = useRouter();
 
-	withRouter;
-
-	//로그아웃
-
+	// 내 아이디 가져오기
 	const [init, setInit] = useState(false);
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
+	const [myAccount, setMyAccount] = useState({});
+
 	useEffect(() => {
-		authService.onAuthStateChanged((user) => {
+		getChats();
+		getMyAccount();
+		const dbMyAccount = authService.onAuthStateChanged((user) => {
 			if (user) {
 				setIsLoggedIn(true);
 			} else {
@@ -117,6 +118,21 @@ export default function Chats() {
 			setInit(true);
 		});
 	}, []);
+
+	const getMyAccount = async () => {
+		const dbMyAccount = await authService.onAuthStateChanged((user) => {
+			if (user) {
+				setMyAccount({
+					displayName: user.displayName,
+					email: user.email,
+					photoURL: user.photoURL,
+					emailVerified: user.emailVerified,
+					uid: user.uid,
+					user: user,
+				});
+			}
+		});
+	};
 
 	// 채팅 목록 가져오기
 
@@ -137,11 +153,29 @@ export default function Chats() {
 			}
 		});
 	};
-	// console.log(chats);
+	console.log(chats);
+	console.log(myAccount);
 
-	useEffect(() => {
-		getChats();
-	}, []);
+	// 친구 목록 가져오기
+
+	const [users, setUsers] = useState([]);
+	const [usersLength, setUsersLength] = useState(1);
+
+	const getUsers = async () => {
+		const dbUsers = await dbService.collection('users').get();
+		dbUsers.forEach((document) => {
+			const userObject = {
+				...document.data(),
+				id: document.id,
+				checked: false,
+			};
+			setUsersLength(dbUsers.docs.length);
+			// console.log(usersLength);
+			if (users.length < dbUsers.docs.length) {
+				setUsers((prev) => [...prev, userObject]);
+			}
+		});
+	};
 
 	return (
 		<React.Fragment>
@@ -155,8 +189,8 @@ export default function Chats() {
 						</Typography>
 					</Grid>
 					<Grid>
-						{/* {chats.map((chat, index) => {
-							if (chat.memberUidArr.includes(myAccountUid)) {
+						{chats.map((chat, index) => {
+							if (chat.memberUid.includes(myAccount.uid)) {
 								return (
 									<Grid
 										container
@@ -175,11 +209,11 @@ export default function Chats() {
 												className={
 													classes.friendEmail
 												}>
-												{chat.memberNameArr.join()}
+												최근 대화
 											</Typography>
 										</Grid>
 										<Grid>
-											<Zoom in={true}>
+											<Zoom in={false}>
 												<Checkbox
 													color='primary'
 													checked={false}
@@ -193,7 +227,7 @@ export default function Chats() {
 									</Grid>
 								);
 							}
-						})} */}
+						})}
 					</Grid>
 				</Grid>
 			</Grid>

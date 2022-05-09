@@ -21,7 +21,7 @@ const useStyles = makeStyles({
 	},
 });
 
-export default function FriendsNavBottom() {
+export default function FriendsNavBottom({ myAccount }) {
 	const router = useRouter();
 	const classes = useStyles();
 	const [value, setValue] = React.useState('friends');
@@ -38,9 +38,7 @@ export default function FriendsNavBottom() {
 			<BottomNavigationAction
 				label='친구'
 				value='friends'
-				icon={<PeopleAltRoundedIcon />}>
-				<Link href='/friends'></Link>
-			</BottomNavigationAction>
+				icon={<PeopleAltRoundedIcon />}></BottomNavigationAction>
 
 			<BottomNavigationAction
 				onClick={() => {

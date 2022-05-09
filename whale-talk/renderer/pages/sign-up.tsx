@@ -45,8 +45,8 @@ const useStyles = makeStyles((theme: Theme) => ({
 		alignItems: 'center',
 	},
 	icon: {
-		width: 200,
-		height: 200,
+		width: 250,
+		height: 250,
 	},
 
 	form: {
@@ -159,7 +159,10 @@ export default function SignUp() {
 			<Container component='main' maxWidth='xs'>
 				<CssBaseline />
 				<div className={classes.paper}>
-					<img src='./images/icon.png' className={classes.icon} />
+					<img
+						src='./images/whale plastic 2@0.5x.png'
+						className={classes.icon}
+					/>
 					<Typography component='h1' variant='h5' className={classes.title}>
 						가입하기
 					</Typography>

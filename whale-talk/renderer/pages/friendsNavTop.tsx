@@ -21,6 +21,7 @@ import { Zoom } from '@material-ui/core';
 // import { useRouter } from 'next/router';
 import { dbService, Timestamp } from './fbase';
 import Router from 'next/router';
+import Link from '../components/Link';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -109,17 +110,12 @@ export default function FriendsNavTop({
 			createdDate: Timestamp,
 			host: myAccount.displayName,
 			memberUid: memberUidArr,
-			member: memberArr,
+			title: null,
 		});
 
 		setCheckedState(new Array(users.length).fill(false));
 
-		await Router.push({
-			pathname: '/chats',
-			query: {
-				myUid: myAccount.uid,
-			},
-		});
+		await Router.push('/chats');
 	};
 	const handleAddFriend = () => {
 		setAnchorEl(null);
@@ -156,6 +152,7 @@ export default function FriendsNavTop({
 										채팅
 									</Typography>
 									<ArrowForwardIosRoundedIcon />
+									<Link href='/chats' myAccount={myAccount} />
 								</IconButton>
 							</Zoom>
 

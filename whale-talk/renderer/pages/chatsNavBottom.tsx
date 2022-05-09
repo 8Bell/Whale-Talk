@@ -41,13 +41,12 @@ export default function ChatsNavBottom() {
 				}}
 				label='친구'
 				value='friends'
-				icon={<PeopleAltRoundedIcon />}>
-				<Link href='/friends'></Link>
-			</BottomNavigationAction>
+				icon={<PeopleAltRoundedIcon />}></BottomNavigationAction>
 
-			<BottomNavigationAction label='채팅' value='chats' icon={<ChatRoundedIcon />}>
-				<Link href='/chats'></Link>
-			</BottomNavigationAction>
+			<BottomNavigationAction
+				label='채팅'
+				value='chats'
+				icon={<ChatRoundedIcon />}></BottomNavigationAction>
 
 			<BottomNavigationAction
 				onClick={onClick}
