@@ -3,21 +3,12 @@ import React, { useState, useEffect } from 'react';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
 import { authService, dbService } from './fbase';
-import { useRouter } from 'next/router';
-import {
-	Avatar,
-	Checkbox,
-	Collapse,
-	Fade,
-	Grid,
-	Grow,
-	Slide,
-	Typography,
-	Zoom,
-} from '@material-ui/core';
-import ChatsNavTop from './chatsNavTop';
-import ChatsNavBottom from './chatsNavBottom';
-import ChatRoom from './chatRoom';
+import router, { useRouter, withRouter } from 'next/router';
+import { Avatar, Checkbox, Grid, Typography, Zoom } from '@material-ui/core';
+import ChatNavTop from './chatRoomNavTop';
+import ChatNavBottom from './ChatRoomInputBar';
+import ChatRoomInputBar from './ChatRoomInputBar';
+import ChatRoomNavTop from './chatRoomNavTop';
 
 const useStyles = makeStyles((theme: Theme) => ({
 	paper: {
@@ -107,7 +98,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 	},
 }));
 
-export default function Chats() {
+export default function ChatRoom({ handleInRoom }) {
 	const classes = useStyles();
 	const router = useRouter();
 
@@ -156,7 +147,10 @@ export default function Chats() {
 
 	const getChats = async () => {
 		const dbChats = await dbService.collection('chats').get();
+		//console.log(dbChats);
 		dbChats.forEach((document) => {
+			console.log(document.data());
+
 			const chatsObject = {
 				...document.data(),
 				id: document.id,
@@ -166,6 +160,7 @@ export default function Chats() {
 				setChats((prev) => [chatsObject, ...prev]);
 			}
 		});
+		// console.log(document.data());
 	};
 
 	// 친구 목록 가져오기
@@ -236,88 +231,61 @@ export default function Chats() {
 		setChatTitles(chatTitleArr);
 	};
 
-	const [inRoom, setInRoom] = useState(false);
-	const handleInRoom = (index) => {
-		setInRoom(!inRoom);
-		console.log(myChats[index]);
-	};
-
 	return (
 		<React.Fragment>
-			<Collapse in={!inRoom}>
-				<Grid>
-					<ChatsNavTop handleInRoom={handleInRoom} />
-					<Grid className={classes.paper}>
-						<Grid className={classes.friends}>
-							<Grid className={classes.friendsTitleBox}>
-								<Typography className={classes.friendsTitle}>
-									{' '}
-									모든 채팅 {myChats.length}
-								</Typography>
-							</Grid>
-							<Grid>
-								{chats.map((chat, index) => {
-									if (chat.memberUid.includes(myAccount.uid)) {
-										return (
-											<Grid
-												container
-												key={chat.chatId}
-												className={classes.friend}
-												onClick={() =>
-													handleInRoom(index)
-												}>
-												<Grid item></Grid>
-												<Grid
-													item
-													xs
-													color='secondery'>
-													<Typography
-														variant='h6'
-														className={
-															classes.friendName
-														}>
-														{
-															chatTitles[
-																index
-															]
-														}
-													</Typography>
-													<Typography
-														className={
-															classes.friendEmail
-														}>
-														최근 대화
-													</Typography>
-												</Grid>
-												<Grid>
-													<Zoom in={false}>
-														<Checkbox
-															color='primary'
-															checked={
-																false
-															}
-															value={
-																false
-															}
-															className={
-																classes.friendCheckbox
-															}
-														/>
-													</Zoom>
-												</Grid>
-											</Grid>
-										);
-									}
-								})}
-							</Grid>
-						</Grid>
+			<ChatRoomNavTop handleInRoom={handleInRoom} />
+			<Grid className={classes.paper}>
+				<Grid className={classes.friends}>
+					<Grid className={classes.friendsTitleBox}>
+						<Typography className={classes.friendsTitle}>
+							{' '}
+							모든 채팅 {myChats.length}
+						</Typography>
 					</Grid>
-					<ChatsNavBottom />
+					<Grid>
+						{chats.map((chat, index) => {
+							if (chat.memberUid.includes(myAccount.uid)) {
+								return (
+									<Grid
+										container
+										key={index}
+										className={classes.friend}>
+										<Grid item></Grid>
+										<Grid item xs color='secondery'>
+											<Typography
+												variant='h6'
+												className={
+													classes.friendName
+												}>
+												{chatTitles[index]}
+											</Typography>
+											<Typography
+												className={
+													classes.friendEmail
+												}>
+												최근 대화
+											</Typography>
+										</Grid>
+										<Grid>
+											<Zoom in={false}>
+												<Checkbox
+													color='primary'
+													checked={false}
+													value={false}
+													className={
+														classes.friendCheckbox
+													}
+												/>
+											</Zoom>
+										</Grid>
+									</Grid>
+								);
+							}
+						})}
+					</Grid>
 				</Grid>
-			</Collapse>
-			<Collapse in={inRoom}>
-				<ChatRoom handleInRoom={handleInRoom} />
-			</Collapse>
+			</Grid>
+			<ChatRoomInputBar />
 		</React.Fragment>
 	);
 }

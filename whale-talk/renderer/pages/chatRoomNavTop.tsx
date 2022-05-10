@@ -18,10 +18,7 @@ import AddCommentRoundedIcon from '@material-ui/icons/AddCommentRounded';
 import ArrowForwardIosRoundedIcon from '@material-ui/icons/ArrowForwardIosRounded';
 import ChevronRightRoundedIcon from '@material-ui/icons/ChevronRightRounded';
 import { Zoom } from '@material-ui/core';
-// import { useRouter } from 'next/router';
-import { dbService, Timestamp } from './fbase';
-import Router from 'next/router';
-import Link from '../components/Link';
+import { useRouter } from 'next/router';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -61,17 +58,9 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-export default function FriendsNavTop({
-	chatMakingState,
-	setChatMakingState,
-	setAddFriendState,
-	checkedState,
-	setCheckedState,
-	myAccount,
-	users,
-}) {
-	// const router = useRouter();
+export default function ChatRoomNavTop({ handleInRoom }) {
 	const classes = useStyles();
+	const router = useRouter();
 	const [auth, setAuth] = useState(true);
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
@@ -90,41 +79,10 @@ export default function FriendsNavTop({
 
 	const handleAddChat = () => {
 		setAnchorEl(null);
-		setChatMakingState(!chatMakingState);
 	};
-	const handleStartChat = async () => {
-		const mydata = users.filter((user) => user.id == myAccount.uid);
-		const userArr = users.filter((user) => user.id !== myAccount.uid);
-		const memberArr = userArr
-			.filter((user, index) => checkedState[index] === true)
-			.concat(mydata);
-
-		const memberUidArr = memberArr.map((member) => member.id);
-
-		if (memberArr.length > 1) {
-			setChatMakingState(!chatMakingState);
-			await dbService
-				.collection('chats')
-				.doc(memberUidArr.sort().join(''))
-				.set({
-					createdAt: Date.now(),
-					createdDate: Timestamp,
-					chatId: memberUidArr.sort().join(''),
-					host: myAccount.uid,
-					memberUid: memberUidArr,
-					title: null,
-				});
-
-			setCheckedState(new Array(users.length).fill(false));
-
-			await Router.push('/chats');
-		} else {
-			alert('채팅을 할 친구를 선택해주세요');
-		}
-	};
+	const handleStartChat = () => {};
 	const handleAddFriend = () => {
 		setAnchorEl(null);
-		setAddFriendState(true);
 	};
 
 	return (
@@ -133,31 +91,27 @@ export default function FriendsNavTop({
 			<AppBar position='static' color='secondary'>
 				<Toolbar>
 					<Typography variant='h5' className={classes.title}>
-						친구
+						채팅
 					</Typography>
 					{auth && (
 						<div>
-							<Zoom in={!chatMakingState}>
+							<Zoom in={true}>
 								<IconButton
 									aria-label='account of current user'
 									aria-controls='menu-appbar'
 									aria-haspopup='true'
 									onClick={handleMenu}
 									color='inherit'
-									className={classes.plusIconBtn}>
-									<AddRoundedIcon style={{ fontSize: 30 }} />
-								</IconButton>
+									className={classes.plusIconBtn}></IconButton>
 							</Zoom>
-							<Zoom in={chatMakingState}>
+							<Zoom in={true}>
 								<IconButton
 									color='primary'
-									onClick={handleStartChat}
+									onClick={handleInRoom}
 									className={classes.nextIconBtn}>
 									<Typography className={classes.nextIconText}>
-										채팅
+										돌아가기
 									</Typography>
-									<ArrowForwardIosRoundedIcon />
-									<Link href='/chats' myAccount={myAccount} />
 								</IconButton>
 							</Zoom>
 

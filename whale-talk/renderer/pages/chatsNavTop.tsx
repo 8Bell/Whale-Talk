@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-export default function ChatsNavTop({}) {
+export default function ChatsNavTop({ handleInRoom }) {
 	const classes = useStyles();
 	const [auth, setAuth] = useState(true);
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -107,10 +107,10 @@ export default function ChatsNavTop({}) {
 							<Zoom in={true}>
 								<IconButton
 									color='primary'
-									onClick={handleStartChat}
+									onClick={handleInRoom}
 									className={classes.nextIconBtn}>
 									<Typography className={classes.nextIconText}>
-										채팅
+										채팅방
 									</Typography>
 									<ArrowForwardIosRoundedIcon />
 								</IconButton>
