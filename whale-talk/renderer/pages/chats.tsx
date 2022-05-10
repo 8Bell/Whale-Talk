@@ -106,8 +106,10 @@ export default function Chats() {
 	const [myAccount, setMyAccount] = useState({});
 
 	useEffect(() => {
-		getChats();
+		getUsers();
+
 		getMyAccount();
+
 		const dbMyAccount = authService.onAuthStateChanged((user) => {
 			if (user) {
 				setIsLoggedIn(true);
@@ -117,6 +119,10 @@ export default function Chats() {
 			}
 			setInit(true);
 		});
+	}, []);
+
+	useEffect(() => {
+		getChats();
 	}, []);
 
 	const getMyAccount = async () => {
@@ -142,19 +148,19 @@ export default function Chats() {
 	const getChats = async () => {
 		const dbChats = await dbService.collection('chats').get();
 		dbChats.forEach((document) => {
-			// console.log(document.id);
-			const chatsObject = {
-				...document.data(),
-				id: document.id,
-			};
-			setChatsLength(dbChats.docs.length);
-			if (chats.length < dbChats.docs.length) {
-				setChats((prev) => [chatsObject, ...prev]);
+			console.log(document.data());
+			if (document.data().memberUid.includes(myAccount.uid)) {
+				const chatsObject = {
+					...document.data(),
+					id: document.id,
+				};
+				setChatsLength(dbChats.docs.length);
+				if (chats.length < dbChats.docs.length) {
+					setChats((prev) => [chatsObject, ...prev]);
+				}
 			}
 		});
 	};
-	console.log(chats);
-	console.log(myAccount);
 
 	// 친구 목록 가져오기
 
@@ -163,7 +169,7 @@ export default function Chats() {
 
 	const getUsers = async () => {
 		const dbUsers = await dbService.collection('users').get();
-		dbUsers.forEach((document) => {
+		await dbUsers.forEach((document) => {
 			const userObject = {
 				...document.data(),
 				id: document.id,
@@ -177,6 +183,53 @@ export default function Chats() {
 		});
 	};
 
+	// 채팅방 참가인원의 이름 가져오기
+	// 이름 변경의 경우를 고려해 고유값인 계정 uid로 작업
+	const chatMemberNamesArr = []; // 모든 채팅들의 멤버 배열을 담은 배열
+
+	const [chatTitles, setChatTitles] = useState([]);
+	const chatTitleArr = [];
+
+	const userUidArr = []; //전체 유저의 uid 배열
+	const userNameArr = []; //전체 유저의 이름 배열
+	const chatUidsArr = []; // 모든 채팅의 멤버 uid 배열을 담은 배열
+
+	useEffect(() => {
+		getChatMemberNamesArr();
+	}, [chats]);
+
+	const getChatMemberNamesArr = () => {
+		users.map((user) => userUidArr.push(user.uid));
+		users.map((user) => userNameArr.push(user.userName));
+		chats.map((chat) => chatUidsArr.push(chat.memberUid));
+		chatUidsArr.map((chatUids, i) => {
+			const chatMemberNames = [];
+			chatUids.map((chatUid) => {
+				chatMemberNames.push(userNameArr[userUidArr.indexOf(chatUid)]);
+			});
+			chatMemberNamesArr.push(chatMemberNames);
+
+			let chatTitle = '';
+
+			if (chatUids.length > 3) {
+				chatTitle =
+					chatMemberNames.slice(0, 3).join(', ') +
+					'외' +
+					' ' +
+					(chatUids.length - 3) +
+					'명의 채팅방';
+			} else {
+				chatTitle = chatMemberNames.join(', ') + '의 채팅방';
+			}
+			console.log(chatTitle);
+			chatTitleArr.push(chatTitle);
+		});
+
+		setChatTitles(chatTitleArr);
+		console.log(chatMemberNamesArr);
+		console.log(chatTitleArr);
+	};
+
 	return (
 		<React.Fragment>
 			<ChatsNavTop />
@@ -185,7 +238,7 @@ export default function Chats() {
 					<Grid className={classes.friendsTitleBox}>
 						<Typography className={classes.friendsTitle}>
 							{' '}
-							모든 채팅 {chats.length}
+							모든 채팅 {chatTitles.length}
 						</Typography>
 					</Grid>
 					<Grid>
@@ -203,7 +256,7 @@ export default function Chats() {
 												className={
 													classes.friendName
 												}>
-												{chat.host + '님의 채팅방'}
+												{chatTitles[index]}
 											</Typography>
 											<Typography
 												className={
