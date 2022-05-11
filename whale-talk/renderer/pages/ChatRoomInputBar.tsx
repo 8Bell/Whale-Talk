@@ -59,6 +59,10 @@ export default function ChatRoomInputBar({ thisRoom, myAccount }) {
 				text: input,
 				chatId: thisRoom,
 			});
+			await dbService.collection('chats').doc(thisRoom).update({
+				lastDialogue: input,
+				lastDialogueAt: Date.now(),
+			});
 			setInput('');
 		}
 	};

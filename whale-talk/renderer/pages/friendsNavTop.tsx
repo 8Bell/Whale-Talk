@@ -108,11 +108,12 @@ export default function FriendsNavTop({
 				.doc(memberUidArr.sort().join(''))
 				.set({
 					createdAt: Date.now(),
-					createdDate: Timestamp,
 					chatId: memberUidArr.sort().join(''),
 					host: myAccount.uid,
 					memberUid: memberUidArr,
 					title: null,
+					lastDialogue: '',
+					lastDialogueAt: '',
 				});
 
 			setCheckedState(new Array(users.length).fill(false));

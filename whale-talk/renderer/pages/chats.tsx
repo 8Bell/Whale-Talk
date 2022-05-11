@@ -22,6 +22,7 @@ import ChatsNavBottom from './chatsNavBottom';
 import ChatRoom from './chatRoom';
 import Link from '../components/Link';
 import console from 'console';
+import { AvatarGroup } from '@material-ui/lab';
 
 const useStyles = makeStyles((theme: Theme) => ({
 	paper: {
@@ -192,12 +193,13 @@ export default function Chats() {
 
 	useEffect(() => {
 		getChatMemberNamesArr();
-		setMyChats(chats.filter((chat) => chat.memberUid.includes(myAccount.uid)));
+
+		setMyChats(chats.filter((chat) => chat.memberUid.includes(myAccount.uid))); //내가 속한 채팅만 반환
 		setMyChatsUid(
 			chats
 				.filter((chat) => chat.memberUid.includes(myAccount.uid))
 				.map((myChat) => myChat.chatId)
-		);
+		); //내가 속한 채팅의 멤버 uid 배열
 	}, [chats]);
 
 	const getChatMemberNamesArr = () => {
@@ -237,14 +239,31 @@ export default function Chats() {
 	const [dialogues, setDialogues] = useState([]);
 
 	useEffect(() => {
-		dbService.collectionGroup('dialogues').onSnapshot((snapshot) => {
-			const dbDialogues = snapshot.docs.map((doc) => ({
-				...doc.data(),
-				id: doc.id,
-			}));
-			setDialogues(dbDialogues);
-		});
+		dbService
+			.collectionGroup('dialogues')
+			.orderBy('createdAt')
+			.onSnapshot((snapshot) => {
+				const dbDialogues = snapshot.docs.map((doc) => ({
+					...doc.data(),
+					id: doc.id,
+				}));
+				setDialogues(dbDialogues);
+			});
 	}, []);
+
+	//마지막 대화 가져오기
+
+	const getLastDialogue = (idx) => {
+		const arr = dialogues
+			.filter((dialogue) => dialogue.chatId === myChatsUid[idx])
+			.slice(-1)[0];
+
+		console.log('알', arr);
+	};
+	console.log(
+		'올',
+		dialogues.filter((dialogue) => dialogue.chatId === myChatsUid[0]).slice(-1)[0]
+	);
 
 	// 분류된 대화 가져오기
 	const [sortedDialogues, setSortedDialogues] = useState([]);
@@ -273,28 +292,6 @@ export default function Chats() {
 		return users[userUidArr.indexOf(inputUid)];
 	};
 
-	// // 각 채팅방 마지막 대화 가져오기
-	// const [lastDialogues, setLastDialogues] = useState([]);
-	// useEffect(() => {
-	// 	// if (lastDialogues.length < myChatsUid.length) {
-	// 	let lastDialogue = [];
-	// 	myChatsUid.map((uid) => {
-	// 		dbService
-	// 			.collection('chats')
-	// 			.doc(uid)
-	// 			.collection('dialogues')
-	// 			.orderBy('createdAt')
-	// 			.onSnapshot((snapshot) => {
-	// 				const dbSortedDialogues =
-	// 					snapshot.docs[snapshot.docs.length - 1].data().text;
-	// 				lastDialogue.push(dbSortedDialogues);
-	// 			});
-	// 		setLastDialogues(lastDialogue);
-	// 	});
-	// 	// }
-	// }, [dialogues]);
-	// console.log('마지막 대화', lastDialogues);
-
 	// 채팅방 선택하기
 	const [indexx, setIndexx] = useState(0);
 
@@ -307,19 +304,6 @@ export default function Chats() {
 		setIsInChatRoom(!isInChatRoom);
 		setThisRoomName(chatTitles[index]);
 	};
-	console.log(myChatsUid);
-
-	// console.log(
-	// 	'마지막',
-	// 	dbService
-	// 		.collection('chats')
-	// 		.doc(thisRoom)
-	// 		.collection('dialogues')
-	// 		.orderBy('createdAt')
-	// 		.onSnapshot((snapshot) => {
-	// 			snapshot.docs[snapshot.docs.length - 1].data().text;
-	// 		})
-	// );
 
 	return (
 		<React.Fragment>
@@ -354,31 +338,55 @@ export default function Chats() {
 												className={
 													classes.friendEmail
 												}>
-												최근 대화
-												{dbService
-													.collection('chats')
-													.doc(
-														myChatsUid[
-															index
-														]
-													)
-													.collection(
-														'dialogues'
-													)
-													.orderBy('createdAt')
-													.onSnapshot(
-														(snapshot) => {
-															snapshot.docs[
-																snapshot
-																	.docs
-																	.length -
-																	1
-															].data()
-																.text;
-														}
-													)}
+												{myChat.lastDialogue}
 											</Typography>
 										</Grid>
+
+										<Grid
+											item
+											className={classes.groupAvatars}>
+											<AvatarGroup max={3}>
+												{myChat.memberUid.map(
+													(uid, index) => {
+														return (
+															<Avatar
+																key={
+																	index
+																}
+																style={{
+																	backgroundColor:
+																		uidToUser(
+																			uid
+																		)
+																			.personalColor,
+																	filter: 'saturate(40%) grayscale(20%) brightness(130%)',
+																}}
+																src={
+																	uidToUser(
+																		uid
+																	)
+																		.profileImg
+																}
+																className={
+																	classes.groupAvatar
+																}>
+																{uidToUser(
+																	uid
+																)
+																	.profileImg ==
+																	null &&
+																	uidToUser(
+																		uid
+																	).userName.charAt(
+																		0
+																	)}
+															</Avatar>
+														);
+													}
+												)}
+											</AvatarGroup>
+										</Grid>
+
 										<Grid>
 											<Zoom in={false}>
 												<Checkbox
