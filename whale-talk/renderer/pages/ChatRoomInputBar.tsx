@@ -62,7 +62,6 @@ export default function ChatRoomInputBar({ thisRoom, myAccount, getDialogues }) 
 					chatId: `${thisRoom}`,
 				});
 			setInput('');
-			getDialogues();
 		}
 	};
 

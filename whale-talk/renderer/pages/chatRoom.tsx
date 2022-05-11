@@ -103,11 +103,13 @@ export default function ChatRoom({
 	setIsInChatRoom,
 	isInChatRoom,
 	thisRoomName,
-	dialogues,
+	dialoguesArr,
 	getDialogues,
 	indexx,
+	dialogues,
 }) {
 	console.log(dialogues);
+	console.log(dialoguesArr);
 	console.log(indexx);
 
 	const classes = useStyles();
