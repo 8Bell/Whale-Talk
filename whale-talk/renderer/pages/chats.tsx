@@ -133,13 +133,16 @@ export default function Chats() {
 	const [myChatsUid, setMyChatsUid] = useState([]);
 
 	useEffect(() => {
-		dbService.collection('chats').onSnapshot((snapshot) => {
-			const dbChats = snapshot.docs.map((doc) => ({
-				...doc.data(),
-				id: doc.id,
-			}));
-			setChats(dbChats);
-		});
+		dbService
+			.collection('chats')
+			.orderBy('lastDialogueAt', 'desc')
+			.onSnapshot((snapshot) => {
+				const dbChats = snapshot.docs.map((doc) => ({
+					...doc.data(),
+					id: doc.id,
+				}));
+				setChats(dbChats);
+			});
 	}, []);
 
 	// 채팅방 참가인원의 이름 가져오기
@@ -363,7 +366,7 @@ export default function Chats() {
 										<Grid
 											item
 											className={classes.groupAvatars}>
-											<AvatarGroup max={4}>
+											<AvatarGroup max={4} spacing={15}>
 												{myChat.memberUid.map(
 													(uid, index) => {
 														return (

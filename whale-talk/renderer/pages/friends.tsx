@@ -143,14 +143,17 @@ export default function Friends() {
 	const [usersLength, setUsersLength] = useState(1);
 
 	useEffect(() => {
-		dbService.collection('users').onSnapshot((snapshot) => {
-			const dbUsers = snapshot.docs.map((doc) => ({
-				...doc.data(),
-				id: doc.id,
-				checked: false,
-			}));
-			setUsers(dbUsers);
-		});
+		dbService
+			.collection('users')
+			.orderBy('userName')
+			.onSnapshot((snapshot) => {
+				const dbUsers = snapshot.docs.map((doc) => ({
+					...doc.data(),
+					id: doc.id,
+					checked: false,
+				}));
+				setUsers(dbUsers);
+			});
 	}, []);
 
 	//나를 제외한 유저 목록 필터링

@@ -113,7 +113,7 @@ export default function FriendsNavTop({
 					memberUid: memberUidArr,
 					title: null,
 					lastDialogue: '',
-					lastDialogueAt: '',
+					lastDialogueAt: Date.now(),
 				});
 
 			setCheckedState(new Array(users.length).fill(false));

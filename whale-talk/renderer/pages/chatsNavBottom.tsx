@@ -5,6 +5,7 @@ import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import ChatRoundedIcon from '@material-ui/icons/ChatRounded';
 import PeopleAltRoundedIcon from '@material-ui/icons/PeopleAltRounded';
 import MenuRoundedIcon from '@material-ui/icons/MenuRounded';
+import LockRoundedIcon from '@material-ui/icons/LockRounded';
 import { authService } from './fbase';
 import Link from '../components/Link';
 import { useRouter } from 'next/router';
@@ -50,9 +51,9 @@ export default function ChatsNavBottom() {
 
 			<BottomNavigationAction
 				onClick={onClick}
-				label='더보기'
-				value='more'
-				icon={<MenuRoundedIcon />}
+				label='로그아웃'
+				value='signOut'
+				icon={<LockRoundedIcon />}
 			/>
 		</BottomNavigation>
 	);
