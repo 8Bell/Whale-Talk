@@ -5,7 +5,7 @@ import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import ChatRoundedIcon from '@material-ui/icons/ChatRounded';
 import PeopleAltRoundedIcon from '@material-ui/icons/PeopleAltRounded';
 import MenuRoundedIcon from '@material-ui/icons/MenuRounded';
-import { authService, dbService } from './fbase';
+import { authService, dbService, Timestamp } from './fbase';
 import Link from '../components/Link';
 import { useRouter } from 'next/router';
 import { Button, Grid, TextField } from '@material-ui/core';
@@ -31,7 +31,7 @@ const useStyles = makeStyles({
 	submit: { top: 16, left: 10, width: 100, height: 55, fontSize: 18 },
 });
 
-export default function ChatRoomInputBar() {
+export default function ChatRoomInputBar({ thisRoom, myAccount, getDialogues }) {
 	const router = useRouter();
 	const classes = useStyles();
 	const [value, setValue] = React.useState('chats');
@@ -47,16 +47,27 @@ export default function ChatRoomInputBar() {
 	const onChange = (e) => {
 		setInput(e.target.value);
 	};
-	const onSubmit = (e) => {
-		e.preverntDefault();
-		dbService.collection('chats').doc();
+	const onSubmit = async (e) => {
+		e.preventDefault();
+		if (input !== '') {
+			await dbService.collection('dialogues').add({
+				createdAt: Date.now(),
+				createdDate: Timestamp,
+				writer: myAccount.uid,
+				text: input,
+				chatId: `${thisRoom}`,
+			});
+			setInput('');
+			getDialogues();
+		}
 	};
 
 	return (
-		<form className={classes.form}>
+		<form className={classes.form} onSubmit={onSubmit}>
 			<Grid container className={classes.root}>
 				<Grid item xs className={classes.inputGrid}>
 					<TextField
+						type='text'
 						id='textfield'
 						margin='normal'
 						fullWidth
@@ -66,13 +77,16 @@ export default function ChatRoomInputBar() {
 						variant='outlined'
 						className={classes.input}
 						onChange={onChange}
+						value={input}
 					/>
 				</Grid>
 				<Grid item className={classes.submitGrid}>
 					<Button
+						type='submit'
 						variant='contained'
 						color='primary'
-						className={classes.submit}>
+						className={classes.submit}
+						onClick={onSubmit}>
 						전송
 					</Button>
 				</Grid>

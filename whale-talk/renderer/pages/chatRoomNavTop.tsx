@@ -37,6 +37,9 @@ const useStyles = makeStyles((theme: Theme) =>
 		},
 		title: {
 			flexGrow: 1,
+			fontSize: 17,
+			marginTop: 4,
+			color: '#444',
 		},
 		plusIconBtn: {
 			position: 'absolute',
@@ -58,7 +61,7 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-export default function ChatRoomNavTop({ handleInRoom }) {
+export default function ChatRoomNavTop({ setIsInChatRoom, isInChatRoom, thisRoomName }) {
 	const classes = useStyles();
 	const router = useRouter();
 	const [auth, setAuth] = useState(true);
@@ -90,9 +93,7 @@ export default function ChatRoomNavTop({ handleInRoom }) {
 			<FormGroup></FormGroup>
 			<AppBar position='static' color='secondary'>
 				<Toolbar>
-					<Typography variant='h5' className={classes.title}>
-						채팅
-					</Typography>
+					<Typography className={classes.title}>{thisRoomName}</Typography>
 					{auth && (
 						<div>
 							<Zoom in={true}>
@@ -107,7 +108,7 @@ export default function ChatRoomNavTop({ handleInRoom }) {
 							<Zoom in={true}>
 								<IconButton
 									color='primary'
-									onClick={handleInRoom}
+									onClick={() => setIsInChatRoom(!isInChatRoom)}
 									className={classes.nextIconBtn}>
 									<Typography className={classes.nextIconText}>
 										돌아가기

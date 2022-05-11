@@ -98,7 +98,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 	},
 }));
 
-export default function ChatRoom({ handleInRoom }) {
+export default function ChatRoom({ thisRoom, setIsInChatRoom, isInChatRoom, thisRoomName }) {
 	const classes = useStyles();
 	const router = useRouter();
 
@@ -231,20 +231,42 @@ export default function ChatRoom({ handleInRoom }) {
 		setChatTitles(chatTitleArr);
 	};
 
+	//대화 가져오기
+
+	const [dialogues, setDialogues] = useState([]);
+
+	useEffect(() => {
+		getDialogues();
+	}, [thisRoom]);
+
+	const getDialogues = async () => {
+		const dbDialogues = await dbService.collection('dialogues').get();
+		dbDialogues.forEach((document) => {
+			const dialogueObject = {
+				...document.data(),
+				id: document.id,
+			};
+			if (dialogues.length < dbDialogues.docs.length) {
+				setDialogues((prev) => [...prev, dialogueObject]);
+			}
+		});
+		console.log(dialogues);
+	};
+
+	console.log('thisRoom2', thisRoom);
+
 	return (
 		<React.Fragment>
-			<ChatRoomNavTop handleInRoom={handleInRoom} />
+			<ChatRoomNavTop
+				setIsInChatRoom={setIsInChatRoom}
+				isInChatRoom={isInChatRoom}
+				thisRoomName={thisRoomName}
+			/>
 			<Grid className={classes.paper}>
 				<Grid className={classes.friends}>
-					<Grid className={classes.friendsTitleBox}>
-						<Typography className={classes.friendsTitle}>
-							{' '}
-							모든 채팅 {myChats.length}
-						</Typography>
-					</Grid>
 					<Grid>
-						{chats.map((chat, index) => {
-							if (chat.memberUid.includes(myAccount.uid)) {
+						{dialogues.map((dialogue, index) => {
+							if (dialogue.chatId == thisRoom) {
 								return (
 									<Grid
 										container
@@ -257,13 +279,13 @@ export default function ChatRoom({ handleInRoom }) {
 												className={
 													classes.friendName
 												}>
-												{chatTitles[index]}
+												{dialogue.text}
 											</Typography>
 											<Typography
 												className={
 													classes.friendEmail
 												}>
-												최근 대화
+												{dialogue.writer}
 											</Typography>
 										</Grid>
 										<Grid>
@@ -285,7 +307,11 @@ export default function ChatRoom({ handleInRoom }) {
 					</Grid>
 				</Grid>
 			</Grid>
-			<ChatRoomInputBar />
+			<ChatRoomInputBar
+				thisRoom={thisRoom}
+				myAccount={myAccount}
+				getDialogues={getDialogues}
+			/>
 		</React.Fragment>
 	);
 }

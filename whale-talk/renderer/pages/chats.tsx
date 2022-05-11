@@ -6,11 +6,13 @@ import { authService, dbService } from './fbase';
 import { useRouter } from 'next/router';
 import {
 	Avatar,
+	Box,
 	Checkbox,
 	Collapse,
 	Fade,
 	Grid,
 	Grow,
+	NoSsr,
 	Slide,
 	Typography,
 	Zoom,
@@ -18,6 +20,8 @@ import {
 import ChatsNavTop from './chatsNavTop';
 import ChatsNavBottom from './chatsNavBottom';
 import ChatRoom from './chatRoom';
+import Link from '../components/Link';
+import console from 'console';
 
 const useStyles = makeStyles((theme: Theme) => ({
 	paper: {
@@ -151,6 +155,7 @@ export default function Chats() {
 
 	const [chats, setChats] = useState([]);
 	const [myChats, setMyChats] = useState(chats);
+	const [myChatsUid, setMyChatsUid] = useState([]);
 
 	const [chatsLength, setChatsLength] = useState(0);
 
@@ -231,22 +236,54 @@ export default function Chats() {
 
 			chatTitleArr.push(chatTitle);
 			setMyChats(chats.filter((chat) => chat.memberUid.includes(myAccount.uid)));
+			setMyChatsUid(myChats.map((myChat) => myChat.chatId));
 		});
 
 		setChatTitles(chatTitleArr);
 	};
 
-	const [inRoom, setInRoom] = useState(false);
-	const handleInRoom = (index) => {
-		setInRoom(!inRoom);
-		console.log(myChats[index]);
+	const [isInChatRoom, setIsInChatRoom] = useState(false);
+	const [thisRoom, setThisRoom] = useState('');
+	const [thisRoomName, setThisRoomName] = useState('채팅방');
+
+	//대화 가져오기
+
+	// const [dialogues, setDialogues] = useState([]);
+
+	// useEffect(() => {
+	// 	getDialogues();
+	// }, []);
+
+	// const getDialogues = async (roomId) => {
+	// 	const dbDialogues = await dbService.collectionGroup('dialogues').get();
+	// 	dbDialogues.forEach((document) => {
+	// 		const dialogueObject = {
+	// 			...document.data(),
+	// 			id: document.id,
+	// 		};
+	// 		if (dialogues.length < dbDialogues.docs.length) {
+	// 			setDialogues((prev) => [...prev, dialogueObject]);
+	// 		}
+	// 	});
+	// 	console.log(dialogues);
+	// };
+
+	const handleInRoom = async (index) => {
+		console.log(index);
+		const roomId = await myChatsUid[index];
+		setThisRoom(roomId);
+		console.log(roomId);
+		setIsInChatRoom(!isInChatRoom);
+		setThisRoomName(chatTitles[index]);
 	};
+	console.log(myChatsUid);
+	console.log('thisRoom', thisRoom);
 
 	return (
 		<React.Fragment>
-			<Collapse in={!inRoom}>
+			<Collapse in={!isInChatRoom}>
 				<Grid>
-					<ChatsNavTop handleInRoom={handleInRoom} />
+					<ChatsNavTop />
 					<Grid className={classes.paper}>
 						<Grid className={classes.friends}>
 							<Grid className={classes.friendsTitleBox}>
@@ -259,6 +296,7 @@ export default function Chats() {
 								{chats.map((chat, index) => {
 									if (chat.memberUid.includes(myAccount.uid)) {
 										return (
+											// <Link href={'/chatRoom'}>
 											<Grid
 												container
 												key={chat.chatId}
@@ -306,6 +344,7 @@ export default function Chats() {
 													</Zoom>
 												</Grid>
 											</Grid>
+											// </Link>
 										);
 									}
 								})}
@@ -315,8 +354,16 @@ export default function Chats() {
 					<ChatsNavBottom />
 				</Grid>
 			</Collapse>
-			<Collapse in={inRoom}>
-				<ChatRoom handleInRoom={handleInRoom} />
+
+			<Collapse in={isInChatRoom}>
+				<ChatRoom
+					thisRoom={thisRoom}
+					setIsInChatRoom={setIsInChatRoom}
+					isInChatRoom={isInChatRoom}
+					thisRoomName={thisRoomName}
+					// setDialogues={setDialogues}
+					// getDialogues={getDialogues}
+				/>
 			</Collapse>
 		</React.Fragment>
 	);

@@ -100,19 +100,17 @@ export default function ChatsNavTop({ handleInRoom }) {
 									aria-haspopup='true'
 									onClick={handleMenu}
 									color='inherit'
-									className={classes.plusIconBtn}>
-									<AddRoundedIcon style={{ fontSize: 30 }} />
-								</IconButton>
+									className={classes.plusIconBtn}></IconButton>
 							</Zoom>
 							<Zoom in={true}>
 								<IconButton
 									color='primary'
 									onClick={handleInRoom}
 									className={classes.nextIconBtn}>
-									<Typography className={classes.nextIconText}>
-										채팅방
-									</Typography>
-									<ArrowForwardIosRoundedIcon />
+									<Typography
+										className={
+											classes.nextIconText
+										}></Typography>
 								</IconButton>
 							</Zoom>
 
