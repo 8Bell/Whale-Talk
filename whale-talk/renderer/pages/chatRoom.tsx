@@ -103,13 +103,14 @@ export default function ChatRoom({
 	setIsInChatRoom,
 	isInChatRoom,
 	thisRoomName,
-	dialoguesArr,
-	getDialogues,
 	indexx,
 	dialogues,
+	sortedDialogues,
+	uidToName,
+	uidToUser,
 }) {
 	console.log(dialogues);
-	console.log(dialoguesArr);
+
 	console.log(indexx);
 
 	const classes = useStyles();
@@ -121,10 +122,6 @@ export default function ChatRoom({
 	const [myAccount, setMyAccount] = useState({});
 
 	useEffect(() => {
-		getUsers();
-		getMyAccount();
-		getChats();
-
 		const dbMyAccount = authService.onAuthStateChanged((user) => {
 			if (user) {
 				setIsLoggedIn(true);
@@ -134,6 +131,10 @@ export default function ChatRoom({
 			}
 			setInit(true);
 		});
+	}, []);
+
+	useEffect(() => {
+		getMyAccount();
 	}, []);
 
 	const getMyAccount = async () => {
@@ -151,102 +152,8 @@ export default function ChatRoom({
 		});
 	};
 
-	// 채팅 목록 가져오기
-
-	const [chats, setChats] = useState([]);
-	const [myChats, setMyChats] = useState(chats);
-
-	const [chatsLength, setChatsLength] = useState(0);
-
-	const getChats = async () => {
-		const dbChats = await dbService.collection('chats').get();
-		//console.log(dbChats);
-		dbChats.forEach((document) => {
-			console.log(document.data());
-
-			const chatsObject = {
-				...document.data(),
-				id: document.id,
-			};
-			setChatsLength(dbChats.docs.length);
-			if (chats.length < dbChats.docs.length) {
-				setChats((prev) => [chatsObject, ...prev]);
-			}
-		});
-		// console.log(document.data());
-	};
-
-	// 친구 목록 가져오기
-
-	const [users, setUsers] = useState([]);
-	const [usersLength, setUsersLength] = useState(1);
-
-	const getUsers = async () => {
-		const dbUsers = await dbService.collection('users').get();
-		await dbUsers.forEach((document) => {
-			const userObject = {
-				...document.data(),
-				id: document.id,
-				checked: false,
-			};
-			setUsersLength(dbUsers.docs.length);
-			// console.log(usersLength);
-			if (users.length < dbUsers.docs.length) {
-				setUsers((prev) => [...prev, userObject]);
-			}
-		});
-	};
-
-	// 채팅방 참가인원의 이름 가져오기
-	// 이름 변경의 경우를 고려해 고유값인 계정 uid로 작업
-	const chatMemberNamesArr = []; // 모든 채팅들의 멤버 배열을 담은 배열
-
-	const [chatTitles, setChatTitles] = useState([]);
-	const chatTitleArr = [];
-
-	const userUidArr = []; //전체 유저의 uid 배열
-	const userNameArr = []; //전체 유저의 이름 배열
-	const chatUidsArr = []; // 모든 채팅의 멤버 uid 배열을 담은 배열
-
-	useEffect(() => {
-		getChatMemberNamesArr();
-	}, [chats]);
-
-	const getChatMemberNamesArr = () => {
-		users.map((user) => userUidArr.push(user.uid));
-		users.map((user) => userNameArr.push(user.userName));
-		chats.map((chat) => chatUidsArr.push(chat.memberUid));
-		chatUidsArr.map((chatUids) => {
-			const chatMemberNames = [];
-
-			chatUids.map((chatUid) => {
-				chatMemberNames.push(userNameArr[userUidArr.indexOf(chatUid)]);
-			});
-			chatMemberNamesArr.push(chatMemberNames);
-
-			let chatTitle = '';
-
-			if (chatUids.length > 3) {
-				chatTitle =
-					chatMemberNames.slice(0, 3).join(', ') +
-					'외' +
-					' ' +
-					(chatUids.length - 3) +
-					'명의 채팅방';
-			} else {
-				chatTitle = chatMemberNames.join(', ') + '의 채팅방';
-			}
-
-			chatTitleArr.push(chatTitle);
-			setMyChats(chats.filter((chat) => chat.memberUid.includes(myAccount.uid)));
-		});
-
-		setChatTitles(chatTitleArr);
-	};
-
-	//대화 가져오기
-
 	console.log('thisRoom2', thisRoom);
+	console.log(sortedDialogues);
 
 	return (
 		<React.Fragment>
@@ -258,12 +165,32 @@ export default function ChatRoom({
 			<Grid className={classes.paper}>
 				<Grid className={classes.friends}>
 					<Grid>
-						{dialogues.map((dialogue, index) => {
+						{sortedDialogues.map((dialogue, index) => {
 							return (
 								<Grid
 									container
 									key={index}
 									className={classes.friend}>
+									<Grid item>
+										<Avatar
+											style={{
+												backgroundColor: uidToUser(
+													dialogue.writer
+												).personalColor,
+												filter: 'saturate(40%) grayscale(20%) brightness(130%) ',
+											}}
+											src={
+												uidToUser(dialogue.writer)
+													.profileImg
+											}
+											className={classes.friendAvatar}>
+											{uidToUser(dialogue.writer)
+												.profileImg == null &&
+												uidToUser(
+													dialogue.writer
+												).userName.charAt(0)}
+										</Avatar>
+									</Grid>
 									<Grid item></Grid>
 									<Grid item xs color='secondery'>
 										<Typography
@@ -273,7 +200,19 @@ export default function ChatRoom({
 										</Typography>
 										<Typography
 											className={classes.friendEmail}>
-											{dialogue.writer}
+											{(
+												'0' +
+												new Date(
+													dialogue.createdAt
+												).getHours()
+											).slice(-2) +
+												':' +
+												(
+													'0' +
+													new Date(
+														dialogue.createdAt
+													).getMinutes()
+												).slice(-2)}
 										</Typography>
 									</Grid>
 									<Grid>
@@ -294,11 +233,7 @@ export default function ChatRoom({
 					</Grid>
 				</Grid>
 			</Grid>
-			<ChatRoomInputBar
-				thisRoom={thisRoom}
-				myAccount={myAccount}
-				getDialogues={getDialogues}
-			/>
+			<ChatRoomInputBar thisRoom={thisRoom} myAccount={myAccount} />
 		</React.Fragment>
 	);
 }

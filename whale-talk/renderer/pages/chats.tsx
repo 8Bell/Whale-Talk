@@ -121,9 +121,7 @@ export default function Chats() {
 	const [myAccount, setMyAccount] = useState({});
 
 	useEffect(() => {
-		getUsers();
 		getMyAccount();
-		getChats();
 
 		const dbMyAccount = authService.onAuthStateChanged((user) => {
 			if (user) {
@@ -151,48 +149,35 @@ export default function Chats() {
 		});
 	};
 
+	// 친구 목록 가져오기
+	const [users, setUsers] = useState([]);
+
+	useEffect(() => {
+		dbService.collection('users').onSnapshot((snapshot) => {
+			const dbUsers = snapshot.docs.map((doc) => ({
+				...doc.data(),
+				id: doc.id,
+				checked: false,
+			}));
+			setUsers(dbUsers);
+		});
+	}, []);
+
 	// 채팅 목록 가져오기
 
 	const [chats, setChats] = useState([]);
 	const [myChats, setMyChats] = useState(chats);
 	const [myChatsUid, setMyChatsUid] = useState([]);
 
-	const [chatsLength, setChatsLength] = useState(0);
-
-	const getChats = async () => {
-		const dbChats = await dbService.collection('chats').get();
-		dbChats.forEach((document) => {
-			const chatsObject = {
-				...document.data(),
-				id: document.id,
-			};
-			setChatsLength(dbChats.docs.length);
-			if (chats.length < dbChats.docs.length) {
-				setChats((prev) => [chatsObject, ...prev]);
-			}
+	useEffect(() => {
+		dbService.collection('chats').onSnapshot((snapshot) => {
+			const dbChats = snapshot.docs.map((doc) => ({
+				...doc.data(),
+				id: doc.id,
+			}));
+			setChats(dbChats);
 		});
-	};
-
-	// 친구 목록 가져오기
-
-	const [users, setUsers] = useState([]);
-	const [usersLength, setUsersLength] = useState(1);
-
-	const getUsers = async () => {
-		const dbUsers = await dbService.collection('users').get();
-		dbUsers.forEach((document) => {
-			const userObject = {
-				...document.data(),
-				id: document.id,
-				checked: false,
-			};
-			setUsersLength(dbUsers.docs.length);
-			// console.log(usersLength);
-			if (users.length < dbUsers.docs.length) {
-				setUsers((prev) => [...prev, userObject]);
-			}
-		});
-	};
+	}, []);
 
 	// 채팅방 참가인원의 이름 가져오기
 	// 이름 변경의 경우를 고려해 고유값인 계정 uid로 작업
@@ -201,9 +186,9 @@ export default function Chats() {
 	const [chatTitles, setChatTitles] = useState([]);
 	const chatTitleArr = [];
 
-	const userUidArr = []; //전체 유저의 uid 배열
-	const userNameArr = []; //전체 유저의 이름 배열
-	const chatUidsArr = []; // 모든 채팅의 멤버 uid 배열을 담은 배열
+	const userUidArr = users.map((user) => user.uid); //전체 유저의 uid 배열
+	const userNameArr = users.map((user) => user.userName); //전체 유저의 이름 배열
+	const chatUidsArr = chats.map((chat) => chat.memberUid); // 모든 채팅의 멤버 uid 배열을 담은 배열
 
 	useEffect(() => {
 		getChatMemberNamesArr();
@@ -216,9 +201,6 @@ export default function Chats() {
 	}, [chats]);
 
 	const getChatMemberNamesArr = () => {
-		users.map((user) => userUidArr.push(user.uid));
-		users.map((user) => userNameArr.push(user.userName));
-		chats.map((chat) => chatUidsArr.push(chat.memberUid));
 		chatUidsArr.map((chatUids) => {
 			const chatMemberNames = [];
 
@@ -264,25 +246,54 @@ export default function Chats() {
 		});
 	}, []);
 
-	// 대화 분류하기
-	const [dialoguesArr, setDialoguesArr] = useState([]);
+	// 분류된 대화 가져오기
+	const [sortedDialogues, setSortedDialogues] = useState([]);
 
 	useEffect(() => {
-		sortDialogues();
-	}, [dialogues]);
+		thisRoom !== '' &&
+			dbService
+				.collection('chats')
+				.doc(thisRoom)
+				.collection('dialogues')
+				.orderBy('createdAt')
+				.onSnapshot((snapshot) => {
+					const dbSortedDialogues = snapshot.docs.map((doc) => ({
+						...doc.data(),
+					}));
+					setSortedDialogues(dbSortedDialogues);
+				});
+	}, [thisRoom]);
 
-	const sortDialogues = () => {
-		myChatsUid.map((uid) => {
-			const sortedDialogues = [];
-			dialogues.map((dialogue) => {
-				dialogue.chatId == uid && sortedDialogues.push(dialogue);
-			});
-
-			if (dialoguesArr.length < myChatsUid.length) {
-				setDialoguesArr((prev) => [...prev, sortedDialogues]);
-			}
-		});
+	// uid를 넣으면 이름을 반환하는 함수
+	const uidToName = (inputUid: string) => {
+		return userNameArr[userUidArr.indexOf(inputUid)];
 	};
+	// uid를 넣으면 유저 객체를 반환하는 함수
+	const uidToUser = (inputUid: string) => {
+		return users[userUidArr.indexOf(inputUid)];
+	};
+
+	// // 각 채팅방 마지막 대화 가져오기
+	// const [lastDialogues, setLastDialogues] = useState([]);
+	// useEffect(() => {
+	// 	// if (lastDialogues.length < myChatsUid.length) {
+	// 	let lastDialogue = [];
+	// 	myChatsUid.map((uid) => {
+	// 		dbService
+	// 			.collection('chats')
+	// 			.doc(uid)
+	// 			.collection('dialogues')
+	// 			.orderBy('createdAt')
+	// 			.onSnapshot((snapshot) => {
+	// 				const dbSortedDialogues =
+	// 					snapshot.docs[snapshot.docs.length - 1].data().text;
+	// 				lastDialogue.push(dbSortedDialogues);
+	// 			});
+	// 		setLastDialogues(lastDialogue);
+	// 	});
+	// 	// }
+	// }, [dialogues]);
+	// console.log('마지막 대화', lastDialogues);
 
 	// 채팅방 선택하기
 	const [indexx, setIndexx] = useState(0);
@@ -297,12 +308,23 @@ export default function Chats() {
 		setThisRoomName(chatTitles[index]);
 	};
 	console.log(myChatsUid);
-	console.log('thisRoom', thisRoom);
+
+	// console.log(
+	// 	'마지막',
+	// 	dbService
+	// 		.collection('chats')
+	// 		.doc(thisRoom)
+	// 		.collection('dialogues')
+	// 		.orderBy('createdAt')
+	// 		.onSnapshot((snapshot) => {
+	// 			snapshot.docs[snapshot.docs.length - 1].data().text;
+	// 		})
+	// );
 
 	return (
 		<React.Fragment>
 			<Collapse in={!isInChatRoom}>
-				<ChatsNavTop handleInRoom={handleInRoom} />
+				<ChatsNavTop />
 				<Grid className={classes.paper}>
 					<Grid className={classes.friends}>
 						<Grid className={classes.friendsTitleBox}>
@@ -333,6 +355,28 @@ export default function Chats() {
 													classes.friendEmail
 												}>
 												최근 대화
+												{dbService
+													.collection('chats')
+													.doc(
+														myChatsUid[
+															index
+														]
+													)
+													.collection(
+														'dialogues'
+													)
+													.orderBy('createdAt')
+													.onSnapshot(
+														(snapshot) => {
+															snapshot.docs[
+																snapshot
+																	.docs
+																	.length -
+																	1
+															].data()
+																.text;
+														}
+													)}
 											</Typography>
 										</Grid>
 										<Grid>
@@ -362,10 +406,11 @@ export default function Chats() {
 					setIsInChatRoom={setIsInChatRoom}
 					isInChatRoom={isInChatRoom}
 					thisRoomName={thisRoomName}
-					dialoguesArr={dialoguesArr}
-					// getDialogues={getDialogues}
 					dialogues={dialogues}
 					indexx={indexx}
+					sortedDialogues={sortedDialogues}
+					uidToName={uidToName}
+					uidToUser={uidToUser}
 				/>
 			</Collapse>
 		</React.Fragment>

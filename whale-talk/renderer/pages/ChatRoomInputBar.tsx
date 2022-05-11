@@ -31,7 +31,7 @@ const useStyles = makeStyles({
 	submit: { top: 16, left: 10, width: 100, height: 55, fontSize: 18 },
 });
 
-export default function ChatRoomInputBar({ thisRoom, myAccount, getDialogues }) {
+export default function ChatRoomInputBar({ thisRoom, myAccount }) {
 	const router = useRouter();
 	const classes = useStyles();
 	const [value, setValue] = React.useState('chats');
@@ -42,6 +42,8 @@ export default function ChatRoomInputBar({ thisRoom, myAccount, getDialogues }) 
 	const onClick = () => {
 		authService.signOut();
 	};
+	console.log(thisRoom);
+	console.log(myAccount.uid);
 
 	const [input, setInput] = useState('');
 	const onChange = (e) => {
@@ -50,17 +52,13 @@ export default function ChatRoomInputBar({ thisRoom, myAccount, getDialogues }) 
 	const onSubmit = async (e) => {
 		e.preventDefault();
 		if (input !== '') {
-			await dbService
-				.collection('chats')
-				.doc(thisRoom)
-				.collection('dialogues')
-				.add({
-					createdAt: Date.now(),
-					createdDate: Timestamp,
-					writer: myAccount.uid,
-					text: input,
-					chatId: `${thisRoom}`,
-				});
+			await dbService.collection('chats').doc(thisRoom).collection('dialogues').add({
+				createdAt: Date.now(),
+				createdDate: Timestamp,
+				writer: myAccount.uid,
+				text: input,
+				chatId: thisRoom,
+			});
 			setInput('');
 		}
 	};

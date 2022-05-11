@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-export default function ChatsNavTop({ handleInRoom }) {
+export default function ChatsNavTop({}) {
 	const classes = useStyles();
 	const [auth, setAuth] = useState(true);
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -105,7 +105,6 @@ export default function ChatsNavTop({ handleInRoom }) {
 							<Zoom in={true}>
 								<IconButton
 									color='primary'
-									onClick={handleInRoom}
 									className={classes.nextIconBtn}>
 									<Typography
 										className={
