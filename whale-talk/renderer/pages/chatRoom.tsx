@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
@@ -16,63 +16,19 @@ const useStyles = makeStyles((theme: Theme) => ({
 		marginLeft: 10,
 		marginRight: 10,
 	},
-	profile: {
-		height: 100,
-		backgroundColor: '#fbfbfb',
-		marginTop: 60,
-		borderBottom: 'solid 2px #ddd',
-	},
-	profileAvatar: {
-		top: '20%',
-		left: 10,
-		width: 60,
-		height: 60,
-		color: theme.palette.getContrastText(theme.palette.primary.main),
-		backgroundColor: theme.palette.primary.main,
-		fontWeight: 400,
-		fontSize: 30,
-	},
-	profileName: {
-		marginTop: 23,
-		marginLeft: 26,
-	},
-	profileEmail: {
-		marginTop: -5,
-		marginLeft: 27,
-		fontSize: 17,
-		fontWeight: 400,
-		color: 'gray',
-	},
-	groupAvatars: {
-		marginTop: 30,
-		marginRight: 10,
-		zIndex: 0,
-	},
-	groupAvatar: {
-		width: theme.spacing(7),
-		height: theme.spacing(7),
 
-		fontWeight: 500,
-	},
-	friends: {
+	dialogues: {
 		marginTop: 75,
-		marginBottom: 60,
+		marginBottom: 90,
 	},
-	friendsTitleBox: {
-		borderBottom: 'solid 1px #f0f0f0',
-	},
-	friendsTitle: {
-		marginTop: 7,
-		marginLeft: 14,
-		marginBottom: 6,
-		color: 'gray',
-	},
-	friend: {
-		height: 80,
+
+	dialogue: {
 		backgroundColor: '#fbfbfb',
 		borderBottom: 'solid 1px #f0f0f0',
+		paddingBottom: 10,
+		paddingTop: 0,
 	},
-	friendAvatar: {
+	dialogueAvatar: {
 		top: '20%',
 		left: 10,
 		width: 50,
@@ -83,16 +39,16 @@ const useStyles = makeStyles((theme: Theme) => ({
 		zIndex: 0,
 	},
 
-	friendName: {
+	dialogueText: {
 		marginTop: 15,
 		marginLeft: 26,
 	},
-	friendEmail: {
-		marginTop: -7,
+	createdTime: {
+		marginTop: -3,
 		marginLeft: 27,
 		color: 'gray',
 	},
-	friendCheckbox: {
+	dialogueCheckbox: {
 		marginTop: 20,
 		marginRight: 0,
 	},
@@ -155,6 +111,16 @@ export default function ChatRoom({
 	console.log('thisRoom2', thisRoom);
 	console.log(sortedDialogues);
 
+	//스크롤 하단으로
+	const scrollRef = useRef();
+	const scrollToBottom = () => {
+		scrollRef.current.scrollIntoView({
+			behavior: 'smooth',
+			block: 'end',
+			inline: 'end',
+		});
+	};
+
 	return (
 		<React.Fragment>
 			<ChatRoomNavTop
@@ -166,14 +132,14 @@ export default function ChatRoom({
 				myAccount={myAccount}
 			/>
 			<Grid className={classes.paper}>
-				<Grid className={classes.friends}>
+				<Grid className={classes.dialogues}>
 					<Grid>
 						{sortedDialogues.map((dialogue, index) => {
 							return (
 								<Grid
 									container
 									key={index}
-									className={classes.friend}>
+									className={classes.dialogue}>
 									<Grid item>
 										<Avatar
 											style={{
@@ -186,7 +152,9 @@ export default function ChatRoom({
 												uidToUser(dialogue.writer)
 													.profileImg
 											}
-											className={classes.friendAvatar}>
+											className={
+												classes.dialogueAvatar
+											}>
 											{uidToUser(dialogue.writer)
 												.profileImg == null &&
 												uidToUser(
@@ -198,11 +166,11 @@ export default function ChatRoom({
 									<Grid item xs color='secondery'>
 										<Typography
 											variant='h6'
-											className={classes.friendName}>
+											className={classes.dialogueText}>
 											{dialogue.text}
 										</Typography>
 										<Typography
-											className={classes.friendEmail}>
+											className={classes.createdTime}>
 											{(
 												'0' +
 												new Date(
@@ -225,7 +193,7 @@ export default function ChatRoom({
 												checked={false}
 												value={false}
 												className={
-													classes.friendCheckbox
+													classes.dialogueCheckbox
 												}
 											/>
 										</Zoom>
@@ -236,7 +204,12 @@ export default function ChatRoom({
 					</Grid>
 				</Grid>
 			</Grid>
-			<ChatRoomInputBar thisRoom={thisRoom} myAccount={myAccount} />
+			<ChatRoomInputBar
+				thisRoom={thisRoom}
+				myAccount={myAccount}
+				scrollToBottom={scrollToBottom}
+			/>
+			<div ref={scrollRef} />
 		</React.Fragment>
 	);
 }

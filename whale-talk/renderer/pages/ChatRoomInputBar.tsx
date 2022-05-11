@@ -31,7 +31,7 @@ const useStyles = makeStyles({
 	submit: { top: 16, left: 10, width: 100, height: 55, fontSize: 18 },
 });
 
-export default function ChatRoomInputBar({ thisRoom, myAccount }) {
+export default function ChatRoomInputBar({ thisRoom, myAccount, scrollToBottom }) {
 	const router = useRouter();
 	const classes = useStyles();
 	const [value, setValue] = React.useState('chats');
@@ -67,6 +67,7 @@ export default function ChatRoomInputBar({ thisRoom, myAccount }) {
 					lastDialogueAt: Date.now(),
 				});
 			setInput('');
+			scrollToBottom();
 		}
 	};
 
