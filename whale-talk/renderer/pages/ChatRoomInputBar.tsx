@@ -50,13 +50,17 @@ export default function ChatRoomInputBar({ thisRoom, myAccount, getDialogues }) 
 	const onSubmit = async (e) => {
 		e.preventDefault();
 		if (input !== '') {
-			await dbService.collection('dialogues').add({
-				createdAt: Date.now(),
-				createdDate: Timestamp,
-				writer: myAccount.uid,
-				text: input,
-				chatId: `${thisRoom}`,
-			});
+			await dbService
+				.collection('chats')
+				.doc(thisRoom)
+				.collection('dialogues')
+				.add({
+					createdAt: Date.now(),
+					createdDate: Timestamp,
+					writer: myAccount.uid,
+					text: input,
+					chatId: `${thisRoom}`,
+				});
 			setInput('');
 			getDialogues();
 		}

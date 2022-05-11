@@ -157,7 +157,7 @@ export default function FriendsNavTop({
 										채팅
 									</Typography>
 									<ArrowForwardIosRoundedIcon />
-									<Link href='/chats' myAccount={myAccount} />
+									<Link href='/chats' />
 								</IconButton>
 							</Zoom>
 

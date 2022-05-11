@@ -140,6 +140,8 @@ export default function Friends() {
 	// 친구 목록 가져오기
 
 	const [users, setUsers] = useState([]);
+	const [friends, setFriends] = useState([]);
+
 	const [usersLength, setUsersLength] = useState(1);
 
 	const getUsers = async () => {
@@ -158,6 +160,10 @@ export default function Friends() {
 		});
 	};
 
+	useEffect(() => {
+		setFriends(users.filter((user) => user.id !== myAccount.uid));
+	}, [users]);
+
 	// console.log(myAccount);
 	// console.log(users);
 
@@ -168,9 +174,12 @@ export default function Friends() {
 	const [chatMakingState, setChatMakingState] = useState(false);
 
 	//체크 박스 작동
-	const [checkedState, setCheckedState] = useState(new Array(users.length).fill(false));
+
+	const [checkedState, setCheckedState] = useState(
+		new Array(users.length).fill(false).slice(0, -1)
+	);
 	useEffect(() => {
-		setCheckedState(new Array(users.length).fill(false));
+		setCheckedState(new Array(users.length).fill(false).slice(0, -1));
 	}, [users]);
 
 	const handleChecked = (position) => {
@@ -213,7 +222,7 @@ export default function Friends() {
 					</Grid>
 					<Grid item className={classes.groupAvatars}>
 						<AvatarGroup max={4}>
-							{users.map((user, index) => {
+							{friends.map((friend, index) => {
 								if (checkedState[index] === true) {
 									return (
 										<Zoom
@@ -222,15 +231,16 @@ export default function Friends() {
 											<Avatar
 												style={{
 													backgroundColor:
-														user.personalColor,
+														friend.personalColor,
 													filter: 'saturate(40%) grayscale(20%) brightness(130%)',
 												}}
-												src={user.profileImg}
+												src={friend.profileImg}
 												className={
 													classes.groupAvatar
 												}>
-												{user.profileImg == null &&
-													user.userName.charAt(
+												{friend.profileImg ==
+													null &&
+													friend.userName.charAt(
 														0
 													)}
 											</Avatar>
@@ -245,60 +255,50 @@ export default function Friends() {
 					<Grid className={classes.friendsTitleBox}>
 						<Typography className={classes.friendsTitle}>
 							{' '}
-							모든 유저 {users.length - 1}
+							모든 유저 {friends.length}
 						</Typography>
 					</Grid>
-					{users.map((user, index) => {
-						if (user.id !== myAccount.uid) {
-							return (
-								<Grid
-									container
-									key={index}
-									className={classes.friend}>
-									<Grid item>
-										<Avatar
-											style={{
-												backgroundColor:
-													user.personalColor,
-												filter: 'saturate(40%) grayscale(20%) brightness(130%) ',
-											}}
-											src={user.profileImg}
-											className={classes.friendAvatar}>
-											{user.profileImg == null &&
-												user.userName.charAt(0)}
-										</Avatar>
-									</Grid>
-									<Grid item xs color='secondery'>
-										<Typography
-											variant='h6'
-											className={classes.friendName}>
-											{user.userName}
-										</Typography>
-										<Typography
-											className={classes.friendEmail}>
-											{user.email}
-										</Typography>
-									</Grid>
-									<Grid>
-										<Zoom in={chatMakingState}>
-											<Checkbox
-												color='primary'
-												checked={
-													checkedState[index]
-												}
-												onClick={() =>
-													handleChecked(index)
-												}
-												value={checkedState[index]}
-												className={
-													classes.friendCheckbox
-												}
-											/>
-										</Zoom>
-									</Grid>
+					{friends.map((friend, index) => {
+						return (
+							<Grid container key={index} className={classes.friend}>
+								<Grid item>
+									<Avatar
+										style={{
+											backgroundColor:
+												friend.personalColor,
+											filter: 'saturate(40%) grayscale(20%) brightness(130%) ',
+										}}
+										src={friend.profileImg}
+										className={classes.friendAvatar}>
+										{friend.profileImg == null &&
+											friend.userName.charAt(0)}
+									</Avatar>
 								</Grid>
-							);
-						}
+								<Grid item xs color='secondery'>
+									<Typography
+										variant='h6'
+										className={classes.friendName}>
+										{friend.userName}
+									</Typography>
+									<Typography className={classes.friendEmail}>
+										{friend.email}
+									</Typography>
+								</Grid>
+								<Grid>
+									<Zoom in={chatMakingState}>
+										<Checkbox
+											color='primary'
+											checked={checkedState[index]}
+											onClick={() =>
+												handleChecked(index)
+											}
+											value={checkedState[index]}
+											className={classes.friendCheckbox}
+										/>
+									</Zoom>
+								</Grid>
+							</Grid>
+						);
 					})}
 				</Grid>
 			</Grid>

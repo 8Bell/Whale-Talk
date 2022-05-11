@@ -98,7 +98,18 @@ const useStyles = makeStyles((theme: Theme) => ({
 	},
 }));
 
-export default function ChatRoom({ thisRoom, setIsInChatRoom, isInChatRoom, thisRoomName }) {
+export default function ChatRoom({
+	thisRoom,
+	setIsInChatRoom,
+	isInChatRoom,
+	thisRoomName,
+	dialogues,
+	getDialogues,
+	indexx,
+}) {
+	console.log(dialogues);
+	console.log(indexx);
+
 	const classes = useStyles();
 	const router = useRouter();
 
@@ -233,26 +244,6 @@ export default function ChatRoom({ thisRoom, setIsInChatRoom, isInChatRoom, this
 
 	//대화 가져오기
 
-	const [dialogues, setDialogues] = useState([]);
-
-	useEffect(() => {
-		getDialogues();
-	}, [thisRoom]);
-
-	const getDialogues = async () => {
-		const dbDialogues = await dbService.collection('dialogues').get();
-		dbDialogues.forEach((document) => {
-			const dialogueObject = {
-				...document.data(),
-				id: document.id,
-			};
-			if (dialogues.length < dbDialogues.docs.length) {
-				setDialogues((prev) => [...prev, dialogueObject]);
-			}
-		});
-		console.log(dialogues);
-	};
-
 	console.log('thisRoom2', thisRoom);
 
 	return (
@@ -266,43 +257,37 @@ export default function ChatRoom({ thisRoom, setIsInChatRoom, isInChatRoom, this
 				<Grid className={classes.friends}>
 					<Grid>
 						{dialogues.map((dialogue, index) => {
-							if (dialogue.chatId == thisRoom) {
-								return (
-									<Grid
-										container
-										key={index}
-										className={classes.friend}>
-										<Grid item></Grid>
-										<Grid item xs color='secondery'>
-											<Typography
-												variant='h6'
-												className={
-													classes.friendName
-												}>
-												{dialogue.text}
-											</Typography>
-											<Typography
-												className={
-													classes.friendEmail
-												}>
-												{dialogue.writer}
-											</Typography>
-										</Grid>
-										<Grid>
-											<Zoom in={false}>
-												<Checkbox
-													color='primary'
-													checked={false}
-													value={false}
-													className={
-														classes.friendCheckbox
-													}
-												/>
-											</Zoom>
-										</Grid>
+							return (
+								<Grid
+									container
+									key={index}
+									className={classes.friend}>
+									<Grid item></Grid>
+									<Grid item xs color='secondery'>
+										<Typography
+											variant='h6'
+											className={classes.friendName}>
+											{dialogue.text}
+										</Typography>
+										<Typography
+											className={classes.friendEmail}>
+											{dialogue.writer}
+										</Typography>
 									</Grid>
-								);
-							}
+									<Grid>
+										<Zoom in={false}>
+											<Checkbox
+												color='primary'
+												checked={false}
+												value={false}
+												className={
+													classes.friendCheckbox
+												}
+											/>
+										</Zoom>
+									</Grid>
+								</Grid>
+							);
 						})}
 					</Grid>
 				</Grid>

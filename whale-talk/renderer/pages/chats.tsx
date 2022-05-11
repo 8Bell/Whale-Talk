@@ -207,6 +207,12 @@ export default function Chats() {
 
 	useEffect(() => {
 		getChatMemberNamesArr();
+		setMyChats(chats.filter((chat) => chat.memberUid.includes(myAccount.uid)));
+		setMyChatsUid(
+			chats
+				.filter((chat) => chat.memberUid.includes(myAccount.uid))
+				.map((myChat) => myChat.chatId)
+		);
 	}, [chats]);
 
 	const getChatMemberNamesArr = () => {
@@ -235,8 +241,6 @@ export default function Chats() {
 			}
 
 			chatTitleArr.push(chatTitle);
-			setMyChats(chats.filter((chat) => chat.memberUid.includes(myAccount.uid)));
-			setMyChatsUid(myChats.map((myChat) => myChat.chatId));
 		});
 
 		setChatTitles(chatTitleArr);
@@ -248,33 +252,49 @@ export default function Chats() {
 
 	//대화 가져오기
 
-	// const [dialogues, setDialogues] = useState([]);
+	const [dialogues, setDialogues] = useState([]);
+	const dialogueArr = [];
 
 	// useEffect(() => {
 	// 	getDialogues();
-	// }, []);
+	// }, [handleInRoom]);
 
-	// const getDialogues = async (roomId) => {
-	// 	const dbDialogues = await dbService.collectionGroup('dialogues').get();
-	// 	dbDialogues.forEach((document) => {
-	// 		const dialogueObject = {
-	// 			...document.data(),
-	// 			id: document.id,
-	// 		};
-	// 		if (dialogues.length < dbDialogues.docs.length) {
-	// 			setDialogues((prev) => [...prev, dialogueObject]);
-	// 		}
-	// 	});
-	// 	console.log(dialogues);
-	// };
+	const getDialogues = async () => {
+		myChatsUid.map(async (uid) => {
+			const dialogue = [];
+			const dbDialogues = dbService
+				.collection('chats')
+				.doc(uid)
+				.collection('dialogues')
+				.get();
+			(await dbDialogues).forEach(async (document) => {
+				const dialogueObject = {
+					...document.data(),
+					id: document.id,
+				};
+				if (dialogues.length < (await dbDialogues).docs.length) {
+					// setDialogues((prev) => [...prev, dialogueObject]);
+					dialogue.push(dialogueObject);
+				}
+			});
+			dialogueArr.push(dialogue);
+		});
+		setDialogues(dialogueArr);
+	};
+
+	console.log(dialogues);
+
+	const [indexx, setIndexx] = useState(0);
 
 	const handleInRoom = async (index) => {
 		console.log(index);
+		setIndexx(index);
 		const roomId = await myChatsUid[index];
 		setThisRoom(roomId);
 		console.log(roomId);
 		setIsInChatRoom(!isInChatRoom);
 		setThisRoomName(chatTitles[index]);
+		getDialogues();
 	};
 	console.log(myChatsUid);
 	console.log('thisRoom', thisRoom);
@@ -283,7 +303,7 @@ export default function Chats() {
 		<React.Fragment>
 			<Collapse in={!isInChatRoom}>
 				<Grid>
-					<ChatsNavTop />
+					<ChatsNavTop handleInRoom={undefined} />
 					<Grid className={classes.paper}>
 						<Grid className={classes.friends}>
 							<Grid className={classes.friendsTitleBox}>
@@ -293,60 +313,47 @@ export default function Chats() {
 								</Typography>
 							</Grid>
 							<Grid>
-								{chats.map((chat, index) => {
-									if (chat.memberUid.includes(myAccount.uid)) {
-										return (
-											// <Link href={'/chatRoom'}>
-											<Grid
-												container
-												key={chat.chatId}
-												className={classes.friend}
-												onClick={() =>
-													handleInRoom(index)
-												}>
-												<Grid item></Grid>
-												<Grid
-													item
-													xs
-													color='secondery'>
-													<Typography
-														variant='h6'
-														className={
-															classes.friendName
-														}>
-														{
-															chatTitles[
-																index
-															]
-														}
-													</Typography>
-													<Typography
-														className={
-															classes.friendEmail
-														}>
-														최근 대화
-													</Typography>
-												</Grid>
-												<Grid>
-													<Zoom in={false}>
-														<Checkbox
-															color='primary'
-															checked={
-																false
-															}
-															value={
-																false
-															}
-															className={
-																classes.friendCheckbox
-															}
-														/>
-													</Zoom>
-												</Grid>
+								{myChats.map((myChat, index) => {
+									return (
+										// <Link href={'/chatRoom'}>
+										<Grid
+											container
+											key={myChat.chatId}
+											className={classes.friend}
+											onClick={() =>
+												handleInRoom(index)
+											}>
+											<Grid item></Grid>
+											<Grid item xs color='secondery'>
+												<Typography
+													variant='h6'
+													className={
+														classes.friendName
+													}>
+													{chatTitles[index]}
+												</Typography>
+												<Typography
+													className={
+														classes.friendEmail
+													}>
+													최근 대화
+												</Typography>
 											</Grid>
-											// </Link>
-										);
-									}
+											<Grid>
+												<Zoom in={false}>
+													<Checkbox
+														color='primary'
+														checked={false}
+														value={false}
+														className={
+															classes.friendCheckbox
+														}
+													/>
+												</Zoom>
+											</Grid>
+										</Grid>
+										// </Link>
+									);
 								})}
 							</Grid>
 						</Grid>
@@ -361,8 +368,9 @@ export default function Chats() {
 					setIsInChatRoom={setIsInChatRoom}
 					isInChatRoom={isInChatRoom}
 					thisRoomName={thisRoomName}
-					// setDialogues={setDialogues}
-					// getDialogues={getDialogues}
+					dialogues={dialogues}
+					getDialogues={getDialogues}
+					indexx={indexx}
 				/>
 			</Collapse>
 		</React.Fragment>
