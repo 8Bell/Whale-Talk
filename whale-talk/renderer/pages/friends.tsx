@@ -109,7 +109,6 @@ export default function Friends() {
 	const [myAccount, setMyAccount] = useState({});
 
 	useEffect(() => {
-		getUsers();
 		getMyAccount();
 		const dbMyAccount = authService.onAuthStateChanged((user) => {
 			if (user) {
@@ -137,44 +136,35 @@ export default function Friends() {
 		});
 	};
 
-	// 친구 목록 가져오기
-
+	// 유저 목록 가져오기
 	const [users, setUsers] = useState([]);
 	const [friends, setFriends] = useState([]);
 
 	const [usersLength, setUsersLength] = useState(1);
 
-	const getUsers = async () => {
-		const dbUsers = await dbService.collection('users').get();
-		dbUsers.forEach((document) => {
-			const userObject = {
-				...document.data(),
-				id: document.id,
+	useEffect(() => {
+		dbService.collection('users').onSnapshot((snapshot) => {
+			const dbUsers = snapshot.docs.map((doc) => ({
+				...doc.data(),
+				id: doc.id,
 				checked: false,
-			};
-			setUsersLength(dbUsers.docs.length);
-			// console.log(usersLength);
-			if (users.length < dbUsers.docs.length) {
-				setUsers((prev) => [...prev, userObject]);
-			}
+			}));
+			setUsers(dbUsers);
 		});
-	};
+	}, []);
 
+	//나를 제외한 유저 목록 필터링
 	useEffect(() => {
 		setFriends(users.filter((user) => user.id !== myAccount.uid));
 	}, [users]);
 
-	// console.log(myAccount);
-	// console.log(users);
-
-	// 친구 추가하기 - 모달창 열기
+	// 친구 추가하기 - 모달창 열기(추후 구현)
 	const [addFriendState, setAddFriendState] = useState(false);
 
 	// 채팅 추가하기 클릭시 체크박스 나타나게
 	const [chatMakingState, setChatMakingState] = useState(false);
 
 	//체크 박스 작동
-
 	const [checkedState, setCheckedState] = useState(
 		new Array(users.length).fill(false).slice(0, -1)
 	);

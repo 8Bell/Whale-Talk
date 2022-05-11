@@ -180,7 +180,7 @@ export default function Chats() {
 
 	const getUsers = async () => {
 		const dbUsers = await dbService.collection('users').get();
-		await dbUsers.forEach((document) => {
+		dbUsers.forEach((document) => {
 			const userObject = {
 				...document.data(),
 				id: document.id,
@@ -255,22 +255,14 @@ export default function Chats() {
 	const [dialogues, setDialogues] = useState([]);
 
 	useEffect(() => {
-		getDialogues();
-	}, []);
-
-	const getDialogues = async () => {
-		const dbDialogues = await dbService.collectionGroup('dialogues').get();
-		console.log('기준 길이', dbDialogues.docs.length);
-		dbDialogues.forEach((document) => {
-			const dialogueObject = {
-				...document.data(),
-				id: document.id,
-			};
-			if (dialogues.length < dbDialogues.docs.length) {
-				setDialogues((prev) => [...prev, dialogueObject]);
-			}
+		dbService.collectionGroup('dialogues').onSnapshot((snapshot) => {
+			const dbDialogues = snapshot.docs.map((doc) => ({
+				...doc.data(),
+				id: doc.id,
+			}));
+			setDialogues(dbDialogues);
 		});
-	};
+	}, []);
 
 	// 대화 분류하기
 	const [dialoguesArr, setDialoguesArr] = useState([]);
@@ -303,7 +295,6 @@ export default function Chats() {
 		console.log(roomId);
 		setIsInChatRoom(!isInChatRoom);
 		setThisRoomName(chatTitles[index]);
-		getDialogues();
 	};
 	console.log(myChatsUid);
 	console.log('thisRoom', thisRoom);
@@ -372,7 +363,7 @@ export default function Chats() {
 					isInChatRoom={isInChatRoom}
 					thisRoomName={thisRoomName}
 					dialoguesArr={dialoguesArr}
-					getDialogues={getDialogues}
+					// getDialogues={getDialogues}
 					dialogues={dialogues}
 					indexx={indexx}
 				/>
