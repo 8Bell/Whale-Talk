@@ -61,9 +61,18 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-export default function ChatRoomNavTop({ setIsInChatRoom, isInChatRoom, thisRoomName }) {
+export default function ChatRoomNavTop({
+	setIsInChatRoom,
+	isInChatRoom,
+	myChats,
+	chatIndex,
+	uidToName,
+	myAccount,
+}) {
 	const classes = useStyles();
 	const router = useRouter();
+	const myChat = myChats[chatIndex];
+	console.log(myChat);
 	const [auth, setAuth] = useState(true);
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
@@ -93,7 +102,31 @@ export default function ChatRoomNavTop({ setIsInChatRoom, isInChatRoom, thisRoom
 			<FormGroup></FormGroup>
 			<AppBar position='static' color='secondary'>
 				<Toolbar>
-					<Typography className={classes.title}>{thisRoomName}</Typography>
+					<Typography className={classes.title}>
+						{myChat
+							? myChat.memberUid.length > 3
+								? uidToName(myChat.memberUid[0]) +
+								  ', ' +
+								  uidToName(myChat.memberUid[1]) +
+								  ', ' +
+								  uidToName(myChat.memberUid[2]) +
+								  '외 ' +
+								  (myChat.memberUid.length - 3) +
+								  '명의 채팅방'
+								: myChat.memberUid.length > 2
+								? uidToName(myChat.memberUid[0]) +
+								  ', ' +
+								  uidToName(myChat.memberUid[1]) +
+								  ', ' +
+								  uidToName(myChat.memberUid[2]) +
+								  '의 채팅방'
+								: uidToName(
+										myChat.memberUid.filter(
+											(uid) => uid !== myAccount.uid
+										)[0]
+								  )
+							: '채팅'}
+					</Typography>
 					{auth && (
 						<div>
 							<Zoom in={true}>
@@ -111,7 +144,7 @@ export default function ChatRoomNavTop({ setIsInChatRoom, isInChatRoom, thisRoom
 									onClick={() => setIsInChatRoom(!isInChatRoom)}
 									className={classes.nextIconBtn}>
 									<Typography className={classes.nextIconText}>
-										돌아가기
+										채팅목록
 									</Typography>
 								</IconButton>
 							</Zoom>

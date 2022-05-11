@@ -102,16 +102,16 @@ export default function ChatRoom({
 	thisRoom,
 	setIsInChatRoom,
 	isInChatRoom,
-	thisRoomName,
-	indexx,
+	chatIndex,
 	dialogues,
 	sortedDialogues,
 	uidToName,
 	uidToUser,
+	myChats,
 }) {
 	console.log(dialogues);
 
-	console.log(indexx);
+	console.log(chatIndex);
 
 	const classes = useStyles();
 	const router = useRouter();
@@ -160,7 +160,10 @@ export default function ChatRoom({
 			<ChatRoomNavTop
 				setIsInChatRoom={setIsInChatRoom}
 				isInChatRoom={isInChatRoom}
-				thisRoomName={thisRoomName}
+				chatIndex={chatIndex}
+				myChats={myChats}
+				uidToName={uidToName}
+				myAccount={myAccount}
 			/>
 			<Grid className={classes.paper}>
 				<Grid className={classes.friends}>

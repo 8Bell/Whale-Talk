@@ -30,83 +30,45 @@ const useStyles = makeStyles((theme: Theme) => ({
 		marginLeft: 10,
 		marginRight: 10,
 	},
-	profile: {
-		height: 100,
-		backgroundColor: '#fbfbfb',
-		marginTop: 60,
-		borderBottom: 'solid 2px #ddd',
-	},
-	profileAvatar: {
-		top: '20%',
-		left: 10,
-		width: 60,
-		height: 60,
-		color: theme.palette.getContrastText(theme.palette.primary.main),
-		backgroundColor: theme.palette.primary.main,
-		fontWeight: 400,
-		fontSize: 30,
-	},
-	profileName: {
-		marginTop: 23,
-		marginLeft: 26,
-	},
-	profileEmail: {
-		marginTop: -5,
-		marginLeft: 27,
-		fontSize: 17,
-		fontWeight: 400,
-		color: 'gray',
-	},
 	groupAvatars: {
-		marginTop: 30,
-		marginRight: 10,
+		marginTop: 20,
+		marginRight: 0,
 		zIndex: 0,
 	},
 	groupAvatar: {
-		width: theme.spacing(7),
-		height: theme.spacing(7),
+		width: theme.spacing(5),
+		height: theme.spacing(5),
 
 		fontWeight: 500,
 	},
-	friends: {
+	chats: {
 		marginTop: 75,
 		marginBottom: 60,
 	},
-	friendsTitleBox: {
+	chatsTitleBox: {
 		borderBottom: 'solid 1px #f0f0f0',
 	},
-	friendsTitle: {
+	chatsTitle: {
 		marginTop: 7,
 		marginLeft: 14,
 		marginBottom: 6,
 		color: 'gray',
 	},
-	friend: {
+	chat: {
 		height: 80,
 		backgroundColor: '#fbfbfb',
 		borderBottom: 'solid 1px #f0f0f0',
 	},
-	friendAvatar: {
-		top: '20%',
-		left: 10,
-		width: 50,
-		height: 50,
-		color: theme.palette.getContrastText(theme.palette.primary.main),
-		backgroundColor: theme.palette.primary.main,
-		fontWeight: 500,
-		zIndex: 0,
-	},
-
-	friendName: {
+	chatName: {
 		marginTop: 15,
 		marginLeft: 26,
 	},
-	friendEmail: {
-		marginTop: -7,
+	lastDialogue: {
+		marginTop: -3,
 		marginLeft: 27,
 		color: 'gray',
 	},
-	friendCheckbox: {
+	chatCheckbox: {
 		marginTop: 20,
 		marginRight: 0,
 	},
@@ -182,6 +144,7 @@ export default function Chats() {
 
 	// 채팅방 참가인원의 이름 가져오기
 	// 이름 변경의 경우를 고려해 고유값인 계정 uid로 작업
+
 	const chatMemberNamesArr = []; // 모든 채팅들의 멤버 배열을 담은 배열
 
 	const [chatTitles, setChatTitles] = useState([]);
@@ -199,7 +162,7 @@ export default function Chats() {
 			chats
 				.filter((chat) => chat.memberUid.includes(myAccount.uid))
 				.map((myChat) => myChat.chatId)
-		); //내가 속한 채팅의 멤버 uid 배열
+		); //내가 속한 채팅의 채팅id 배열
 	}, [chats]);
 
 	const getChatMemberNamesArr = () => {
@@ -251,20 +214,6 @@ export default function Chats() {
 			});
 	}, []);
 
-	//마지막 대화 가져오기
-
-	const getLastDialogue = (idx) => {
-		const arr = dialogues
-			.filter((dialogue) => dialogue.chatId === myChatsUid[idx])
-			.slice(-1)[0];
-
-		console.log('알', arr);
-	};
-	console.log(
-		'올',
-		dialogues.filter((dialogue) => dialogue.chatId === myChatsUid[0]).slice(-1)[0]
-	);
-
 	// 분류된 대화 가져오기
 	const [sortedDialogues, setSortedDialogues] = useState([]);
 
@@ -293,11 +242,11 @@ export default function Chats() {
 	};
 
 	// 채팅방 선택하기
-	const [indexx, setIndexx] = useState(0);
+	const [chatIndex, setChatIndex] = useState(0);
 
 	const handleInRoom = async (index) => {
 		console.log(index);
-		setIndexx(index);
+		setChatIndex(index);
 		const roomId = await myChatsUid[index];
 		setThisRoom(roomId);
 		console.log(roomId);
@@ -305,14 +254,37 @@ export default function Chats() {
 		setThisRoomName(chatTitles[index]);
 	};
 
+	//채팅방 이름 가져오기
+
+	const getChatName = (idx = 0) => {
+		const myChat = myChats[idx];
+		return myChat.memberUid.length > 3
+			? uidToName(myChat.memberUid[0]) +
+					', ' +
+					uidToName(myChat.memberUid[1]) +
+					', ' +
+					uidToName(myChat.memberUid[2]) +
+					'외 ' +
+					(myChat.memberUid.length - 3) +
+					'명의 채팅방'
+			: myChat.memberUid.length > 2
+			? uidToName(myChat.memberUid[0]) +
+			  ', ' +
+			  uidToName(myChat.memberUid[1]) +
+			  ', ' +
+			  uidToName(myChat.memberUid[2]) +
+			  '의 채팅방'
+			: uidToName(myChat.memberUid.filter((uid) => uid !== myAccount.uid)[0]);
+	};
+
 	return (
 		<React.Fragment>
 			<Collapse in={!isInChatRoom}>
 				<ChatsNavTop />
 				<Grid className={classes.paper}>
-					<Grid className={classes.friends}>
-						<Grid className={classes.friendsTitleBox}>
-							<Typography className={classes.friendsTitle}>
+					<Grid className={classes.chats}>
+						<Grid className={classes.chatsTitleBox}>
+							<Typography className={classes.chatsTitle}>
 								{' '}
 								모든 채팅 {myChats.length}
 							</Typography>
@@ -323,20 +295,66 @@ export default function Chats() {
 									<Grid
 										container
 										key={myChat.chatId}
-										className={classes.friend}
+										className={classes.chat}
 										onClick={() => handleInRoom(index)}>
 										<Grid item></Grid>
 										<Grid item xs color='secondery'>
 											<Typography
 												variant='h6'
 												className={
-													classes.friendName
+													classes.chatName
 												}>
-												{chatTitles[index]}
+												{myChat.memberUid.length > 3
+													? uidToName(
+															myChat
+																.memberUid[0]
+													  ) +
+													  ', ' +
+													  uidToName(
+															myChat
+																.memberUid[1]
+													  ) +
+													  ', ' +
+													  uidToName(
+															myChat
+																.memberUid[2]
+													  ) +
+													  '외 ' +
+													  (myChat.memberUid
+															.length -
+															3) +
+													  '명의 채팅방'
+													: myChat.memberUid
+															.length >
+													  2
+													? uidToName(
+															myChat
+																.memberUid[0]
+													  ) +
+													  ', ' +
+													  uidToName(
+															myChat
+																.memberUid[1]
+													  ) +
+													  ', ' +
+													  uidToName(
+															myChat
+																.memberUid[2]
+													  ) +
+													  '의 채팅방'
+													: uidToName(
+															myChat.memberUid.filter(
+																(
+																	uid
+																) =>
+																	uid !==
+																	myAccount.uid
+															)[0]
+													  )}
 											</Typography>
 											<Typography
 												className={
-													classes.friendEmail
+													classes.lastDialogue
 												}>
 												{myChat.lastDialogue}
 											</Typography>
@@ -345,7 +363,7 @@ export default function Chats() {
 										<Grid
 											item
 											className={classes.groupAvatars}>
-											<AvatarGroup max={3}>
+											<AvatarGroup max={4}>
 												{myChat.memberUid.map(
 													(uid, index) => {
 														return (
@@ -394,7 +412,7 @@ export default function Chats() {
 													checked={false}
 													value={false}
 													className={
-														classes.friendCheckbox
+														classes.chatCheckbox
 													}
 												/>
 											</Zoom>
@@ -415,10 +433,11 @@ export default function Chats() {
 					isInChatRoom={isInChatRoom}
 					thisRoomName={thisRoomName}
 					dialogues={dialogues}
-					indexx={indexx}
+					chatIndex={chatIndex}
 					sortedDialogues={sortedDialogues}
 					uidToName={uidToName}
 					uidToUser={uidToUser}
+					myChats={myChats}
 				/>
 			</Collapse>
 		</React.Fragment>
