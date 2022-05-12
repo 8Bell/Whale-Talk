@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Props } from 'react';
 import Head from 'next/head';
 
 import Button from '@material-ui/core/Button';
@@ -18,6 +18,12 @@ import { Router, Translate } from '@material-ui/icons';
 import next from 'next';
 import Link from '../components/Link';
 import { yellow } from '@material-ui/core/colors';
+
+import { createStyles } from '@material-ui/core/styles';
+import { purple } from '@material-ui/core/colors';
+import FormGroup from '@material-ui/core/FormGroup';
+
+import { SwitchClassKey, SwitchProps } from '@material-ui/core/Switch';
 
 function Copyright() {
 	return (
@@ -131,29 +137,14 @@ export default function SignIn() {
 		}
 	};
 
-	//
-	const [Account, setAccount] = useState([]);
-
-	useEffect(() => {
-		getMyAccount();
-	}, []);
-
-	const getMyAccount = async () => {
-		const dbMyAccount = await authService.onAuthStateChanged((user) => {
-			if (user) {
-				setAccount({
-					displayName: user.displayName,
-					email: user.email,
-					photoURL: user.photoURL,
-					emailVerified: user.emailVerified,
-					uid: user.uid,
-					user: user,
-				});
-			}
-		});
-	};
-
 	//Toggle Switch //
+	interface Styles extends Partial<Record<SwitchClassKey, string>> {
+		focusVisible?: string;
+	}
+
+	interface Props extends SwitchProps {
+		classes: Styles;
+	}
 	const IOSSwitch = withStyles((theme: Theme) => ({
 		root: {
 			width: 38,
@@ -290,6 +281,7 @@ export default function SignIn() {
 									/>
 								}
 								className={classes.checkBox}
+								label={''}
 							/>
 						</div>
 						<Button

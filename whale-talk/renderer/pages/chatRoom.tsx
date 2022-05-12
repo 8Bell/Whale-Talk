@@ -137,7 +137,14 @@ export default function ChatRoom({
 	// 내 아이디 가져오기
 	const [init, setInit] = useState(false);
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
-	const [myAccount, setMyAccount] = useState({});
+	const [myAccount, setMyAccount] = useState({
+		displayName: null,
+		email: null,
+		photoURL: null,
+		emailVerified: false,
+		uid: null,
+		user: null,
+	});
 
 	useEffect(() => {
 		const dbMyAccount = authService.onAuthStateChanged((user) => {
@@ -179,7 +186,7 @@ export default function ChatRoom({
 	}, []);
 
 	//스크롤 하단으로
-	const scrollRef = useRef();
+	const scrollRef = useRef(null);
 	const scrollToBottom = () => {
 		scrollRef.current.scrollIntoView({
 			behavior: 'smooth',
@@ -190,135 +197,140 @@ export default function ChatRoom({
 
 	return (
 		<React.Fragment>
-			<ChatRoomNavTop
-				setIsInChatRoom={setIsInChatRoom}
-				isInChatRoom={isInChatRoom}
-				chatIndex={chatIndex}
-				myChats={myChats}
-				uidToName={uidToName}
-				myAccount={myAccount}
-			/>
-			<Grid className={classes.paper}>
-				<Grid className={classes.dialogues}>
-					<Grid>
-						{sortedDialogues.map((dialogue, index, arr) => {
-							return (
-								<Grid
-									container
-									key={index}
-									className={classes.dialogue}>
-									<Grid item xs={1}>
-										<Avatar
-											style={{
-												backgroundColor: uidToUser(
-													dialogue.writer
-												).personalColor,
-												filter: 'saturate(40%) grayscale(20%) brightness(130%) ',
-											}}
-											src={
-												uidToUser(dialogue.writer)
-													.profileImg
-											}
-											className={
-												dialogue.writer ==
-												myAccount.uid
-													? classes.dialogueAvatarR
-													: classes.dialogueAvatar
-											}>
-											{uidToUser(dialogue.writer)
-												.profileImg == null &&
-												uidToUser(
-													dialogue.writer
-												).userName.charAt(0)}
-										</Avatar>
-									</Grid>
-
+			<div>
+				<ChatRoomNavTop
+					setIsInChatRoom={setIsInChatRoom}
+					isInChatRoom={isInChatRoom}
+					chatIndex={chatIndex}
+					myChats={myChats}
+					uidToName={uidToName}
+					myAccount={myAccount}
+				/>
+				<Grid className={classes.paper}>
+					<Grid className={classes.dialogues}>
+						<Grid>
+							{sortedDialogues.map((dialogue, index, arr) => {
+								return (
 									<Grid
-										item
-										color='secondery'
-										className={
-											dialogue.writer == myAccount.uid
-												? classes.dialogueBoxR
-												: classes.dialogueBox
-										}>
-										<Typography
-											className={
-												dialogue.writer ==
-												myAccount.uid
-													? classes.createdTimeL
-													: classes.createdTimeR
-											}>
-											{(
-												'0' +
-												new Date(
-													dialogue.createdAt
-												).getHours()
-											).slice(-2) +
-												':' +
-												(
-													'0' +
-													new Date(
-														dialogue.createdAt
-													).getMinutes()
-												).slice(-2)}
-										</Typography>
-
-										<Typography
-											variant='h6'
-											className={
-												dialogue.writer ==
-												myAccount.uid
-													? classes.dialogueTextR
-													: classes.dialogueText
-											}>
-											{dialogue.text}
-										</Typography>
-
-										<Typography
-											className={
-												dialogue.writer ==
-												myAccount.uid
-													? classes.createdTimeR
-													: classes.createdTime
-											}>
-											{(
-												'0' +
-												new Date(
-													dialogue.createdAt
-												).getHours()
-											).slice(-2) +
-												':' +
-												(
-													'0' +
-													new Date(
-														dialogue.createdAt
-													).getMinutes()
-												).slice(-2)}
-										</Typography>
-									</Grid>
-									<Grid item>
-										<Zoom in={false}>
-											<Checkbox
-												color='primary'
-												checked={false}
-												value={false}
-												className={
-													classes.dialogueCheckbox
+										container
+										key={index}
+										className={classes.dialogue}>
+										<Grid item xs={1}>
+											<Avatar
+												style={{
+													backgroundColor:
+														uidToUser(
+															dialogue.writer
+														).personalColor,
+													filter: 'saturate(40%) grayscale(20%) brightness(130%) ',
+												}}
+												src={
+													uidToUser(
+														dialogue.writer
+													).profileImg
 												}
-											/>
-										</Zoom>
+												className={
+													dialogue.writer ==
+													myAccount.uid
+														? classes.dialogueAvatarR
+														: classes.dialogueAvatar
+												}>
+												{uidToUser(dialogue.writer)
+													.profileImg == null &&
+													uidToUser(
+														dialogue.writer
+													).userName.charAt(0)}
+											</Avatar>
+										</Grid>
+
+										<Grid
+											item
+											color='secondery'
+											className={
+												dialogue.writer ==
+												myAccount.uid
+													? classes.dialogueBoxR
+													: classes.dialogueBox
+											}>
+											<Typography
+												className={
+													dialogue.writer ==
+													myAccount.uid
+														? classes.createdTimeL
+														: classes.createdTimeR
+												}>
+												{(
+													'0' +
+													new Date(
+														dialogue.createdAt
+													).getHours()
+												).slice(-2) +
+													':' +
+													(
+														'0' +
+														new Date(
+															dialogue.createdAt
+														).getMinutes()
+													).slice(-2)}
+											</Typography>
+
+											<Typography
+												variant='h6'
+												className={
+													dialogue.writer ==
+													myAccount.uid
+														? classes.dialogueTextR
+														: classes.dialogueText
+												}>
+												{dialogue.text}
+											</Typography>
+
+											<Typography
+												className={
+													dialogue.writer ==
+													myAccount.uid
+														? classes.createdTimeR
+														: classes.createdTime
+												}>
+												{(
+													'0' +
+													new Date(
+														dialogue.createdAt
+													).getHours()
+												).slice(-2) +
+													':' +
+													(
+														'0' +
+														new Date(
+															dialogue.createdAt
+														).getMinutes()
+													).slice(-2)}
+											</Typography>
+										</Grid>
+										<Grid item>
+											<Zoom in={false}>
+												<Checkbox
+													color='primary'
+													checked={false}
+													value={false}
+													className={
+														classes.dialogueCheckbox
+													}
+												/>
+											</Zoom>
+										</Grid>
 									</Grid>
-								</Grid>
-							);
-						})}
+								);
+							})}
+						</Grid>
 					</Grid>
 				</Grid>
-			</Grid>
-			<ChatRoomInputBar
-				thisRoom={thisRoom}
-				myAccount={myAccount}
-				scrollToBottom={scrollToBottom}
-			/>
+				<ChatRoomInputBar
+					thisRoom={thisRoom}
+					myAccount={myAccount}
+					scrollToBottom={scrollToBottom}
+				/>
+			</div>
 			<div ref={scrollRef} />
 		</React.Fragment>
 	);

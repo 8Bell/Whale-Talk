@@ -106,7 +106,14 @@ export default function Friends() {
 	// 내 아이디 가져오기
 	const [init, setInit] = useState(false);
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
-	const [myAccount, setMyAccount] = useState({});
+	const [myAccount, setMyAccount] = useState({
+		displayName: null,
+		email: null,
+		photoURL: null,
+		emailVerified: false,
+		uid: null,
+		user: null,
+	});
 
 	useEffect(() => {
 		getMyAccount();
