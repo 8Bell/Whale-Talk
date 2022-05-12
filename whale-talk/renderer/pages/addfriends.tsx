@@ -34,7 +34,9 @@ export default function FormDialog({ addFriendState, setAddFriendState, myAccoun
 				aria-labelledby='form-dialog-title'>
 				<DialogTitle id='form-dialog-title'>친구추가</DialogTitle>
 				<DialogContent>
-					<DialogContentText>친구의 이메일을 입력해주세요</DialogContentText>
+					<DialogContentText>
+						친구의 이메일을 입력해주세요.(업데이트 준비 중)
+					</DialogContentText>
 					<TextField
 						autoFocus
 						margin='dense'
