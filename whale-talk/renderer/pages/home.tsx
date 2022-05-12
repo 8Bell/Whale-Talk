@@ -11,12 +11,13 @@ import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import { authService } from './fbase';
+import { authLocal, authService, authSession } from './fbase';
 import { Checkbox, FormControlLabel, Switch, withStyles } from '@material-ui/core';
 import { useRouter } from 'next/router';
 import { Router, Translate } from '@material-ui/icons';
 import next from 'next';
 import Link from '../components/Link';
+import { yellow } from '@material-ui/core/colors';
 
 function Copyright() {
 	return (
@@ -46,6 +47,11 @@ const useStyles = makeStyles((theme: Theme) => ({
 		display: 'flex',
 		flexDirection: 'column',
 		alignItems: 'center',
+		minHeight: 400,
+		minWidth: 300,
+		position: 'absolute',
+		left: '50%',
+		transform: 'translateX(-50%)',
 	},
 	icon: {
 		width: 250,
@@ -60,11 +66,11 @@ const useStyles = makeStyles((theme: Theme) => ({
 		margin: theme.spacing(0.7),
 	},
 	submit: {
-		margin: theme.spacing(2, 0, 2, 0.6),
-		height: '45px',
+		margin: theme.spacing(5, 0, 2, 0.6),
+		height: '50px',
 	},
 	checkBox: {
-		marginLeft: -4,
+		marginLeft: 0,
 	},
 }));
 
@@ -125,6 +131,28 @@ export default function SignIn() {
 		}
 	};
 
+	//
+	const [Account, setAccount] = useState([]);
+
+	useEffect(() => {
+		getMyAccount();
+	}, []);
+
+	const getMyAccount = async () => {
+		const dbMyAccount = await authService.onAuthStateChanged((user) => {
+			if (user) {
+				setAccount({
+					displayName: user.displayName,
+					email: user.email,
+					photoURL: user.photoURL,
+					emailVerified: user.emailVerified,
+					uid: user.uid,
+					user: user,
+				});
+			}
+		});
+	};
+
 	//Toggle Switch //
 	const IOSSwitch = withStyles((theme: Theme) => ({
 		root: {
@@ -179,23 +207,21 @@ export default function SignIn() {
 		);
 	});
 
-	const [toggleChecked, setToggleChecked] = React.useState({
-		togglecheck: false,
+	const [toggleChecked, setToggleChecked] = useState({
+		togglecheck: true,
 	});
-
-	// authService.setPersistence(authService.Auth.Persistence.SESSION);
 
 	const handleChange = (e) => {
 		setToggleChecked({ ...toggleChecked, [e.target.name]: e.target.checked });
 		console.log(toggleChecked);
-		// if (toggleChecked.togglecheck == false) {
-		// 	authService.setPersistence(authService.Auth.Persistence.LOCAL);
-		// } else if (toggleChecked.togglecheck == true) {
-		// 	authService.setPersistence(authService.Auth.Persistence.SESSION);
-		// }
-		// console.log(authService);
+		if (toggleChecked.togglecheck == false) {
+			authService.setPersistence(authLocal);
+			console.log('계정 로컬 저장 활성화');
+		} else if (toggleChecked.togglecheck == true) {
+			authService.setPersistence(authSession);
+			console.log('계정 로컬 저장 비활성화');
+		}
 	};
-	//End Toggle Switch//
 
 	return (
 		<React.Fragment>
@@ -239,18 +265,33 @@ export default function SignIn() {
 							value={password}
 							onChange={onChange}
 						/>
-
-						{/* <FormControlLabel
-							label='자동 로그인'
-							control={
-								<IOSSwitch
-									checked={toggleChecked.togglecheck}
-									onChange={handleChange}
-									name='togglecheck'
-								/>
-							}
-							className={classes.checkBox}
-						/> */}
+						<div
+							style={{
+								position: 'absolute',
+								right: 0,
+								height: '40px',
+								transform: 'translateX(25px)',
+							}}>
+							<div
+								style={{
+									fontSize: '15px',
+									color: '#777',
+									display: 'inline-block',
+									transform: 'translateY(2px)',
+								}}>
+								접속시 자동로그인
+							</div>
+							<FormControlLabel
+								control={
+									<IOSSwitch
+										checked={toggleChecked.togglecheck}
+										onChange={handleChange}
+										name='togglecheck'
+									/>
+								}
+								className={classes.checkBox}
+							/>
+						</div>
 						<Button
 							type='submit'
 							fullWidth

@@ -131,15 +131,6 @@ export default function ChatRoomNavTop({
 						<div>
 							<Zoom in={true}>
 								<IconButton
-									aria-label='account of current user'
-									aria-controls='menu-appbar'
-									aria-haspopup='true'
-									onClick={handleMenu}
-									color='inherit'
-									className={classes.plusIconBtn}></IconButton>
-							</Zoom>
-							<Zoom in={true}>
-								<IconButton
 									color='primary'
 									onClick={() => setIsInChatRoom(!isInChatRoom)}
 									className={classes.nextIconBtn}>

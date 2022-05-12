@@ -434,7 +434,6 @@ export default function Chats() {
 					thisRoom={thisRoom}
 					setIsInChatRoom={setIsInChatRoom}
 					isInChatRoom={isInChatRoom}
-					thisRoomName={thisRoomName}
 					dialogues={dialogues}
 					chatIndex={chatIndex}
 					sortedDialogues={sortedDialogues}

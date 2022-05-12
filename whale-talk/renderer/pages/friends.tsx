@@ -122,7 +122,7 @@ export default function Friends() {
 	}, []);
 
 	const getMyAccount = async () => {
-		const dbMyAccount = await authService.onAuthStateChanged((user) => {
+		const dbMyAccount = authService.onAuthStateChanged((user) => {
 			if (user) {
 				setMyAccount({
 					displayName: user.displayName,
@@ -138,7 +138,7 @@ export default function Friends() {
 
 	// 유저 목록 가져오기
 	const [users, setUsers] = useState([]);
-	const [friends, setFriends] = useState([]);
+	const [members, setMembers] = useState([]);
 
 	const [usersLength, setUsersLength] = useState(1);
 
@@ -158,11 +158,17 @@ export default function Friends() {
 
 	//나를 제외한 유저 목록 필터링
 	useEffect(() => {
-		setFriends(users.filter((user) => user.id !== myAccount.uid));
+		setMembers(users.filter((user) => user.id !== myAccount.uid));
 	}, [users]);
 
-	// 친구 추가하기 - 모달창 열기(추후 구현)
+	// 친구 추가하기 - 모달창 열기
 	const [addFriendState, setAddFriendState] = useState(false);
+
+	// uid를 넣으면 유저 객체를 반환하는 함수
+	const userUidArr = users.map((user) => user.uid);
+	const uidToUser = (inputUid: string) => {
+		return users[userUidArr.indexOf(inputUid)];
+	};
 
 	// 채팅 추가하기 클릭시 체크박스 나타나게
 	const [chatMakingState, setChatMakingState] = useState(false);
@@ -215,7 +221,7 @@ export default function Friends() {
 					</Grid>
 					<Grid item className={classes.groupAvatars}>
 						<AvatarGroup max={4}>
-							{friends.map((friend, index) => {
+							{members.map((member, index) => {
 								if (checkedState[index] === true) {
 									return (
 										<Zoom
@@ -224,16 +230,16 @@ export default function Friends() {
 											<Avatar
 												style={{
 													backgroundColor:
-														friend.personalColor,
+														member.personalColor,
 													filter: 'saturate(40%) grayscale(20%) brightness(130%)',
 												}}
-												src={friend.profileImg}
+												src={member.profileImg}
 												className={
 													classes.groupAvatar
 												}>
-												{friend.profileImg ==
+												{member.profileImg ==
 													null &&
-													friend.userName.charAt(
+													member.userName.charAt(
 														0
 													)}
 											</Avatar>
@@ -248,33 +254,33 @@ export default function Friends() {
 					<Grid className={classes.friendsTitleBox}>
 						<Typography className={classes.friendsTitle}>
 							{' '}
-							모든 유저 {friends.length}
+							모든 유저 {members.length}
 						</Typography>
 					</Grid>
-					{friends.map((friend, index) => {
+					{members.map((member, index) => {
 						return (
 							<Grid container key={index} className={classes.friend}>
 								<Grid item>
 									<Avatar
 										style={{
 											backgroundColor:
-												friend.personalColor,
+												member.personalColor,
 											filter: 'saturate(40%) grayscale(20%) brightness(130%) ',
 										}}
-										src={friend.profileImg}
+										src={member.profileImg}
 										className={classes.friendAvatar}>
-										{friend.profileImg == null &&
-											friend.userName.charAt(0)}
+										{member.profileImg == null &&
+											member.userName.charAt(0)}
 									</Avatar>
 								</Grid>
 								<Grid item xs color='secondery'>
 									<Typography
 										variant='h6'
 										className={classes.friendName}>
-										{friend.userName}
+										{member.userName}
 									</Typography>
 									<Typography className={classes.friendEmail}>
-										{friend.email}
+										{member.email}
 									</Typography>
 								</Grid>
 								<Grid>
@@ -298,6 +304,7 @@ export default function Friends() {
 			<FormDialog
 				addFriendState={addFriendState}
 				setAddFriendState={setAddFriendState}
+				myAccount={myAccount}
 			/>
 			<FriendsNavBottom myAccount={myAccount} />
 		</React.Fragment>

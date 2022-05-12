@@ -64,7 +64,8 @@ export default function ChatRoomInputBar({ thisRoom, myAccount, scrollToBottom }
 				.collection('chats')
 				.doc(thisRoom)
 				.update({
-					lastDialogue: input.substr(0, 20) + '...',
+					lastDialogue:
+						input.substr(0, 20) + `${input.length > 20 ? '...' : ''}`,
 					lastDialogueAt: Date.now(),
 				});
 			setInput('');

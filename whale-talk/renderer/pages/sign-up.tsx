@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 	},
 	submit: {
 		margin: theme.spacing(2, 0, 2),
-		height: '45px',
+		height: '50px',
 	},
 	title: {
 		margin: theme.spacing(-2, 0, 3, 0),
@@ -76,7 +76,9 @@ export default function SignUp() {
 		authService.onAuthStateChanged((user) => {
 			if (user) {
 				setIsLoggedIn(true);
-				router.push('/friends');
+				setTimeout(() => {
+					router.push('/friends');
+				}, 2500);
 			} else {
 				setIsLoggedIn(false);
 			}
@@ -105,35 +107,42 @@ export default function SignUp() {
 	const onSubmit = async (e) => {
 		e.preventDefault();
 		try {
-			if (password == rePassword) {
-				let data = await authService.createUserWithEmailAndPassword(
-					email,
-					password
-				);
-				await data.user.updateProfile({
-					displayName: userName,
-				});
-				console.log(data);
-
-				await dbService
-					.collection('users')
-					.doc(data.user.uid)
-					.set({
-						uid: data.user.uid,
+			if (userName !== '') {
+				if (password == rePassword) {
+					let data = await authService.createUserWithEmailAndPassword(
 						email,
-						userName,
-						createdAt: Date.now(),
-						createdDate: Timestamp,
-						isOnline: true,
-						profileImg: null,
-						personalColor:
-							'#' +
-							(Math.floor(Math.random() * 80) + 50).toString(16) +
-							(Math.floor(Math.random() * 80) + 50).toString(16) +
-							(Math.floor(Math.random() * 156) + 100).toString(16),
+						password
+					);
+					await data.user.updateProfile({
+						displayName: userName,
 					});
+					console.log(data);
+
+					await dbService
+						.collection('users')
+						.doc(data.user.uid)
+						.set({
+							uid: data.user.uid,
+							email,
+							userName,
+							createdAt: Date.now(),
+							createdDate: Timestamp,
+							isOnline: true,
+							profileImg: null,
+							personalColor:
+								'#' +
+								(Math.floor(Math.random() * 80) + 50).toString(16) +
+								(Math.floor(Math.random() * 80) + 50).toString(16) +
+								(Math.floor(Math.random() * 156) + 100).toString(
+									16
+								),
+							friends: [],
+						});
+				} else {
+					alert('확인 비밀번호가 일치하지 않습니다.');
+				}
 			} else {
-				alert('확인 비밀번호가 일치하지 않습니다.');
+				alert('이름을 입력해주세요.');
 			}
 		} catch (error) {
 			console.log(error);
@@ -174,7 +183,7 @@ export default function SignUp() {
 									required
 									fullWidth
 									id='Name'
-									label='성함'
+									label='이름'
 									name='Name'
 									autoComplete='lname'
 									className={classes.textField}
@@ -226,17 +235,6 @@ export default function SignUp() {
 									onChange={onChange}
 								/>
 							</Grid>
-							{/* <Grid item xs={12}>
-							<FormControlLabel
-								control={
-									<Checkbox
-										value='allowExtraEmails'
-										color='primary'
-									/>
-								}
-								label='I want to receive inspiration, marketing promotions and updates via email.'
-							/>
-						</Grid> */}
 						</Grid>
 						<Button
 							type='submit'
@@ -251,7 +249,7 @@ export default function SignUp() {
 						<Grid item xs></Grid>
 						<Grid item>
 							<Link href='/home' variant='body2'>
-								회원이신가요? 로그인하기
+								로그인 화면으로 돌아가기
 							</Link>
 						</Grid>
 					</Grid>
