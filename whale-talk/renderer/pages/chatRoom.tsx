@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
-import { authService, dbService } from './fbase';
+import { authService, dbService } from '../fbase';
 import router, { useRouter, withRouter } from 'next/router';
 import { Avatar, Checkbox, Grid, Typography, Zoom } from '@material-ui/core';
 import ChatNavTop from './chatRoomNavTop';

@@ -19,7 +19,7 @@ import ArrowForwardIosRoundedIcon from '@material-ui/icons/ArrowForwardIosRounde
 import ChevronRightRoundedIcon from '@material-ui/icons/ChevronRightRounded';
 import { Zoom } from '@material-ui/core';
 // import { useRouter } from 'next/router';
-import { dbService, Timestamp } from './fbase';
+import { dbService, Timestamp } from '../fbase';
 import Router from 'next/router';
 import Link from '../components/Link';
 

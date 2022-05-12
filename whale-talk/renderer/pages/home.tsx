@@ -11,7 +11,7 @@ import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import { authLocal, authService, authSession } from './fbase';
+import { authLocal, authService, authSession } from '../fbase';
 import { Checkbox, FormControlLabel, Switch, withStyles } from '@material-ui/core';
 import { useRouter } from 'next/router';
 import { Router, Translate } from '@material-ui/icons';

@@ -10,7 +10,7 @@ import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles, Theme, withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import { authService, dbService, Timestamp } from './fbase';
+import { authService, dbService, Timestamp } from '../fbase';
 
 import router from 'next/router';
 import Link from '../components/Link';

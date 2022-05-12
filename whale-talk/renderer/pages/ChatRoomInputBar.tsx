@@ -6,7 +6,7 @@ import ChatRoundedIcon from '@material-ui/icons/ChatRounded';
 import PeopleAltRoundedIcon from '@material-ui/icons/PeopleAltRounded';
 import MenuRoundedIcon from '@material-ui/icons/MenuRounded';
 
-import { authService, dbService, Timestamp } from './fbase';
+import { authService, dbService, Timestamp } from '../fbase';
 import Link from '../components/Link';
 import { useRouter } from 'next/router';
 import { Button, Grid, TextField } from '@material-ui/core';

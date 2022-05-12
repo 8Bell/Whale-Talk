@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
 import NavBottom from './friendsNavBottom';
-import { authService, dbService } from './fbase';
+import { authService, dbService } from '../fbase';
 import router from 'next/router';
 import { Avatar, Checkbox, Grid, Radio, Typography, Zoom } from '@material-ui/core';
 import { deepOrange, green } from '@material-ui/core/colors';
