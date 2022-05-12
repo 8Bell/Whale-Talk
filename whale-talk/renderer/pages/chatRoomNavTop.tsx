@@ -18,7 +18,7 @@ import AddCommentRoundedIcon from '@material-ui/icons/AddCommentRounded';
 import ArrowForwardIosRoundedIcon from '@material-ui/icons/ArrowForwardIosRounded';
 import ChevronRightRoundedIcon from '@material-ui/icons/ChevronRightRounded';
 import { Zoom } from '@material-ui/core';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -61,14 +61,7 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-export default function ChatRoomNavTop({
-	setIsInChatRoom,
-	isInChatRoom,
-	myChats,
-	chatIndex,
-	uidToName,
-	myAccount,
-}) {
+export default function ChatRoomNavTop({ myChats, chatIndex, uidToName, myAccount }) {
 	const classes = useStyles();
 	const myChat = myChats[chatIndex];
 	const [auth, setAuth] = useState(true);
@@ -121,7 +114,7 @@ export default function ChatRoomNavTop({
 							<Zoom in={true}>
 								<IconButton
 									color='primary'
-									onClick={() => setIsInChatRoom(!isInChatRoom)}
+									onClick={() => Router.push('/chats')}
 									className={classes.nextIconBtn}>
 									<Typography className={classes.nextIconText}>
 										채팅목록

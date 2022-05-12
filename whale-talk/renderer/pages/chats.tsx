@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
 import { authService, dbService } from '../fbase';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import {
 	Avatar,
 	Box,
@@ -205,9 +205,7 @@ export default function Chats() {
 		setChatTitles(chatTitleArr);
 	};
 
-	const [isInChatRoom, setIsInChatRoom] = useState(false);
 	const [thisRoom, setThisRoom] = useState('');
-	const [thisRoomName, setThisRoomName] = useState('채팅방');
 
 	//대화 가져오기
 
@@ -257,13 +255,15 @@ export default function Chats() {
 	const [chatIndex, setChatIndex] = useState(0);
 
 	const handleInRoom = async (index) => {
-		console.log(index);
 		setChatIndex(index);
 		const roomId = await myChatsUid[index];
 		setThisRoom(roomId);
-		console.log(roomId);
-		setIsInChatRoom(!isInChatRoom);
-		setThisRoomName(chatTitles[index]);
+		Router.push({
+			pathname: '/chatRoom',
+			query: {
+				chatIndex: index,
+			},
+		});
 	};
 
 	//채팅방 이름 가져오기
@@ -289,197 +289,141 @@ export default function Chats() {
 			: uidToName(myChat.memberUid.filter((uid) => uid !== myAccount.uid)[0]);
 	};
 
-	useEffect(() => {
-		scrollToBottom();
-		//	window.scrollTo(0, document.body.scrollHeight);
-	}, []);
-
-	//스크롤 하단으로
-	const scrollRef = useRef(null);
-	const scrollToBottom = () => {
-		scrollRef.current.scrollIntoView({
-			behavior: 'smooth',
-			block: 'end',
-			inline: 'nearest',
-		});
-	};
-
 	return (
 		<React.Fragment>
-			<Collapse in={!isInChatRoom}>
-				<ChatsNavTop />
-				<Grid className={classes.paper}>
-					<Grid className={classes.chats}>
-						<Grid className={classes.chatsTitleBox}>
-							<Typography className={classes.chatsTitle}>
-								{' '}
-								모든 채팅 {myChats.length}
-							</Typography>
-						</Grid>
-						<Grid>
-							{myChats.map((myChat, index) => {
-								return (
-									<Grid
-										container
-										key={myChat.chatId}
-										className={classes.chat}
-										onClick={() => handleInRoom(index)}>
-										<Grid item></Grid>
-										<Grid item xs color='secondery'>
-											<Typography
-												variant='h6'
-												className={
-													classes.chatName
-												}>
-												{myChat.memberUid.length > 3
-													? uidToName(
-															myChat
-																.memberUid[0]
-													  ) +
-													  ', ' +
-													  uidToName(
-															myChat
-																.memberUid[1]
-													  ) +
-													  ', ' +
-													  uidToName(
-															myChat
-																.memberUid[2]
-													  ) +
-													  '외 ' +
-													  (myChat.memberUid
-															.length -
-															3) +
-													  '명의 채팅방'
-													: myChat.memberUid
-															.length >
-													  2
-													? uidToName(
-															myChat
-																.memberUid[0]
-													  ) +
-													  ', ' +
-													  uidToName(
-															myChat
-																.memberUid[1]
-													  ) +
-													  ', ' +
-													  uidToName(
-															myChat
-																.memberUid[2]
-													  ) +
-													  '의 채팅방'
-													: uidToName(
-															myChat.memberUid.filter(
-																(
-																	uid
-																) =>
-																	uid !==
-																	myAccount.uid
-															)[0]
-													  )}
-											</Typography>
-											<Typography
-												className={
-													classes.lastDialogue
-												}>
-												{myChat.lastDialogue}
-											</Typography>
-										</Grid>
-
-										<Grid
-											item
-											className={classes.groupAvatars}>
-											<AvatarGroup max={4} spacing={15}>
-												{myChat.memberUid.map(
-													(uid, index) => {
-														return (
-															<Avatar
-																key={
-																	index
-																}
-																style={{
-																	backgroundColor:
-																		uidToUser(
-																			uid
-																		)
-																			.personalColor,
-																	filter: 'saturate(40%) grayscale(20%) brightness(130%)',
-																}}
-																src={
+			<ChatsNavTop />
+			<Grid className={classes.paper}>
+				<Grid className={classes.chats}>
+					<Grid className={classes.chatsTitleBox}>
+						<Typography className={classes.chatsTitle}>
+							{' '}
+							모든 채팅 {myChats.length}
+						</Typography>
+					</Grid>
+					<Grid>
+						{myChats.map((myChat, index) => {
+							return (
+								<Grid
+									container
+									key={myChat.chatId}
+									className={classes.chat}
+									onClick={() => handleInRoom(index)}>
+									<Grid item></Grid>
+									<Grid item xs color='secondery'>
+										<Typography
+											variant='h6'
+											className={classes.chatName}>
+											{myChat.memberUid.length > 3
+												? uidToName(
+														myChat
+															.memberUid[0]
+												  ) +
+												  ', ' +
+												  uidToName(
+														myChat
+															.memberUid[1]
+												  ) +
+												  ', ' +
+												  uidToName(
+														myChat
+															.memberUid[2]
+												  ) +
+												  '외 ' +
+												  (myChat.memberUid.length -
+														3) +
+												  '명의 채팅방'
+												: myChat.memberUid.length >
+												  2
+												? uidToName(
+														myChat
+															.memberUid[0]
+												  ) +
+												  ', ' +
+												  uidToName(
+														myChat
+															.memberUid[1]
+												  ) +
+												  ', ' +
+												  uidToName(
+														myChat
+															.memberUid[2]
+												  ) +
+												  '의 채팅방'
+												: uidToName(
+														myChat.memberUid.filter(
+															(uid) =>
+																uid !==
+																myAccount.uid
+														)[0]
+												  )}
+										</Typography>
+										<Typography
+											className={classes.lastDialogue}>
+											{myChat.lastDialogue}
+										</Typography>
+									</Grid>
+									<Grid item className={classes.groupAvatars}>
+										<AvatarGroup max={4} spacing={15}>
+											{myChat.memberUid.map(
+												(uid, index) => {
+													return (
+														<Avatar
+															key={
+																index
+															}
+															style={{
+																backgroundColor:
 																	uidToUser(
 																		uid
 																	)
-																		.profileImg
-																}
-																className={
-																	classes.groupAvatar
-																}>
-																{uidToUser(
+																		.personalColor,
+																filter: 'saturate(40%) grayscale(20%) brightness(130%)',
+															}}
+															src={
+																uidToUser(
 																	uid
 																)
-																	.profileImg ==
-																	null &&
-																	uidToUser(
-																		uid
-																	).userName.charAt(
-																		0
-																	)}
-															</Avatar>
-														);
-													}
-												)}
-											</AvatarGroup>
-										</Grid>
-
-										<Grid>
-											<Zoom in={false}>
-												<Checkbox
-													color='primary'
-													checked={false}
-													value={false}
-													className={
-														classes.chatCheckbox
-													}
-												/>
-											</Zoom>
-										</Grid>
+																	.profileImg
+															}
+															className={
+																classes.groupAvatar
+															}>
+															{uidToUser(
+																uid
+															)
+																.profileImg ==
+																null &&
+																uidToUser(
+																	uid
+																).userName.charAt(
+																	0
+																)}
+														</Avatar>
+													);
+												}
+											)}
+										</AvatarGroup>
 									</Grid>
-								);
-							})}
-						</Grid>
+
+									<Grid>
+										<Zoom in={false}>
+											<Checkbox
+												color='primary'
+												checked={false}
+												value={false}
+												className={
+													classes.chatCheckbox
+												}
+											/>
+										</Zoom>
+									</Grid>
+								</Grid>
+							);
+						})}
 					</Grid>
 				</Grid>
-				<ChatsNavBottom />
-			</Collapse>
-
-			<Collapse in={isInChatRoom}>
-				<ChatRoomNavTop
-					setIsInChatRoom={setIsInChatRoom}
-					isInChatRoom={isInChatRoom}
-					chatIndex={chatIndex}
-					myChats={myChats}
-					uidToName={uidToName}
-					myAccount={myAccount}
-				/>
-				<ChatRoom
-					thisRoom={thisRoom}
-					setIsInChatRoom={setIsInChatRoom}
-					isInChatRoom={isInChatRoom}
-					dialogues={dialogues}
-					chatIndex={chatIndex}
-					sortedDialogues={sortedDialogues}
-					uidToName={uidToName}
-					uidToUser={uidToUser}
-					myChats={myChats}
-					scrollRef={scrollRef}
-				/>
-				<ChatRoomInputBar
-					thisRoom={thisRoom}
-					myAccount={myAccount}
-					scrollToBottom={scrollToBottom}
-				/>
-			</Collapse>
+			</Grid>
+			<ChatsNavBottom />
 		</React.Fragment>
 	);
 }

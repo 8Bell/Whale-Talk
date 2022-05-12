@@ -116,20 +116,74 @@ const useStyles = makeStyles((theme: Theme) => ({
 	},
 }));
 
-export default function ChatRoom({
-	thisRoom,
-	setIsInChatRoom,
-	isInChatRoom,
-	chatIndex,
-	dialogues,
-	sortedDialogues,
-	uidToName,
-	uidToUser,
-	myChats,
-	scrollRef,
-}) {
+export default function ChatRoom({}) {
 	const classes = useStyles();
 	const router = useRouter();
+
+	const chatIndex = Number(router.query.chatIndex);
+
+	const [chats, setChats] = useState([]);
+	const [myChatsUid, setMyChatsUid] = useState([]);
+
+	const [thisRoom, setThisRoom] = useState(myChatsUid[chatIndex]);
+
+	useEffect(() => {
+		setThisRoom(myChatsUid[chatIndex]);
+	}, []);
+
+	console.log(
+		'chatIndex 2',
+		chats
+			.filter((chat) => chat.memberUid.includes(myAccount.uid))
+			.map((myChat) => myChat.chatId)[chatIndex]
+	);
+
+	// 분류된 대화 가져오기
+	const [sortedDialogues, setSortedDialogues] = useState([]);
+	useEffect(() => {
+		dbService
+			.collection('chats')
+			.doc(thisRoom)
+			.collection('dialogues')
+			.orderBy('createdAt')
+			.onSnapshot((snapshot) => {
+				const dbSortedDialogues = snapshot.docs.map((doc) => ({
+					...doc.data(),
+				}));
+				setSortedDialogues(dbSortedDialogues);
+			});
+	}, [thisRoom]);
+
+	// 친구 목록 가져오기
+	const [users, setUsers] = useState([]);
+
+	useEffect(() => {
+		dbService.collection('users').onSnapshot((snapshot) => {
+			const dbUsers = snapshot.docs.map((doc) => ({
+				...doc.data(),
+				id: doc.id,
+				checked: false,
+			}));
+			setUsers(dbUsers);
+		});
+	}, []);
+	const chatMemberNamesArr = []; // 모든 채팅들의 멤버 배열을 담은 배열
+
+	const [chatTitles, setChatTitles] = useState([]);
+	const chatTitleArr = [];
+
+	const userUidArr = users.map((user) => user.uid); //전체 유저의 uid 배열
+	const userNameArr = users.map((user) => user.userName); //전체 유저의 이름 배열
+	const chatUidsArr = chats.map((chat) => chat.memberUid); // 모든 채팅의 멤버 uid 배열을 담은 배열
+
+	// uid를 넣으면 이름을 반환하는 함수
+	const uidToName = (inputUid: string) => {
+		return userNameArr[userUidArr.indexOf(inputUid)];
+	};
+	// uid를 넣으면 유저 객체를 반환하는 함수
+	const uidToUser = (inputUid: string) => {
+		return users[userUidArr.indexOf(inputUid)];
+	};
 
 	// 내 아이디 가져오기
 	const [init, setInit] = useState(false);
@@ -142,6 +196,60 @@ export default function ChatRoom({
 		uid: null,
 		user: null,
 	});
+
+	useEffect(() => {
+		dbService
+			.collection('chats')
+			.orderBy('lastDialogueAt', 'desc')
+			.onSnapshot((snapshot) => {
+				const dbChats = snapshot.docs.map((doc) => ({
+					...doc.data(),
+					id: doc.id,
+				}));
+				setChats(dbChats);
+			});
+	}, []);
+
+	useEffect(() => {
+		getChatMemberNamesArr();
+
+		setMyChats(chats.filter((chat) => chat.memberUid.includes(myAccount.uid))); //내가 속한 채팅만 반환
+		setMyChatsUid(
+			chats
+				.filter((chat) => chat.memberUid.includes(myAccount.uid))
+				.map((myChat) => myChat.chatId)
+		);
+	}, [chats]);
+
+	const [myChats, setMyChats] = useState(chats);
+
+	const getChatMemberNamesArr = () => {
+		chatUidsArr.map((chatUids) => {
+			const chatMemberNames = [];
+
+			chatUids.map((chatUid) => {
+				chatMemberNames.push(userNameArr[userUidArr.indexOf(chatUid)]);
+			});
+			chatMemberNamesArr.push(chatMemberNames);
+
+			let chatTitle = '';
+
+			if (chatUids.length > 3) {
+				chatTitle =
+					chatMemberNames.slice(0, 3).join(', ') +
+					'외' +
+					' ' +
+					(chatUids.length - 3) +
+					'명의 채팅방';
+			} else {
+				chatTitle = chatMemberNames.join(', ') + '의 채팅방';
+			}
+
+			chatTitleArr.push(chatTitle);
+		});
+
+		setChatTitles(chatTitleArr);
+	};
 
 	useEffect(() => {
 		const dbMyAccount = authService.onAuthStateChanged((user) => {
@@ -174,28 +282,34 @@ export default function ChatRoom({
 		});
 	};
 
-	// useEffect(() => {
-	// 	scrollToBottom();
-	// 	//	window.scrollTo(0, document.body.scrollHeight);
-	// }, []);
+	useEffect(() => {
+		scrollToBottom();
+		//	window.scrollTo(0, document.body.scrollHeight);
+	}, []);
 
-	// //스크롤 하단으로
-	// const scrollRef = useRef(null);
-	// const scrollToBottom = () => {
-	// 	scrollRef.current.scrollIntoView({
-	// 		behavior: 'smooth',
-	// 		block: 'end',
-	// 		inline: 'nearest',
-	// 	});
-	// };
+	//스크롤 하단으로
+	const scrollRef = useRef(null);
+	const scrollToBottom = () => {
+		scrollRef.current.scrollIntoView({
+			behavior: 'smooth',
+			block: 'end',
+			inline: 'nearest',
+		});
+	};
 
 	return (
 		<React.Fragment>
 			<div>
+				<ChatRoomNavTop
+					chatIndex={chatIndex}
+					myChats={myChats}
+					uidToName={uidToName}
+					myAccount={myAccount}
+				/>
 				<Grid className={classes.paper}>
 					<Grid className={classes.dialogues}>
 						<Grid>
-							{sortedDialogues.map((dialogue, index, arr) => {
+							{sortedDialogues.map((dialogue, index) => {
 								return (
 									<Grid
 										container
@@ -311,6 +425,11 @@ export default function ChatRoom({
 						</Grid>
 					</Grid>
 				</Grid>
+				<ChatRoomInputBar
+					thisRoom={thisRoom}
+					myAccount={myAccount}
+					scrollToBottom={scrollToBottom}
+				/>
 			</div>
 			<div ref={scrollRef} />
 		</React.Fragment>
