@@ -70,20 +70,10 @@ export default function ChatRoomNavTop({
 	myAccount,
 }) {
 	const classes = useStyles();
-	const router = useRouter();
 	const myChat = myChats[chatIndex];
-	console.log(myChat);
 	const [auth, setAuth] = useState(true);
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
-
-	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		setAuth(event.target.checked);
-	};
-
-	const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-		setAnchorEl(event.currentTarget);
-	};
 
 	const handleClose = () => {
 		setAnchorEl(null);
@@ -92,7 +82,6 @@ export default function ChatRoomNavTop({
 	const handleAddChat = () => {
 		setAnchorEl(null);
 	};
-	const handleStartChat = () => {};
 	const handleAddFriend = () => {
 		setAnchorEl(null);
 	};

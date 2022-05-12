@@ -9,7 +9,8 @@
 		"dev": "nextron",
 		"build": "nextron build",
 		"build:mac": "nextron build --mac --x64",
-		"postinstall": "electron-builder install-app-deps"
+		"postinstall": "electron-builder install-app-deps",
+		"lint": "next lint"
 	},
 	"dependencies": {
 		"@material-ui/icons": "^4.11.3",
@@ -26,6 +27,8 @@
 		"@types/react": "^16.9.49",
 		"electron": "^17.1.2",
 		"electron-builder": "23.0.2",
+		"eslint": "^8.15.0",
+		"eslint-config-next": "12.1.6",
 		"next": "^12.1.0",
 		"nextron": "^8.0.0",
 		"react": "^17.0.2",

@@ -43,8 +43,6 @@ export default function ChatRoomInputBar({ thisRoom, myAccount, scrollToBottom }
 	const onClick = () => {
 		authService.signOut();
 	};
-	console.log(thisRoom);
-	console.log(myAccount.uid);
 
 	const [input, setInput] = useState('');
 	const onChange = (e) => {

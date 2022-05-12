@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
@@ -23,6 +23,8 @@ import ChatRoom from './chatRoom';
 import Link from '../components/Link';
 import console from 'console';
 import { AvatarGroup } from '@material-ui/lab';
+import ChatRoomNavTop from './chatRoomNavTop';
+import ChatRoomInputBar from './ChatRoomInputBar';
 
 const useStyles = makeStyles((theme: Theme) => ({
 	paper: {
@@ -287,6 +289,21 @@ export default function Chats() {
 			: uidToName(myChat.memberUid.filter((uid) => uid !== myAccount.uid)[0]);
 	};
 
+	useEffect(() => {
+		scrollToBottom();
+		//	window.scrollTo(0, document.body.scrollHeight);
+	}, []);
+
+	//스크롤 하단으로
+	const scrollRef = useRef(null);
+	const scrollToBottom = () => {
+		scrollRef.current.scrollIntoView({
+			behavior: 'smooth',
+			block: 'end',
+			inline: 'nearest',
+		});
+	};
+
 	return (
 		<React.Fragment>
 			<Collapse in={!isInChatRoom}>
@@ -437,6 +454,14 @@ export default function Chats() {
 			</Collapse>
 
 			<Collapse in={isInChatRoom}>
+				<ChatRoomNavTop
+					setIsInChatRoom={setIsInChatRoom}
+					isInChatRoom={isInChatRoom}
+					chatIndex={chatIndex}
+					myChats={myChats}
+					uidToName={uidToName}
+					myAccount={myAccount}
+				/>
 				<ChatRoom
 					thisRoom={thisRoom}
 					setIsInChatRoom={setIsInChatRoom}
@@ -447,6 +472,12 @@ export default function Chats() {
 					uidToName={uidToName}
 					uidToUser={uidToUser}
 					myChats={myChats}
+					scrollRef={scrollRef}
+				/>
+				<ChatRoomInputBar
+					thisRoom={thisRoom}
+					myAccount={myAccount}
+					scrollToBottom={scrollToBottom}
 				/>
 			</Collapse>
 		</React.Fragment>

@@ -126,11 +126,8 @@ export default function ChatRoom({
 	uidToName,
 	uidToUser,
 	myChats,
+	scrollRef,
 }) {
-	console.log(dialogues);
-
-	console.log(chatIndex);
-
 	const classes = useStyles();
 	const router = useRouter();
 
@@ -177,35 +174,24 @@ export default function ChatRoom({
 		});
 	};
 
-	console.log('thisRoom2', thisRoom);
-	console.log(sortedDialogues);
+	// useEffect(() => {
+	// 	scrollToBottom();
+	// 	//	window.scrollTo(0, document.body.scrollHeight);
+	// }, []);
 
-	useEffect(() => {
-		scrollToBottom();
-		//	window.scrollTo(0, document.body.scrollHeight);
-	}, []);
-
-	//스크롤 하단으로
-	const scrollRef = useRef(null);
-	const scrollToBottom = () => {
-		scrollRef.current.scrollIntoView({
-			behavior: 'smooth',
-			block: 'end',
-			inline: 'nearest',
-		});
-	};
+	// //스크롤 하단으로
+	// const scrollRef = useRef(null);
+	// const scrollToBottom = () => {
+	// 	scrollRef.current.scrollIntoView({
+	// 		behavior: 'smooth',
+	// 		block: 'end',
+	// 		inline: 'nearest',
+	// 	});
+	// };
 
 	return (
 		<React.Fragment>
 			<div>
-				<ChatRoomNavTop
-					setIsInChatRoom={setIsInChatRoom}
-					isInChatRoom={isInChatRoom}
-					chatIndex={chatIndex}
-					myChats={myChats}
-					uidToName={uidToName}
-					myAccount={myAccount}
-				/>
 				<Grid className={classes.paper}>
 					<Grid className={classes.dialogues}>
 						<Grid>
@@ -325,11 +311,6 @@ export default function ChatRoom({
 						</Grid>
 					</Grid>
 				</Grid>
-				<ChatRoomInputBar
-					thisRoom={thisRoom}
-					myAccount={myAccount}
-					scrollToBottom={scrollToBottom}
-				/>
 			</div>
 			<div ref={scrollRef} />
 		</React.Fragment>
