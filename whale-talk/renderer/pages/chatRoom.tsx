@@ -121,29 +121,24 @@ export default function ChatRoom({}) {
 	const router = useRouter();
 
 	const chatIndex = Number(router.query.chatIndex);
+	const roomId = router.query.roomId;
 
 	const [chats, setChats] = useState([]);
 	const [myChatsUid, setMyChatsUid] = useState([]);
 
-	const [thisRoom, setThisRoom] = useState(myChatsUid[chatIndex]);
-
-	useEffect(() => {
-		setThisRoom(myChatsUid[chatIndex]);
-	}, []);
-
-	console.log(
-		'chatIndex 2',
-		chats
-			.filter((chat) => chat.memberUid.includes(myAccount.uid))
-			.map((myChat) => myChat.chatId)[chatIndex]
-	);
+	// const [thisRoom, setThisRoom] = useState(myChatsUid[chatIndex]);
+	// useEffect(() => {
+	// 	setThisRoom(myChatsUid[chatIndex]);
+	// }, []);
+	const thisRoom = myChatsUid[chatIndex];
+	console.log('thisRoom 2', roomId, chatIndex);
 
 	// 분류된 대화 가져오기
 	const [sortedDialogues, setSortedDialogues] = useState([]);
 	useEffect(() => {
 		dbService
 			.collection('chats')
-			.doc(thisRoom)
+			.doc(roomId)
 			.collection('dialogues')
 			.orderBy('createdAt')
 			.onSnapshot((snapshot) => {
@@ -152,7 +147,7 @@ export default function ChatRoom({}) {
 				}));
 				setSortedDialogues(dbSortedDialogues);
 			});
-	}, [thisRoom]);
+	}, [roomId]);
 
 	// 친구 목록 가져오기
 	const [users, setUsers] = useState([]);
@@ -317,29 +312,29 @@ export default function ChatRoom({}) {
 										className={classes.dialogue}>
 										<Grid item xs={1}>
 											<Avatar
-												style={{
-													backgroundColor:
-														uidToUser(
-															dialogue.writer
-														).personalColor,
-													filter: 'saturate(40%) grayscale(20%) brightness(130%) ',
-												}}
-												src={
-													uidToUser(
-														dialogue.writer
-													).profileImg
-												}
+												// style={{
+												// 	backgroundColor:
+												// 		uidToUser(
+												// 			dialogue.writer
+												// 		).personalColor,
+												// 	filter: 'saturate(40%) grayscale(20%) brightness(130%) ',
+												// }}
+												// src={
+												// 	uidToUser(
+												// 		dialogue.writer
+												// 	).profileImg
+												// }
 												className={
 													dialogue.writer ==
 													myAccount.uid
 														? classes.dialogueAvatarR
 														: classes.dialogueAvatar
 												}>
-												{uidToUser(dialogue.writer)
+												{/* {uidToUser(dialogue.writer)
 													.profileImg == null &&
 													uidToUser(
 														dialogue.writer
-													).userName.charAt(0)}
+													).userName.charAt(0)} */}
 											</Avatar>
 										</Grid>
 

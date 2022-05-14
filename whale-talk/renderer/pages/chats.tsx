@@ -262,6 +262,7 @@ export default function Chats() {
 			pathname: '/chatRoom',
 			query: {
 				chatIndex: index,
+				roomId: roomId,
 			},
 		});
 	};
