@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
@@ -162,6 +162,7 @@ export default function ChatRoom({}) {
 			setUsers(dbUsers);
 		});
 	}, []);
+
 	const chatMemberNamesArr = []; // 모든 채팅들의 멤버 배열을 담은 배열
 
 	const [chatTitles, setChatTitles] = useState([]);
@@ -175,25 +176,24 @@ export default function ChatRoom({}) {
 	const uidToName = (inputUid: string) => {
 		return userNameArr[userUidArr.indexOf(inputUid)];
 	};
-	// uid를 넣으면 유저 객체를 반환하는 함수
-	// const uidToUser = (inputUid: string) => {
-	// 	return users[userUidArr.indexOf(inputUid)];
-	// };
+	//uid를 넣으면 유저 객체를 반환하는 함수
+	const uidToUser = (inputUid: string) => {
+		return users[userUidArr.indexOf(inputUid)];
+	};
 
 	// ui로 특정 유저 반환
 
-	const uidToUser = (uid: string) => {
+	const uidToUserr = (uid: string) => {
 		dbService
 			.collection('chats')
 			.doc(uid)
 			.onSnapshot((snapshot) => {
-				const dbUser = snapshot.docs.map((doc) => ({
-					...doc.data(),
-				}));
+				const dbUser = snapshot.docs[0].data;
 				return dbUser;
 				console.log(dbUser);
 			});
 	};
+	console.log(uidToUser('9DHeo4cwkdUWUysdFGPK6fLz2pS2'));
 
 	// 내 아이디 가져오기
 	const [init, setInit] = useState(false);
@@ -327,13 +327,13 @@ export default function ChatRoom({}) {
 										className={classes.dialogue}>
 										<Grid item xs={1}>
 											<Avatar
-												// style={{
-												// 	backgroundColor:
-												// 		uidToUser(
-												// 			dialogue.writer
-												// 		).personalColor,
-												// 	filter: 'saturate(40%) grayscale(20%) brightness(130%) ',
-												// }}
+												style={{
+													backgroundColor:
+														uidToUser(
+															dialogue.writer
+														).personalColor,
+													filter: 'saturate(40%) grayscale(20%) brightness(130%) ',
+												}}
 												// src={
 												// 	uidToUser(
 												// 		dialogue.writer
