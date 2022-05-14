@@ -176,8 +176,23 @@ export default function ChatRoom({}) {
 		return userNameArr[userUidArr.indexOf(inputUid)];
 	};
 	// uid를 넣으면 유저 객체를 반환하는 함수
-	const uidToUser = (inputUid: string) => {
-		return users[userUidArr.indexOf(inputUid)];
+	// const uidToUser = (inputUid: string) => {
+	// 	return users[userUidArr.indexOf(inputUid)];
+	// };
+
+	// ui로 특정 유저 반환
+
+	const uidToUser = (uid: string) => {
+		dbService
+			.collection('chats')
+			.doc(uid)
+			.onSnapshot((snapshot) => {
+				const dbUser = snapshot.docs.map((doc) => ({
+					...doc.data(),
+				}));
+				return dbUser;
+				console.log(dbUser);
+			});
 	};
 
 	// 내 아이디 가져오기
@@ -330,11 +345,11 @@ export default function ChatRoom({}) {
 														? classes.dialogueAvatarR
 														: classes.dialogueAvatar
 												}>
-												{/* {uidToUser(dialogue.writer)
+												{uidToUser(dialogue.writer)
 													.profileImg == null &&
 													uidToUser(
 														dialogue.writer
-													).userName.charAt(0)} */}
+													).userName.charAt(0)}
 											</Avatar>
 										</Grid>
 
