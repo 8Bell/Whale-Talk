@@ -181,20 +181,6 @@ export default function ChatRoom({}) {
 		return users[userUidArr.indexOf(inputUid)];
 	};
 
-	// ui로 특정 유저 반환
-
-	const uidToUserr = (uid: string) => {
-		dbService
-			.collection('chats')
-			.doc(uid)
-			.onSnapshot((snapshot) => {
-				const dbUser = snapshot.docs[0].data;
-				return dbUser;
-				console.log(dbUser);
-			});
-	};
-	console.log(uidToUser('9DHeo4cwkdUWUysdFGPK6fLz2pS2'));
-
 	// 내 아이디 가져오기
 	const [init, setInit] = useState(false);
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
