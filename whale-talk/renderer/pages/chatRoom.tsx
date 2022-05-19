@@ -126,10 +126,6 @@ export default function ChatRoom({}) {
 	const [chats, setChats] = useState([]);
 	const [myChatsUid, setMyChatsUid] = useState([]);
 
-	// const [thisRoom, setThisRoom] = useState(myChatsUid[chatIndex]);
-	// useEffect(() => {
-	// 	setThisRoom(myChatsUid[chatIndex]);
-	// }, []);
 	const thisRoom = myChatsUid[chatIndex];
 	console.log('thisRoom 2', roomId, chatIndex);
 
@@ -148,6 +144,34 @@ export default function ChatRoom({}) {
 				setSortedDialogues(dbSortedDialogues);
 			});
 	}, [roomId]);
+
+	// 선택된 대화방의 유저 목록 가져오기
+	const [chatMembers, setChatMembers] = useState([]);
+	useEffect(async () => {
+		await dbService
+			.collection('chats')
+			.doc(roomId)
+			.get()
+			.then((doc) => {
+				doc.data().memberUid.map((uid) => {
+					dbService
+						.collection('users')
+						.doc(uid)
+						.get()
+						.then((doc) => setChatMembers((prev) => [...prev, doc.data()]));
+				});
+			});
+	}, [roomId]);
+	console.log('cm', chatMembers);
+
+	// uid to color
+	const uidToColor = (inputUid: string) => {
+		dbService
+			.collection('user')
+			.doc(inputUid)
+			.get()
+			.then((doc) => doc.data());
+	};
 
 	// 친구 목록 가져오기
 	const [users, setUsers] = useState([]);
@@ -315,27 +339,27 @@ export default function ChatRoom({}) {
 											<Avatar
 												style={{
 													backgroundColor:
-														uidToUser(
+														uidToColor(
 															dialogue.writer
-														).personalColor,
+														),
 													filter: 'saturate(40%) grayscale(20%) brightness(130%) ',
 												}}
-												// src={
-												// 	uidToUser(
-												// 		dialogue.writer
-												// 	).profileImg
-												// }
+												src={uidToColor(
+													dialogue.writer
+												)}
 												className={
 													dialogue.writer ==
 													myAccount.uid
 														? classes.dialogueAvatarR
 														: classes.dialogueAvatar
 												}>
-												{uidToUser(dialogue.writer)
-													.profileImg == null &&
-													uidToUser(
-														dialogue.writer
-													).userName.charAt(0)}
+												{
+													// uidToUser(dialogue.writer)
+													// 	.profileImg == null &&
+													// uidToUser(
+													// 	dialogue.writer
+													// ).userName.charAt(0)
+												}
 											</Avatar>
 										</Grid>
 
