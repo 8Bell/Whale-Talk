@@ -25,11 +25,11 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 	dialogue: {
 		backgroundColor: '#fbfbfb',
-		paddingBottom: 10,
+		paddingBottom: 0,
 		paddingTop: 0,
 	},
 	dialogueAvatar: {
-		top: '20%',
+		//top: '20%',
 		left: 10,
 		width: 50,
 		height: 50,
@@ -42,9 +42,11 @@ const useStyles = makeStyles((theme: Theme) => ({
 		position: 'relative',
 		maxWidth: '60%',
 		marginLeft: 5,
-		marginTop: 10,
-		paddingBottom: 10,
-		paddingTop: 10,
+		//marginTop: 10,
+		//paddingBottom: 10,
+		//paddingTop: 10,
+		backgroundColor: 'green',
+		height: 50,
 	},
 
 	dialogueText: {
@@ -55,11 +57,12 @@ const useStyles = makeStyles((theme: Theme) => ({
 		paddingBottom: 3,
 		paddingLeft: 20,
 		paddingRight: 20,
-
 		position: 'relative',
 		display: 'inline-block',
 		border: 'solid 1px #44546A',
 		borderRadius: 20,
+		marginBottom: 0,
+		marginTop: 0,
 	},
 	createdTime: {
 		marginTop: 0,
@@ -69,14 +72,14 @@ const useStyles = makeStyles((theme: Theme) => ({
 		transform: 'translateY(35%)',
 	},
 	dialogueAvatarR: { display: 'none' },
+
 	dialogueBoxR: {
 		position: 'absolute',
 		maxWidth: '60%',
 		right: 10,
-		marginTop: 10,
-		paddingBottom: 10,
-		paddingTop: 10,
-
+		// marginTop: 10,
+		// paddingBottom: 10,
+		// paddingTop: 10,
 		overflow: 'hidden',
 	},
 
@@ -99,7 +102,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 	createdTimeR: {
 		display: 'none',
-		clear: 'both',
 	},
 	createdTimeL: {
 		marginTop: 0,
@@ -108,7 +110,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 		color: 'gray',
 		position: 'absolute',
 		display: 'inline-block',
-		clear: 'both',
 	},
 	dialogueCheckbox: {
 		marginTop: 20,
@@ -125,6 +126,33 @@ export default function ChatRoom({}) {
 
 	const [chats, setChats] = useState([]);
 	const [myChatsUid, setMyChatsUid] = useState([]);
+
+	// 내 아이디 가져오기
+	const [init, setInit] = useState(false);
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
+	const [myAccount, setMyAccount] = useState({
+		displayName: null,
+		email: null,
+		photoURL: null,
+		emailVerified: false,
+		uid: null,
+		user: null,
+	});
+
+	const getMyAccount = async () => {
+		const dbMyAccount = await authService.onAuthStateChanged((user) => {
+			if (user) {
+				setMyAccount({
+					displayName: user.displayName,
+					email: user.email,
+					photoURL: user.photoURL,
+					emailVerified: user.emailVerified,
+					uid: user.uid,
+					user: user,
+				});
+			}
+		});
+	};
 
 	const thisRoom = myChatsUid[chatIndex];
 	console.log('thisRoom 2', roomId, chatIndex);
@@ -145,6 +173,8 @@ export default function ChatRoom({}) {
 			});
 	}, [roomId]);
 
+	console.log('myAccount', myAccount.uid);
+
 	// 선택된 대화방의 유저 목록 가져오기
 	const [chatMembers, setChatMembers] = useState([]);
 	useEffect(async () => {
@@ -153,25 +183,52 @@ export default function ChatRoom({}) {
 			.doc(roomId)
 			.get()
 			.then((doc) => {
-				doc.data().memberUid.map((uid) => {
-					dbService
-						.collection('users')
-						.doc(uid)
-						.get()
-						.then((doc) => setChatMembers((prev) => [...prev, doc.data()]));
-				});
+				if (chatMembers.length < doc.data().memberUid.length) {
+					doc.data().memberUid.map((uid) => {
+						dbService
+							.collection('users')
+							.doc(uid)
+							.get()
+							.then((doc) =>
+								setChatMembers((prev) => [...prev, doc.data()])
+							);
+					});
+				}
 			});
+		//setChatMembers(chatMembers.filter((member) => member.uid !== myAccount.uid));
 	}, [roomId]);
-	console.log('cm', chatMembers);
+
+	console.log('chatMembers', chatMembers);
 
 	// uid to color
 	const uidToColor = (inputUid: string) => {
-		dbService
-			.collection('user')
-			.doc(inputUid)
-			.get()
-			.then((doc) => doc.data());
+		const thisMember = chatMembers.filter((member) => member.uid === inputUid);
+		try {
+			return thisMember[0].personalColor;
+		} catch (err) {
+			console.log(err);
+		}
 	};
+	// uid to first letter
+	const uidToFL = (inputUid: string) => {
+		const thisMember = chatMembers.filter((member) => member.uid === inputUid);
+		try {
+			return thisMember[0].userName.charAt(0);
+		} catch (err) {
+			console.log(err);
+		}
+	};
+	// uid to profileImage
+	const uidToPI = (inputUid: string) => {
+		const thisMember = chatMembers.filter((member) => member.uid === inputUid);
+		try {
+			return thisMember[0].profileImg;
+		} catch (err) {
+			console.log(err);
+		}
+	};
+
+	console.log('uidtocolor', uidToFL('LqgKXAunBlQirhkJDCUdEnZkdk42'));
 
 	// 친구 목록 가져오기
 	const [users, setUsers] = useState([]);
@@ -204,18 +261,6 @@ export default function ChatRoom({}) {
 	const uidToUser = (inputUid: string) => {
 		return users[userUidArr.indexOf(inputUid)];
 	};
-
-	// 내 아이디 가져오기
-	const [init, setInit] = useState(false);
-	const [isLoggedIn, setIsLoggedIn] = useState(false);
-	const [myAccount, setMyAccount] = useState({
-		displayName: null,
-		email: null,
-		photoURL: null,
-		emailVerified: false,
-		uid: null,
-		user: null,
-	});
 
 	useEffect(() => {
 		dbService
@@ -287,21 +332,6 @@ export default function ChatRoom({}) {
 		getMyAccount();
 	}, []);
 
-	const getMyAccount = async () => {
-		const dbMyAccount = await authService.onAuthStateChanged((user) => {
-			if (user) {
-				setMyAccount({
-					displayName: user.displayName,
-					email: user.email,
-					photoURL: user.photoURL,
-					emailVerified: user.emailVerified,
-					uid: user.uid,
-					user: user,
-				});
-			}
-		});
-	};
-
 	useEffect(() => {
 		scrollToBottom();
 		//	window.scrollTo(0, document.body.scrollHeight);
@@ -329,38 +359,62 @@ export default function ChatRoom({}) {
 				<Grid className={classes.paper}>
 					<Grid className={classes.dialogues}>
 						<Grid>
-							{sortedDialogues.map((dialogue, index) => {
+							{sortedDialogues.map((dialogue, index, arr) => {
 								return (
 									<Grid
 										container
 										key={index}
 										className={classes.dialogue}>
 										<Grid item xs={1}>
-											<Avatar
-												style={{
-													backgroundColor:
-														uidToColor(
+											{index > 0 ? (
+												dialogue.writer !==
+													arr[Number(index - 1)]
+														.writer && (
+													<Avatar
+														style={{
+															backgroundColor:
+																uidToColor(
+																	dialogue.writer
+																),
+															filter: 'saturate(40%) grayscale(20%) brightness(130%) ',
+														}}
+														src={uidToPI(
 															dialogue.writer
-														),
-													filter: 'saturate(40%) grayscale(20%) brightness(130%) ',
-												}}
-												src={uidToColor(
-													dialogue.writer
-												)}
-												className={
-													dialogue.writer ==
-													myAccount.uid
-														? classes.dialogueAvatarR
-														: classes.dialogueAvatar
-												}>
-												{
-													// uidToUser(dialogue.writer)
-													// 	.profileImg == null &&
-													// uidToUser(
-													// 	dialogue.writer
-													// ).userName.charAt(0)
-												}
-											</Avatar>
+														)}
+														className={
+															dialogue.writer ==
+															myAccount.uid
+																? classes.dialogueAvatarR
+																: classes.dialogueAvatar
+														}>
+														{uidToFL(
+															dialogue.writer
+														)}
+													</Avatar>
+												)
+											) : (
+												<Avatar
+													style={{
+														backgroundColor:
+															uidToColor(
+																dialogue.writer
+															),
+														filter: 'saturate(40%) grayscale(20%) brightness(130%) ',
+													}}
+													src={uidToPI(
+														dialogue.writer
+													)}
+													className={
+														dialogue.writer ==
+														myAccount.uid
+															? classes.dialogueAvatarR
+															: classes.dialogueAvatar
+													}>
+													{uidToFL(
+														dialogue.writer
+													)}
+												</Avatar>
+											)}
 										</Grid>
 
 										<Grid
@@ -372,28 +426,65 @@ export default function ChatRoom({}) {
 													? classes.dialogueBoxR
 													: classes.dialogueBox
 											}>
-											<Typography
-												className={
-													dialogue.writer ==
-													myAccount.uid
-														? classes.createdTimeL
-														: classes.createdTimeR
-												}>
-												{(
+											{(
+												'0' +
+												new Date(
+													dialogue.createdAt
+												).getHours()
+											).slice(-2) +
+												':' +
+												(
 													'0' +
 													new Date(
 														dialogue.createdAt
-													).getHours()
-												).slice(-2) +
-													':' +
-													(
+													).getMinutes()
+												).slice(-2) ==
+											(
+												'0' +
+												new Date(
+													arr[
+														Number(
+															index - 1
+														)
+													].createdAt
+												).getHours()
+											).slice(-2) +
+												':' +
+												(
+													'0' +
+													new Date(
+														arr[
+															Number(
+																index -
+																	1
+															)
+														].createdAt
+													).getMinutes()
+												).slice(-2) ? (
+												<Typography
+													className={
+														dialogue.writer ==
+														myAccount.uid
+															? classes.createdTimeL
+															: classes.createdTimeR
+													}>
+													{(
 														'0' +
 														new Date(
 															dialogue.createdAt
-														).getMinutes()
-													).slice(-2)}
-											</Typography>
-
+														).getHours()
+													).slice(-2) +
+														':' +
+														(
+															'0' +
+															new Date(
+																dialogue.createdAt
+															).getMinutes()
+														).slice(-2)}
+												</Typography>
+											) : (
+												{}
+											)}
 											<Typography
 												variant='h6'
 												className={
@@ -428,7 +519,9 @@ export default function ChatRoom({}) {
 											</Typography>
 										</Grid>
 										<Grid item>
-											<Zoom in={false}>
+											<Zoom
+												in={false}
+												style={{ height: '30px' }}>
 												<Checkbox
 													color='primary'
 													checked={false}
