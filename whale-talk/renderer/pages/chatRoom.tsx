@@ -10,6 +10,7 @@ import ChatNavBottom from './ChatRoomInputBar';
 import ChatRoomInputBar from './ChatRoomInputBar';
 import ChatRoomNavTop from './chatRoomNavTop';
 import { relative } from 'path';
+import { yellow } from '@material-ui/core/colors';
 
 const useStyles = makeStyles((theme: Theme) => ({
 	paper: {
@@ -25,8 +26,10 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 	dialogue: {
 		backgroundColor: '#fbfbfb',
+
 		paddingBottom: 0,
 		paddingTop: 0,
+		display: 'flex',
 	},
 	dialogueAvatar: {
 		//top: '20%',
@@ -37,16 +40,27 @@ const useStyles = makeStyles((theme: Theme) => ({
 		backgroundColor: theme.palette.primary.main,
 		fontWeight: 500,
 		zIndex: 0,
+		marginTop: 20,
+		//marginBottom: 30,
 	},
+	dialogueWriter: {
+		position: 'relative',
+		height: 30,
+		marginLeft: 10,
+		marginTop: 20,
+		//backgroundColor: 'yellow',
+	},
+
 	dialogueBox: {
 		position: 'relative',
 		maxWidth: '60%',
-		marginLeft: 5,
+
+		marginLeft: -10,
 		//marginTop: 10,
-		//paddingBottom: 10,
+		paddingBottom: 10,
 		//paddingTop: 10,
 		//backgroundColor: 'green',
-		height: 50,
+		//height: 50,
 	},
 
 	dialogueText: {
@@ -74,13 +88,15 @@ const useStyles = makeStyles((theme: Theme) => ({
 	dialogueAvatarR: { display: 'none' },
 
 	dialogueBoxR: {
-		position: 'absolute',
+		position: 'relative',
 		maxWidth: '60%',
 		right: 10,
 		// marginTop: 10,
-		// paddingBottom: 10,
+		paddingBottom: 10,
 		// paddingTop: 10,
 		overflow: 'hidden',
+		//backgroundColor: 'yellow',
+		marginLeft: 'auto',
 	},
 
 	dialogueTextR: {
@@ -122,7 +138,7 @@ export default function ChatRoom({}) {
 	const router = useRouter();
 
 	const chatIndex = Number(router.query.chatIndex);
-	const roomId = router.query.roomId;
+	const roomId: string = router.query.roomId.toString();
 
 	const [chats, setChats] = useState([]);
 	const [myChatsUid, setMyChatsUid] = useState([]);
@@ -155,30 +171,32 @@ export default function ChatRoom({}) {
 	};
 
 	const thisRoom = myChatsUid[chatIndex];
-	console.log('thisRoom 2', roomId, chatIndex);
+	console.log(roomId);
 
 	// 분류된 대화 가져오기
 	const [sortedDialogues, setSortedDialogues] = useState([]);
-	useEffect(() => {
-		dbService
-			.collection('chats')
-			.doc(roomId)
-			.collection('dialogues')
-			.orderBy('createdAt')
-			.onSnapshot((snapshot) => {
-				const dbSortedDialogues = snapshot.docs.map((doc) => ({
-					...doc.data(),
-				}));
-				setSortedDialogues(dbSortedDialogues);
-			});
-	}, [roomId]);
+	useEffect(
+		() =>
+			dbService
+				.collection('chats')
+				.doc(roomId)
+				.collection('dialogues')
+				.orderBy('createdAt')
+				.onSnapshot((snapshot) => {
+					const dbSortedDialogues = snapshot.docs.map((doc) => ({
+						...doc.data(),
+					}));
+					setSortedDialogues(dbSortedDialogues);
+				}),
+		[roomId]
+	);
 
-	console.log('myAccount', myAccount.uid);
+	//console.log('myAccount', myAccount.uid);
 
 	// 선택된 대화방의 유저 목록 가져오기
 	const [chatMembers, setChatMembers] = useState([]);
-	useEffect(async () => {
-		await dbService
+	useEffect(() => {
+		dbService
 			.collection('chats')
 			.doc(roomId)
 			.get()
@@ -198,7 +216,7 @@ export default function ChatRoom({}) {
 		//setChatMembers(chatMembers.filter((member) => member.uid !== myAccount.uid));
 	}, [roomId]);
 
-	console.log('chatMembers', chatMembers);
+	//console.log('chatMembers', chatMembers);
 
 	// uid to color
 	const uidToColor = (inputUid: string) => {
@@ -227,8 +245,6 @@ export default function ChatRoom({}) {
 			console.log(err);
 		}
 	};
-
-	console.log('uidtocolor', uidToFL('LqgKXAunBlQirhkJDCUdEnZkdk42'));
 
 	// 친구 목록 가져오기
 	const [users, setUsers] = useState([]);
@@ -426,6 +442,38 @@ export default function ChatRoom({}) {
 													? classes.dialogueBoxR
 													: classes.dialogueBox
 											}>
+											{dialogue.writer !==
+												myAccount.uid &&
+												(index > 0 ? (
+													dialogue.writer !==
+														arr[
+															Number(
+																index -
+																	1
+															)
+														].writer && (
+														<Grid
+															item
+															className={
+																classes.dialogueWriter
+															}>
+															<Typography>
+																고양이
+															</Typography>
+														</Grid>
+													)
+												) : (
+													<Grid
+														item
+														xs
+														className={
+															classes.dialogueWriter
+														}>
+														<Typography>
+															고양이
+														</Typography>
+													</Grid>
+												))}
 											<Typography
 												className={
 													dialogue.writer ==
