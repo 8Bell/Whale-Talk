@@ -119,6 +119,15 @@ const useStyles = makeStyles((theme: Theme) => ({
 	createdTimeR: {
 		display: 'none',
 	},
+	createdTimeD: {
+		marginTop: 0,
+		marginLeft: 0,
+		color: 'gray',
+		display: 'inline-block',
+		transform: 'translateY(35%)',
+		opacity: '0%',
+	},
+
 	createdTimeL: {
 		marginTop: 0,
 		left: 0,
@@ -551,41 +560,31 @@ export default function ChatRoom({}) {
 												{dialogue.text}
 											</Typography>
 
-											{index < arr.length - 1 ? (
-												cToT(dialogue.createdAt) !=
-													cToT(
-														arr[
-															Number(
-																index +
-																	1
-															)
-														].createdAt
-													) && (
-													<Typography
-														className={
-															dialogue.writer ==
-															myAccount.uid
-																? classes.createdTimeR
-																: classes.createdTime
-														}>
-														{cToT(
-															dialogue.createdAt
-														)}
-													</Typography>
-												)
-											) : (
-												<Typography
-													className={
-														dialogue.writer ==
-														myAccount.uid
-															? classes.createdTimeR
-															: classes.createdTime
-													}>
-													{cToT(
-														dialogue.createdAt
-													)}
-												</Typography>
-											)}
+											<Typography
+												className={
+													dialogue.writer ==
+													myAccount.uid
+														? classes.createdTimeR
+														: index <
+														  arr.length - 1
+														? cToT(
+																dialogue.createdAt
+														  ) !=
+														  cToT(
+																arr[
+																	Number(
+																		index +
+																			1
+																	)
+																]
+																	.createdAt
+														  )
+															? classes.createdTime
+															: classes.createdTimeD
+														: classes.createdTime
+												}>
+												{cToT(dialogue.createdAt)}
+											</Typography>
 										</Grid>
 										<Grid item>
 											<Zoom
