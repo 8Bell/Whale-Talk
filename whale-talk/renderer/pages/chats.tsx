@@ -17,14 +17,14 @@ import {
 	Typography,
 	Zoom,
 } from '@material-ui/core';
-import ChatsNavTop from './chatsNavTop';
-import ChatsNavBottom from './chatsNavBottom';
+import ChatsNavTop from '../components/chatsNavTop';
+import ChatsNavBottom from '../components/chatsNavBottom';
 import ChatRoom from './chatRoom';
 import Link from '../components/Link';
 import console from 'console';
 import { AvatarGroup } from '@material-ui/lab';
-import ChatRoomNavTop from './chatRoomNavTop';
-import ChatRoomInputBar from './ChatRoomInputBar';
+import ChatRoomNavTop from '../components//chatRoomNavTop';
+import ChatRoomInputBar from '../components/chatRoomInputBar';
 
 const useStyles = makeStyles((theme: Theme) => ({
 	paper: {

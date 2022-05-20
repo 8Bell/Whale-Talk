@@ -8,7 +8,7 @@ import MenuRoundedIcon from '@material-ui/icons/MenuRounded';
 import LockRoundedIcon from '@material-ui/icons/LockRounded';
 import SettingsRoundedIcon from '@material-ui/icons/SettingsRounded';
 import { authService } from '../fbase';
-import Link from '../components/Link';
+import Link from './Link';
 import { useRouter } from 'next/router';
 
 const useStyles = makeStyles({

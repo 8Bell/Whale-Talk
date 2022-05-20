@@ -2,16 +2,16 @@ import React, { useState, useEffect, useMemo } from 'react';
 
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
-import NavBottom from './friendsNavBottom';
+import NavBottom from '../components/friendsNavBottom';
 import { authService, dbService } from '../fbase';
 import router from 'next/router';
 import { Avatar, Checkbox, Grid, Radio, Typography, Zoom } from '@material-ui/core';
 import { deepOrange, green } from '@material-ui/core/colors';
 import { withStyles } from '@material-ui/styles';
-import FormDialog from './addfriends';
+import FormDialog from '../components/addfriends';
 import AvatarGroup from '@material-ui/lab/AvatarGroup';
-import FriendsNavTop from './friendsNavTop';
-import FriendsNavBottom from './friendsNavBottom';
+import FriendsNavTop from '../components/friendsNavTop';
+import FriendsNavBottom from '../components/friendsNavBottom';
 
 const useStyles = makeStyles((theme: Theme) => ({
 	paper: {

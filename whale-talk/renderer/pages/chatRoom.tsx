@@ -5,10 +5,10 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import { authService, dbService } from '../fbase';
 import router, { useRouter, withRouter } from 'next/router';
 import { Avatar, Checkbox, Grid, Typography, Zoom } from '@material-ui/core';
-import ChatNavTop from './chatRoomNavTop';
-import ChatNavBottom from './ChatRoomInputBar';
-import ChatRoomInputBar from './ChatRoomInputBar';
-import ChatRoomNavTop from './chatRoomNavTop';
+import ChatNavTop from '../components/chatRoomNavTop';
+import ChatNavBottom from '../components/chatRoomInputBar';
+import ChatRoomInputBar from '../components/chatRoomInputBar';
+import ChatRoomNavTop from '../components/chatRoomNavTop';
 import { relative } from 'path';
 import { yellow } from '@material-ui/core/colors';
 
