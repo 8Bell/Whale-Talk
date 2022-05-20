@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 		//marginTop: 10,
 		//paddingBottom: 10,
 		//paddingTop: 10,
-		backgroundColor: 'green',
+		//backgroundColor: 'green',
 		height: 50,
 	},
 
@@ -426,65 +426,28 @@ export default function ChatRoom({}) {
 													? classes.dialogueBoxR
 													: classes.dialogueBox
 											}>
-											{(
-												'0' +
-												new Date(
-													dialogue.createdAt
-												).getHours()
-											).slice(-2) +
-												':' +
-												(
+											<Typography
+												className={
+													dialogue.writer ==
+													myAccount.uid
+														? classes.createdTimeL
+														: classes.createdTimeR
+												}>
+												{(
 													'0' +
 													new Date(
 														dialogue.createdAt
-													).getMinutes()
-												).slice(-2) ==
-											(
-												'0' +
-												new Date(
-													arr[
-														Number(
-															index - 1
-														)
-													].createdAt
-												).getHours()
-											).slice(-2) +
-												':' +
-												(
-													'0' +
-													new Date(
-														arr[
-															Number(
-																index -
-																	1
-															)
-														].createdAt
-													).getMinutes()
-												).slice(-2) ? (
-												<Typography
-													className={
-														dialogue.writer ==
-														myAccount.uid
-															? classes.createdTimeL
-															: classes.createdTimeR
-													}>
-													{(
+													).getHours()
+												).slice(-2) +
+													':' +
+													(
 														'0' +
 														new Date(
 															dialogue.createdAt
-														).getHours()
-													).slice(-2) +
-														':' +
-														(
-															'0' +
-															new Date(
-																dialogue.createdAt
-															).getMinutes()
-														).slice(-2)}
-												</Typography>
-											) : (
-												{}
-											)}
+														).getMinutes()
+													).slice(-2)}
+											</Typography>
+
 											<Typography
 												variant='h6'
 												className={
@@ -521,7 +484,7 @@ export default function ChatRoom({}) {
 										<Grid item>
 											<Zoom
 												in={false}
-												style={{ height: '30px' }}>
+												style={{ height: '28px' }}>
 												<Checkbox
 													color='primary'
 													checked={false}
