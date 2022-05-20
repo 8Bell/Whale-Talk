@@ -26,11 +26,12 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 	dialogue: {
 		backgroundColor: '#fbfbfb',
-
+		//backgroundColor: 'green',
 		paddingBottom: 0,
 		paddingTop: 0,
 		display: 'flex',
 	},
+	dialogueAvatarGrid: { width: 85 },
 	dialogueAvatar: {
 		//top: '20%',
 		left: 10,
@@ -41,7 +42,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 		fontWeight: 500,
 		zIndex: 0,
 		marginTop: 20,
-		//marginBottom: 30,
+		boxShadow: '0 0 10px 5px #aaa',
 	},
 	dialogueWriter: {
 		position: 'relative',
@@ -50,12 +51,14 @@ const useStyles = makeStyles((theme: Theme) => ({
 		marginTop: 20,
 		//backgroundColor: 'yellow',
 	},
+	dialogueWriterD: {
+		display: 'none',
+	},
 
 	dialogueBox: {
 		position: 'relative',
 		maxWidth: '60%',
-
-		marginLeft: -10,
+		marginLeft: '-10px',
 		//marginTop: 10,
 		paddingBottom: 10,
 		//paddingTop: 10,
@@ -67,16 +70,20 @@ const useStyles = makeStyles((theme: Theme) => ({
 		maxWidth: '84%',
 		marginLeft: 5,
 		marginRight: 10,
-		paddingTop: 3,
-		paddingBottom: 3,
-		paddingLeft: 20,
-		paddingRight: 20,
+		paddingTop: 5,
+		paddingBottom: 4,
+		paddingLeft: 21,
+		paddingRight: 21,
 		position: 'relative',
 		display: 'inline-block',
-		border: 'solid 1px #44546A',
-		borderRadius: 20,
+		border: 'solid 2px #dddddd',
+		backgroundColor: '#fbfbfb',
+		color: '#333333',
+		fontWeight: 400,
+		borderRadius: 30,
 		marginBottom: 0,
 		marginTop: 0,
+		boxShadow: '0 0 10px 5px #eeeeee',
 	},
 	createdTime: {
 		marginTop: 0,
@@ -95,25 +102,26 @@ const useStyles = makeStyles((theme: Theme) => ({
 		paddingBottom: 10,
 		// paddingTop: 10,
 		overflow: 'hidden',
-		//backgroundColor: 'yellow',
+		//	backgroundColor: 'yellow',
 		marginLeft: 'auto',
 	},
 
 	dialogueTextR: {
 		maxWidth: '100%',
 		marginLeft: 50,
-		marginRight: 10,
-		paddingTop: 3,
-		paddingBottom: 3,
-		paddingLeft: 17,
+		paddingTop: 5,
+		paddingBottom: 4,
+		paddingLeft: 20,
 		paddingRight: 20,
 		position: 'relative',
 		display: 'inline-block',
 		border: 'solid 1px #44546A',
-		borderRadius: 20,
+		borderRadius: 30,
 		backgroundColor: '#44546A',
 		color: '#fbfbfb',
 		float: 'right',
+		fontWeight: 400,
+		boxShadow: '0 0 10px 5px #dddddd',
 	},
 
 	createdTimeR: {
@@ -165,7 +173,7 @@ export default function ChatRoom({}) {
 	});
 
 	const getMyAccount = async () => {
-		const dbMyAccount = await authService.onAuthStateChanged((user) => {
+		const dbMyAccount = authService.onAuthStateChanged((user) => {
 			if (user) {
 				setMyAccount({
 					displayName: user.displayName,
@@ -180,7 +188,6 @@ export default function ChatRoom({}) {
 	};
 
 	const thisRoom = myChatsUid[chatIndex];
-	console.log(roomId);
 
 	// 분류된 대화 가져오기
 	const [sortedDialogues, setSortedDialogues] = useState([]);
@@ -197,7 +204,7 @@ export default function ChatRoom({}) {
 					}));
 					setSortedDialogues(dbSortedDialogues);
 				}),
-		[roomId]
+		[]
 	);
 
 	//console.log('myAccount', myAccount.uid);
@@ -223,7 +230,7 @@ export default function ChatRoom({}) {
 				}
 			});
 		//setChatMembers(chatMembers.filter((member) => member.uid !== myAccount.uid));
-	}, [roomId]);
+	}, []);
 
 	//console.log('chatMembers', chatMembers);
 
@@ -327,7 +334,6 @@ export default function ChatRoom({}) {
 
 	useEffect(() => {
 		getChatMemberNamesArr();
-
 		setMyChats(chats.filter((chat) => chat.memberUid.includes(myAccount.uid))); //내가 속한 채팅만 반환
 		setMyChatsUid(
 			chats
@@ -415,56 +421,53 @@ export default function ChatRoom({}) {
 										container
 										key={index}
 										className={classes.dialogue}>
-										<Grid item xs={1}>
-											{index > 0 ? (
-												dialogue.writer !==
-													arr[Number(index - 1)]
-														.writer && (
-													<Avatar
-														style={{
-															backgroundColor:
-																uidToColor(
-																	dialogue.writer
-																),
-															filter: 'saturate(40%) grayscale(20%) brightness(130%) ',
-														}}
-														src={uidToPI(
+										<Grid
+											item
+											className={
+												classes.dialogueAvatarGrid
+											}>
+											<Avatar
+												style={{
+													backgroundColor:
+														uidToColor(
 															dialogue.writer
-														)}
-														className={
-															dialogue.writer ==
-															myAccount.uid
-																? classes.dialogueAvatarR
-																: classes.dialogueAvatar
-														}>
-														{uidToFL(
-															dialogue.writer
-														)}
-													</Avatar>
-												)
-											) : (
-												<Avatar
-													style={{
-														backgroundColor:
-															uidToColor(
-																dialogue.writer
-															),
-														filter: 'saturate(40%) grayscale(20%) brightness(130%) ',
-													}}
-													src={uidToPI(
-														dialogue.writer
-													)}
-													className={
-														dialogue.writer ==
-														myAccount.uid
-															? classes.dialogueAvatarR
-															: classes.dialogueAvatar
-													}>
-													{uidToFL(
-														dialogue.writer
-													)}
-												</Avatar>
-											)}
+														),
+													filter: 'saturate(40%) grayscale(20%) brightness(130%) ',
+												}}
+												src={uidToPI(
+													dialogue.writer
+												)}
+												className={
+													dialogue.writer ==
+													myAccount.uid
+														? classes.dialogueAvatarR
+														: index > 0
+														? dialogue.writer !==
+														  arr[
+																Number(
+																	index -
+																		1
+																)
+														  ].writer
+															? classes.dialogueAvatar
+															: cToT(
+																	dialogue.createdAt
+															  ) !=
+															  cToT(
+																	arr[
+																		Number(
+																			index -
+																				1
+																		)
+																	]
+																		.createdAt
+															  )
+															? classes.dialogueAvatar
+															: classes.dialogueAvatarR
+														: classes.dialogueAvatar
+												}>
+												{uidToFL(dialogue.writer)}
+											</Avatar>
 										</Grid>
 
 										<Grid
@@ -476,42 +479,44 @@ export default function ChatRoom({}) {
 													? classes.dialogueBoxR
 													: classes.dialogueBox
 											}>
-											{dialogue.writer !==
-												myAccount.uid &&
-												(index > 0 ? (
-													dialogue.writer !==
-														arr[
-															Number(
-																index -
-																	1
-															)
-														].writer && (
-														<Grid
-															item
-															className={
-																classes.dialogueWriter
-															}>
-															<Typography>
-																{uidToFN(
-																	dialogue.writer
-																)}
-															</Typography>
-														</Grid>
-													)
-												) : (
-													<Grid
-														item
-														xs
-														className={
-															classes.dialogueWriter
-														}>
-														<Typography>
-															{uidToFN(
-																dialogue.writer
-															)}
-														</Typography>
-													</Grid>
-												))}
+											<Grid
+												item
+												xs
+												className={
+													dialogue.writer ==
+													myAccount.uid
+														? classes.dialogueWriterD
+														: index > 0
+														? dialogue.writer !==
+														  arr[
+																Number(
+																	index -
+																		1
+																)
+														  ].writer
+															? classes.dialogueWriter
+															: cToT(
+																	dialogue.createdAt
+															  ) !==
+															  cToT(
+																	arr[
+																		Number(
+																			index -
+																				1
+																		)
+																	]
+																		.createdAt
+															  )
+															? classes.dialogueWriter
+															: classes.dialogueWriterD
+														: classes.dialogueWriter
+												}>
+												<Typography>
+													{uidToFN(
+														dialogue.writer
+													)}
+												</Typography>
+											</Grid>
 
 											{index < arr.length - 1 ? (
 												cToT(dialogue.createdAt) !=
@@ -569,7 +574,7 @@ export default function ChatRoom({}) {
 														  arr.length - 1
 														? cToT(
 																dialogue.createdAt
-														  ) !=
+														  ) !==
 														  cToT(
 																arr[
 																	Number(
@@ -585,20 +590,6 @@ export default function ChatRoom({}) {
 												}>
 												{cToT(dialogue.createdAt)}
 											</Typography>
-										</Grid>
-										<Grid item>
-											<Zoom
-												in={false}
-												style={{ height: '28px' }}>
-												<Checkbox
-													color='primary'
-													checked={false}
-													value={false}
-													className={
-														classes.dialogueCheckbox
-													}
-												/>
-											</Zoom>
 										</Grid>
 									</Grid>
 								);
