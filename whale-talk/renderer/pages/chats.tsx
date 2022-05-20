@@ -256,7 +256,7 @@ export default function Chats() {
 
 	const handleInRoom = async (index) => {
 		setChatIndex(index);
-		const roomId = await myChatsUid[index];
+		const roomId: string = await myChatsUid[index];
 		setThisRoom(roomId);
 		Router.push({
 			pathname: '/chatRoom',

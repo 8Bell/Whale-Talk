@@ -155,7 +155,7 @@ export default function ChatRoom({}) {
 	const router = useRouter();
 
 	const chatIndex = Number(router.query.chatIndex);
-	const roomId: string = router.query.roomId.toString();
+	const roomId: string = router.query.roomId;
 
 	const [chats, setChats] = useState([]);
 	const [myChatsUid, setMyChatsUid] = useState([]);
@@ -240,7 +240,7 @@ export default function ChatRoom({}) {
 		try {
 			return thisMember[0].personalColor;
 		} catch (err) {
-			console.log(err);
+			//console.log(err);
 		}
 	};
 	// uid to first letter
@@ -249,7 +249,7 @@ export default function ChatRoom({}) {
 		try {
 			return thisMember[0].userName.charAt(0);
 		} catch (err) {
-			console.log(err);
+			//console.log(err);
 		}
 	};
 
@@ -259,7 +259,7 @@ export default function ChatRoom({}) {
 		try {
 			return thisMember[0].userName;
 		} catch (err) {
-			console.log(err);
+			//console.log(err);
 		}
 	};
 
@@ -269,7 +269,7 @@ export default function ChatRoom({}) {
 		try {
 			return thisMember[0].profileImg;
 		} catch (err) {
-			console.log(err);
+			//console.log(err);
 		}
 	};
 
@@ -283,7 +283,7 @@ export default function ChatRoom({}) {
 
 			return time.toString();
 		} catch (err) {
-			console.log(err);
+			//console.log(err);
 		}
 	};
 
