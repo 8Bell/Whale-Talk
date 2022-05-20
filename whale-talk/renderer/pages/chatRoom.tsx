@@ -236,11 +236,36 @@ export default function ChatRoom({}) {
 			console.log(err);
 		}
 	};
+
+	// uid to Fullname
+	const uidToFN = (inputUid: string) => {
+		const thisMember = chatMembers.filter((member) => member.uid === inputUid);
+		try {
+			return thisMember[0].userName;
+		} catch (err) {
+			console.log(err);
+		}
+	};
+
 	// uid to profileImage
 	const uidToPI = (inputUid: string) => {
 		const thisMember = chatMembers.filter((member) => member.uid === inputUid);
 		try {
 			return thisMember[0].profileImg;
+		} catch (err) {
+			console.log(err);
+		}
+	};
+
+	//createdAt To createdTime
+	const cToT = (inputTime) => {
+		try {
+			const time =
+				('0' + new Date(inputTime).getHours()).slice(-2) +
+				':' +
+				('0' + new Date(inputTime).getMinutes()).slice(-2);
+
+			return time.toString();
 		} catch (err) {
 			console.log(err);
 		}
@@ -458,7 +483,9 @@ export default function ChatRoom({}) {
 																classes.dialogueWriter
 															}>
 															<Typography>
-																고양이
+																{uidToFN(
+																	dialogue.writer
+																)}
 															</Typography>
 														</Grid>
 													)
@@ -470,31 +497,48 @@ export default function ChatRoom({}) {
 															classes.dialogueWriter
 														}>
 														<Typography>
-															고양이
+															{uidToFN(
+																dialogue.writer
+															)}
 														</Typography>
 													</Grid>
 												))}
-											<Typography
-												className={
-													dialogue.writer ==
-													myAccount.uid
-														? classes.createdTimeL
-														: classes.createdTimeR
-												}>
-												{(
-													'0' +
-													new Date(
-														dialogue.createdAt
-													).getHours()
-												).slice(-2) +
-													':' +
-													(
-														'0' +
-														new Date(
+
+											{index < arr.length - 1 ? (
+												cToT(dialogue.createdAt) !=
+													cToT(
+														arr[
+															Number(
+																index +
+																	1
+															)
+														].createdAt
+													) && (
+													<Typography
+														className={
+															dialogue.writer ==
+															myAccount.uid
+																? classes.createdTimeL
+																: classes.createdTimeR
+														}>
+														{cToT(
 															dialogue.createdAt
-														).getMinutes()
-													).slice(-2)}
-											</Typography>
+														)}
+													</Typography>
+												)
+											) : (
+												<Typography
+													className={
+														dialogue.writer ==
+														myAccount.uid
+															? classes.createdTimeL
+															: classes.createdTimeR
+													}>
+													{cToT(
+														dialogue.createdAt
+													)}
+												</Typography>
+											)}
 
 											<Typography
 												variant='h6'
@@ -507,27 +551,41 @@ export default function ChatRoom({}) {
 												{dialogue.text}
 											</Typography>
 
-											<Typography
-												className={
-													dialogue.writer ==
-													myAccount.uid
-														? classes.createdTimeR
-														: classes.createdTime
-												}>
-												{(
-													'0' +
-													new Date(
-														dialogue.createdAt
-													).getHours()
-												).slice(-2) +
-													':' +
-													(
-														'0' +
-														new Date(
+											{index < arr.length - 1 ? (
+												cToT(dialogue.createdAt) !=
+													cToT(
+														arr[
+															Number(
+																index +
+																	1
+															)
+														].createdAt
+													) && (
+													<Typography
+														className={
+															dialogue.writer ==
+															myAccount.uid
+																? classes.createdTimeR
+																: classes.createdTime
+														}>
+														{cToT(
 															dialogue.createdAt
-														).getMinutes()
-													).slice(-2)}
-											</Typography>
+														)}
+													</Typography>
+												)
+											) : (
+												<Typography
+													className={
+														dialogue.writer ==
+														myAccount.uid
+															? classes.createdTimeR
+															: classes.createdTime
+													}>
+													{cToT(
+														dialogue.createdAt
+													)}
+												</Typography>
+											)}
 										</Grid>
 										<Grid item>
 											<Zoom
