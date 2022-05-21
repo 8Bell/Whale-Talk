@@ -1,13 +1,11 @@
-import React, { useState, useEffect, useMemo } from 'react';
+/* eslint-disable prettier/prettier */
+import React, { useState, useEffect } from 'react';
 
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
-import NavBottom from '../components/friendsNavBottom';
 import { authService, dbService } from '../fbase';
 import router from 'next/router';
-import { Avatar, Checkbox, Grid, Radio, Typography, Zoom } from '@material-ui/core';
-import { deepOrange, green } from '@material-ui/core/colors';
-import { withStyles } from '@material-ui/styles';
+import { Avatar, Checkbox, Grid, Typography, Zoom } from '@material-ui/core';
 import FormDialog from '../components/addfriends';
 import AvatarGroup from '@material-ui/lab/AvatarGroup';
 import FriendsNavTop from '../components/friendsNavTop';
@@ -104,7 +102,9 @@ export default function Friends() {
 	const classes = useStyles();
 
 	// 내 아이디 가져오기
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [init, setInit] = useState(false);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [myAccount, setMyAccount] = useState({
 		displayName: null,
@@ -117,7 +117,7 @@ export default function Friends() {
 
 	useEffect(() => {
 		getMyAccount();
-		const dbMyAccount = authService.onAuthStateChanged((user) => {
+		authService.onAuthStateChanged((user) => {
 			if (user) {
 				setIsLoggedIn(true);
 			} else {
@@ -129,7 +129,7 @@ export default function Friends() {
 	}, []);
 
 	const getMyAccount = async () => {
-		const dbMyAccount = authService.onAuthStateChanged((user) => {
+		authService.onAuthStateChanged((user) => {
 			if (user) {
 				setMyAccount({
 					displayName: user.displayName,
@@ -146,8 +146,6 @@ export default function Friends() {
 	// 유저 목록 가져오기
 	const [users, setUsers] = useState([]);
 	const [members, setMembers] = useState([]);
-
-	const [usersLength, setUsersLength] = useState(1);
 
 	useEffect(() => {
 		dbService
@@ -166,16 +164,11 @@ export default function Friends() {
 	//나를 제외한 유저 목록 필터링
 	useEffect(() => {
 		setMembers(users.filter((user) => user.id !== myAccount.uid));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [users]);
 
 	// 친구 추가하기 - 모달창 열기
 	const [addFriendState, setAddFriendState] = useState(false);
-
-	// uid를 넣으면 유저 객체를 반환하는 함수
-	const userUidArr = users.map((user) => user.uid);
-	const uidToUser = (inputUid: string) => {
-		return users[userUidArr.indexOf(inputUid)];
-	};
 
 	// 채팅 추가하기 클릭시 체크박스 나타나게
 	const [chatMakingState, setChatMakingState] = useState(false);
@@ -311,9 +304,8 @@ export default function Friends() {
 			<FormDialog
 				addFriendState={addFriendState}
 				setAddFriendState={setAddFriendState}
-				myAccount={myAccount}
 			/>
-			<FriendsNavBottom myAccount={myAccount} />
+			<FriendsNavBottom />
 		</React.Fragment>
 	);
 }

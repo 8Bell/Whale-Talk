@@ -1,14 +1,12 @@
+/* eslint-disable prettier/prettier */
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import ChatRoundedIcon from '@material-ui/icons/ChatRounded';
 import PeopleAltRoundedIcon from '@material-ui/icons/PeopleAltRounded';
-import MenuRoundedIcon from '@material-ui/icons/MenuRounded';
 import LockRoundedIcon from '@material-ui/icons/LockRounded';
-import SettingsRoundedIcon from '@material-ui/icons/SettingsRounded';
 import { authService } from '../fbase';
-import Link from './Link';
 import { useRouter } from 'next/router';
 
 const useStyles = makeStyles({
@@ -30,6 +28,7 @@ export default function ChatsNavBottom() {
 	const classes = useStyles();
 	const [value, setValue] = React.useState('chats');
 
+	// eslint-disable-next-line @typescript-eslint/ban-types
 	const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
 		setValue(newValue);
 	};

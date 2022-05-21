@@ -1,10 +1,12 @@
+/* eslint-disable import/no-anonymous-default-export */
+/* eslint-disable react/display-name */
+/* eslint-disable prettier/prettier */
 import React from 'react';
 import Head from 'next/head';
 import { ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { theme } from '../lib/theme';
 import type { AppProps } from 'next/app';
-import Link from 'next/link';
 
 export default function (props: AppProps) {
 	const { Component, pageProps } = props;

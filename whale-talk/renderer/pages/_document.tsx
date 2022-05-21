@@ -1,3 +1,6 @@
+/* eslint-disable import/no-anonymous-default-export */
+/* eslint-disable react/display-name */
+/* eslint-disable prettier/prettier */
 import React from 'react';
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 import { ServerStyleSheets } from '@material-ui/styles';

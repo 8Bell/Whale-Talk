@@ -1,24 +1,14 @@
+/* eslint-disable prettier/prettier */
 import React, { useState } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import Switch from '@material-ui/core/Switch';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormGroup from '@material-ui/core/FormGroup';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import AddRoundedIcon from '@material-ui/icons/AddRounded';
-import AddCircleRoundedIcon from '@material-ui/icons/AddCircleRounded';
-import ArrowForwardRoundedIcon from '@material-ui/icons/ArrowForwardRounded';
-import CheckCircleRoundedIcon from '@material-ui/icons/CheckCircleRounded';
-import OfflinePinRoundedIcon from '@material-ui/icons/OfflinePinRounded';
-import AddCommentRoundedIcon from '@material-ui/icons/AddCommentRounded';
-import ArrowForwardIosRoundedIcon from '@material-ui/icons/ArrowForwardIosRounded';
-import ChevronRightRoundedIcon from '@material-ui/icons/ChevronRightRounded';
 import { Zoom } from '@material-ui/core';
-import Router, { useRouter } from 'next/router';
+import Router from 'next/router';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -65,6 +55,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function ChatRoomNavTop({ myChats, chatIndex, uidToName, myAccount }) {
 	const classes = useStyles();
 	const myChat = myChats[chatIndex];
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [auth, setAuth] = useState(true);
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);

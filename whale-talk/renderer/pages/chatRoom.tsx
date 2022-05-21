@@ -1,16 +1,13 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+/* eslint-disable prettier/prettier */
+import React, { useState, useEffect, useRef } from 'react';
 
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
 import { authService, dbService } from '../fbase';
-import router, { useRouter, withRouter } from 'next/router';
-import { Avatar, Checkbox, Grid, Typography, Zoom } from '@material-ui/core';
-import ChatNavTop from '../components/chatRoomNavTop';
-import ChatNavBottom from '../components/chatRoomInputBar';
+import { useRouter } from 'next/router';
+import { Avatar, Grid, Typography } from '@material-ui/core';
 import ChatRoomInputBar from '../components/chatRoomInputBar';
 import ChatRoomNavTop from '../components/chatRoomNavTop';
-import { relative } from 'path';
-import { yellow } from '@material-ui/core/colors';
 
 const useStyles = makeStyles((theme: Theme) => ({
 	paper: {
@@ -153,6 +150,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 	},
 }));
 
+// eslint-disable-next-line no-empty-pattern
 export default function ChatRoom({}) {
 	const classes = useStyles();
 	const router = useRouter();
@@ -164,7 +162,9 @@ export default function ChatRoom({}) {
 	const [myChatsUid, setMyChatsUid] = useState([]);
 
 	// 내 아이디 가져오기
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [init, setInit] = useState(false);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [myAccount, setMyAccount] = useState({
 		displayName: null,
@@ -176,7 +176,7 @@ export default function ChatRoom({}) {
 	});
 
 	const getMyAccount = async () => {
-		const dbMyAccount = authService.onAuthStateChanged((user) => {
+		await authService.onAuthStateChanged((user) => {
 			if (user) {
 				setMyAccount({
 					displayName: user.displayName,
@@ -207,6 +207,7 @@ export default function ChatRoom({}) {
 					}));
 					setSortedDialogues(dbSortedDialogues);
 				}),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[]
 	);
 
@@ -233,6 +234,7 @@ export default function ChatRoom({}) {
 				}
 			});
 		//setChatMembers(chatMembers.filter((member) => member.uid !== myAccount.uid));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	//console.log('chatMembers', chatMembers);
@@ -306,6 +308,7 @@ export default function ChatRoom({}) {
 
 	const chatMemberNamesArr = []; // 모든 채팅들의 멤버 배열을 담은 배열
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [chatTitles, setChatTitles] = useState([]);
 	const chatTitleArr = [];
 
@@ -318,9 +321,9 @@ export default function ChatRoom({}) {
 		return userNameArr[userUidArr.indexOf(inputUid)];
 	};
 	//uid를 넣으면 유저 객체를 반환하는 함수
-	const uidToUser = (inputUid: string) => {
-		return users[userUidArr.indexOf(inputUid)];
-	};
+	// const uidToUser = (inputUid: string) => {
+	// 	return users[userUidArr.indexOf(inputUid)];
+	// };
 
 	useEffect(() => {
 		dbService
@@ -343,6 +346,7 @@ export default function ChatRoom({}) {
 				.filter((chat) => chat.memberUid.includes(myAccount.uid))
 				.map((myChat) => myChat.chatId)
 		);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [chats]);
 
 	const [myChats, setMyChats] = useState(chats);
@@ -376,7 +380,7 @@ export default function ChatRoom({}) {
 	};
 
 	useEffect(() => {
-		const dbMyAccount = authService.onAuthStateChanged((user) => {
+		authService.onAuthStateChanged((user) => {
 			if (user) {
 				setIsLoggedIn(true);
 			} else {
@@ -385,6 +389,7 @@ export default function ChatRoom({}) {
 			}
 			setInit(true);
 		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {

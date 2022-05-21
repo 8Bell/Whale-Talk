@@ -1,4 +1,5 @@
-import React, { useState, useEffect, Props } from 'react';
+/* eslint-disable prettier/prettier */
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 
 import Button from '@material-ui/core/Button';
@@ -12,18 +13,12 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { authLocal, authService, authSession } from '../fbase';
-import { Checkbox, FormControlLabel, Switch, withStyles } from '@material-ui/core';
+import { FormControlLabel, Switch, withStyles } from '@material-ui/core';
 import { useRouter } from 'next/router';
-import { Router, Translate } from '@material-ui/icons';
-import next from 'next';
 import Link from '../components/Link';
-import { yellow } from '@material-ui/core/colors';
-
-import { createStyles } from '@material-ui/core/styles';
-import { purple } from '@material-ui/core/colors';
-import FormGroup from '@material-ui/core/FormGroup';
 
 import { SwitchClassKey, SwitchProps } from '@material-ui/core/Switch';
+import Image from 'next/image';
 
 function Copyright() {
 	return (
@@ -84,7 +79,9 @@ export default function SignIn() {
 	const classes = useStyles();
 	const router = useRouter();
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [init, setInit] = useState(false);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	useEffect(() => {
 		authService.onAuthStateChanged((user) => {
@@ -96,6 +93,7 @@ export default function SignIn() {
 			}
 			setInit(true);
 		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const [email, setEmail] = useState('');
@@ -115,8 +113,7 @@ export default function SignIn() {
 	const onSubmit = async (e) => {
 		e.preventDefault();
 		try {
-			let data = await authService.signInWithEmailAndPassword(email, password);
-			console.log(data);
+			await authService.signInWithEmailAndPassword(email, password);
 			console.log(authService);
 		} catch (error) {
 			console.log(error);
@@ -222,8 +219,9 @@ export default function SignIn() {
 			<Container component='main' maxWidth='xs'>
 				<CssBaseline />
 				<div className={classes.paper}>
-					<img
+					<Image
 						src='./images/whale plastic 2@0.5x.png'
+						alt='whale icon'
 						className={classes.icon}
 					/>
 

@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -6,20 +7,17 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { dbService } from '../fbase';
 
-export default function FormDialog({ addFriendState, setAddFriendState, myAccount }) {
-	const handleClickOpen = () => {
-		setAddFriendState(true);
-	};
-
+export default function FormDialog({ addFriendState, setAddFriendState }) {
 	const handleClose = () => {
 		setAddFriendState(false);
 	};
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [friendEmail, setFriendEmail] = useState('');
 
 	const handleAddFriend = (e) => {
+		e.preventDefault();
 		// dbService.collection('users').doc(myAccount.uid).update({
 		// 	friend
 		// });

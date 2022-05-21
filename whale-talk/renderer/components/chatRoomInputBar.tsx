@@ -1,16 +1,9 @@
+/* eslint-disable prettier/prettier */
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import BottomNavigation from '@material-ui/core/BottomNavigation';
-import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
-import ChatRoundedIcon from '@material-ui/icons/ChatRounded';
-import PeopleAltRoundedIcon from '@material-ui/icons/PeopleAltRounded';
-import MenuRoundedIcon from '@material-ui/icons/MenuRounded';
 
-import { authService, dbService, Timestamp } from '../fbase';
-import Link from './Link';
-import { useRouter } from 'next/router';
-import { Button, Grid, InputBase, TextField } from '@material-ui/core';
-import zIndex from '@material-ui/core/styles/zIndex';
+import { dbService, Timestamp } from '../fbase';
+import { Button, Grid, InputBase } from '@material-ui/core';
 
 const useStyles = makeStyles({
 	form: {
@@ -63,16 +56,7 @@ const useStyles = makeStyles({
 });
 
 export default function ChatRoomInputBar({ thisRoom, myAccount, scrollToBottom }) {
-	const router = useRouter();
 	const classes = useStyles();
-	const [value, setValue] = React.useState('chats');
-
-	const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
-		setValue(newValue);
-	};
-	const onClick = () => {
-		confirm('로그아웃하시겠습니까?') && authService.signOut();
-	};
 
 	const [input, setInput] = useState('');
 	const onChange = (e) => {

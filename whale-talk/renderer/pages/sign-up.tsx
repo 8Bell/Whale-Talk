@@ -1,5 +1,5 @@
+/* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react';
-import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
@@ -8,12 +8,13 @@ import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 
 import Typography from '@material-ui/core/Typography';
-import { makeStyles, Theme, withStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { authService, dbService, Timestamp } from '../fbase';
 
 import router from 'next/router';
 import Link from '../components/Link';
+import Image from 'next/image';
 
 function Copyright() {
 	return (
@@ -70,7 +71,9 @@ const useStyles = makeStyles((theme: Theme) => ({
 export default function SignUp() {
 	const classes = useStyles();
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [init, setInit] = useState(false);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	useEffect(() => {
 		authService.onAuthStateChanged((user) => {
@@ -109,7 +112,7 @@ export default function SignUp() {
 		try {
 			if (userName !== '') {
 				if (password == rePassword) {
-					let data = await authService.createUserWithEmailAndPassword(
+					const data = await authService.createUserWithEmailAndPassword(
 						email,
 						password
 					);
@@ -168,8 +171,9 @@ export default function SignUp() {
 			<Container component='main' maxWidth='xs'>
 				<CssBaseline />
 				<div className={classes.paper}>
-					<img
+					<Image
 						src='./images/whale plastic 2@0.5x.png'
+						alt='whale icon'
 						className={classes.icon}
 					/>
 					<Typography component='h1' variant='h5' className={classes.title}>
