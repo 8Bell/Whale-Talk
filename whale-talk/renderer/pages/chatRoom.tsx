@@ -158,7 +158,7 @@ export default function ChatRoom({}) {
 	const router = useRouter();
 
 	const chatIndex = Number(router.query.chatIndex);
-	const roomId: string = router.query.roomId;
+	const roomId: string = router.query.roomId.toString();
 
 	const [chats, setChats] = useState([]);
 	const [myChatsUid, setMyChatsUid] = useState([]);
