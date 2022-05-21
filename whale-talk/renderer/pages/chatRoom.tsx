@@ -17,11 +17,14 @@ const useStyles = makeStyles((theme: Theme) => ({
 		minWidth: 500,
 		marginLeft: 10,
 		marginRight: 10,
+		'&::-webkit-scrollbar': {
+			display: 'none',
+		},
 	},
 
 	dialogues: {
-		marginTop: 75,
-		marginBottom: 90,
+		marginTop: 90,
+		marginBottom: 95,
 	},
 
 	dialogue: {
@@ -42,7 +45,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 		fontWeight: 500,
 		zIndex: 0,
 		marginTop: 20,
-		boxShadow: '0 0 10px 5px #aaa',
+		boxShadow: '0 0 10px 5px rgba(0,0,0,0.1)',
 	},
 	dialogueWriter: {
 		position: 'relative',
@@ -83,7 +86,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 		borderRadius: 30,
 		marginBottom: 0,
 		marginTop: 0,
-		boxShadow: '0 0 10px 5px #eeeeee',
+		boxShadow: '0 0 16px 8px rgba(0,0,0,0.05)',
 	},
 	createdTime: {
 		marginTop: 0,
@@ -121,7 +124,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 		color: '#fbfbfb',
 		float: 'right',
 		fontWeight: 400,
-		boxShadow: '0 0 10px 5px #dddddd',
+		boxShadow: '0 0 20px 8px rgba(0,0,0,0.05)',
 	},
 
 	createdTimeR: {

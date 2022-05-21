@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 	profile: {
 		height: 100,
 		backgroundColor: '#fbfbfb',
-		marginTop: 60,
+		marginTop: 75,
 		borderBottom: 'solid 2px #ddd',
 	},
 	profileAvatar: {
@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 		fontWeight: 500,
 	},
 	friends: {
-		marginBottom: 60,
+		marginBottom: 100,
 	},
 	friendsTitleBox: {
 		borderBottom: 'solid 1px #f0f0f0',

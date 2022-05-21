@@ -21,36 +21,40 @@ import { Zoom } from '@material-ui/core';
 // import { useRouter } from 'next/router';
 import { dbService, Timestamp } from '../fbase';
 import Router from 'next/router';
-import Link from '../components/Link';
+import Link from './Link';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		root: {
 			width: '100vw',
-			height: 60,
+			height: 70,
 			position: 'fixed',
 			top: 0,
-			left: '50%',
-			transform: 'translate(-50%, 0)',
-			backgroundColor: '#eeeeee',
+			left: 0,
 			zIndex: 1,
+			backgroundColor: 'rgba(220,220,220,0.3)',
+			backdropFilter: 'blur(7px)',
+			boxShadow: '0 0 12px 6px rgba(0,0,0,0.1)',
 		},
 		menuButton: {
 			marginRight: theme.spacing(2),
 		},
 		title: {
 			flexGrow: 1,
+			color: '#444',
+			marginTop: 9,
 		},
 		plusIconBtn: {
 			position: 'absolute',
 			zIndex: 2,
-			top: 3,
+			top: 8,
 			right: 10,
+			color: '#444',
 		},
 		nextIconBtn: {
 			position: 'absolute',
 			zIndex: 2,
-			top: 2,
+			top: 8,
 			right: 10,
 		},
 		nextIconText: {
@@ -129,9 +133,8 @@ export default function FriendsNavTop({
 	};
 
 	return (
-		<div className={classes.root}>
-			<FormGroup></FormGroup>
-			<AppBar position='static' color='secondary'>
+		<div>
+			<AppBar className={classes.root}>
 				<Toolbar>
 					<Typography variant='h5' className={classes.title}>
 						친구

@@ -16,7 +16,7 @@ export const theme = createTheme({
 			main: red.A400,
 		},
 		background: {
-			default: '#fafafa',
+			default: '#fbfbfb',
 		},
 	},
 });

@@ -27,10 +27,15 @@ import ChatRoomNavTop from '../components//chatRoomNavTop';
 import ChatRoomInputBar from '../components/chatRoomInputBar';
 
 const useStyles = makeStyles((theme: Theme) => ({
-	paper: {
+	root: {
 		minWidth: 500,
-		marginLeft: 10,
-		marginRight: 10,
+		backgroundColor: '#f7f7f7',
+		width: '100vw',
+		height: '100%',
+	},
+	paper: {
+		marginLeft: 15,
+		marginRight: 15,
 	},
 	groupAvatars: {
 		marginTop: 20,
@@ -40,15 +45,14 @@ const useStyles = makeStyles((theme: Theme) => ({
 	groupAvatar: {
 		width: theme.spacing(5),
 		height: theme.spacing(5),
-
 		fontWeight: 500,
 	},
 	chats: {
-		marginTop: 75,
-		marginBottom: 60,
+		marginTop: 85,
+		marginBottom: 100,
 	},
 	chatsTitleBox: {
-		borderBottom: 'solid 1px #f0f0f0',
+		marginBottom: 10,
 	},
 	chatsTitle: {
 		marginTop: 7,
@@ -58,8 +62,11 @@ const useStyles = makeStyles((theme: Theme) => ({
 	},
 	chat: {
 		height: 80,
-		backgroundColor: '#fbfbfb',
-		borderBottom: 'solid 1px #f0f0f0',
+		borderRadius: '25px',
+		marginTop: 10,
+		marginBottom: 15,
+		backgroundColor: 'rgba(220,220,220,0.2)',
+		boxShadow: '0 0 16px 8px rgba(0,0,0,0.07)',
 	},
 	chatName: {
 		marginTop: 15,
@@ -292,139 +299,151 @@ export default function Chats() {
 
 	return (
 		<React.Fragment>
-			<ChatsNavTop />
-			<Grid className={classes.paper}>
-				<Grid className={classes.chats}>
-					<Grid className={classes.chatsTitleBox}>
-						<Typography className={classes.chatsTitle}>
-							{' '}
-							모든 채팅 {myChats.length}
-						</Typography>
-					</Grid>
-					<Grid>
-						{myChats.map((myChat, index) => {
-							return (
-								<Grid
-									container
-									key={myChat.chatId}
-									className={classes.chat}
-									onClick={() => handleInRoom(index)}>
-									<Grid item></Grid>
-									<Grid item xs color='secondery'>
-										<Typography
-											variant='h6'
-											className={classes.chatName}>
-											{myChat.memberUid.length > 3
-												? uidToName(
-														myChat
-															.memberUid[0]
-												  ) +
-												  ', ' +
-												  uidToName(
-														myChat
-															.memberUid[1]
-												  ) +
-												  ', ' +
-												  uidToName(
-														myChat
-															.memberUid[2]
-												  ) +
-												  '외 ' +
-												  (myChat.memberUid.length -
-														3) +
-												  '명의 채팅방'
-												: myChat.memberUid.length >
-												  2
-												? uidToName(
-														myChat
-															.memberUid[0]
-												  ) +
-												  ', ' +
-												  uidToName(
-														myChat
-															.memberUid[1]
-												  ) +
-												  ', ' +
-												  uidToName(
-														myChat
-															.memberUid[2]
-												  ) +
-												  '의 채팅방'
-												: uidToName(
-														myChat.memberUid.filter(
-															(uid) =>
-																uid !==
-																myAccount.uid
-														)[0]
-												  )}
-										</Typography>
-										<Typography
-											className={classes.lastDialogue}>
-											{myChat.lastDialogue}
-										</Typography>
-									</Grid>
-									<Grid item className={classes.groupAvatars}>
-										<AvatarGroup max={4} spacing={15}>
-											{myChat.memberUid.map(
-												(uid, index) => {
-													return (
-														<Avatar
-															key={
-																index
-															}
-															style={{
-																backgroundColor:
+			<div className={classes.root}>
+				<ChatsNavTop />
+				<Grid className={classes.paper}>
+					<Grid className={classes.chats}>
+						<Grid className={classes.chatsTitleBox}>
+							<Typography className={classes.chatsTitle}>
+								{' '}
+								모든 채팅 {myChats.length}
+							</Typography>
+						</Grid>
+						<Grid>
+							{myChats.map((myChat, index) => {
+								return (
+									<Grid
+										container
+										key={myChat.chatId}
+										className={classes.chat}
+										onClick={() => handleInRoom(index)}>
+										<Grid item></Grid>
+										<Grid item xs color='secondery'>
+											<Typography
+												variant='h6'
+												className={
+													classes.chatName
+												}>
+												{myChat.memberUid.length > 3
+													? uidToName(
+															myChat
+																.memberUid[0]
+													  ) +
+													  ', ' +
+													  uidToName(
+															myChat
+																.memberUid[1]
+													  ) +
+													  ', ' +
+													  uidToName(
+															myChat
+																.memberUid[2]
+													  ) +
+													  '외 ' +
+													  (myChat.memberUid
+															.length -
+															3) +
+													  '명의 채팅방'
+													: myChat.memberUid
+															.length >
+													  2
+													? uidToName(
+															myChat
+																.memberUid[0]
+													  ) +
+													  ', ' +
+													  uidToName(
+															myChat
+																.memberUid[1]
+													  ) +
+													  ', ' +
+													  uidToName(
+															myChat
+																.memberUid[2]
+													  ) +
+													  '의 채팅방'
+													: uidToName(
+															myChat.memberUid.filter(
+																(
+																	uid
+																) =>
+																	uid !==
+																	myAccount.uid
+															)[0]
+													  )}
+											</Typography>
+											<Typography
+												className={
+													classes.lastDialogue
+												}>
+												{myChat.lastDialogue}
+											</Typography>
+										</Grid>
+										<Grid
+											item
+											className={classes.groupAvatars}>
+											<AvatarGroup max={4} spacing={15}>
+												{myChat.memberUid.map(
+													(uid, index) => {
+														return (
+															<Avatar
+																key={
+																	index
+																}
+																style={{
+																	backgroundColor:
+																		uidToUser(
+																			uid
+																		)
+																			.personalColor,
+																	filter: 'saturate(40%) grayscale(20%) brightness(130%)',
+																}}
+																src={
 																	uidToUser(
 																		uid
 																	)
-																		.personalColor,
-																filter: 'saturate(40%) grayscale(20%) brightness(130%)',
-															}}
-															src={
-																uidToUser(
+																		.profileImg
+																}
+																className={
+																	classes.groupAvatar
+																}>
+																{uidToUser(
 																	uid
 																)
-																	.profileImg
-															}
-															className={
-																classes.groupAvatar
-															}>
-															{uidToUser(
-																uid
-															)
-																.profileImg ==
-																null &&
-																uidToUser(
-																	uid
-																).userName.charAt(
-																	0
-																)}
-														</Avatar>
-													);
-												}
-											)}
-										</AvatarGroup>
-									</Grid>
+																	.profileImg ==
+																	null &&
+																	uidToUser(
+																		uid
+																	).userName.charAt(
+																		0
+																	)}
+															</Avatar>
+														);
+													}
+												)}
+											</AvatarGroup>
+										</Grid>
 
-									<Grid>
-										<Zoom in={false}>
-											<Checkbox
-												color='primary'
-												checked={false}
-												value={false}
-												className={
-													classes.chatCheckbox
-												}
-											/>
-										</Zoom>
+										<Grid>
+											<Zoom in={false}>
+												<Checkbox
+													color='primary'
+													checked={false}
+													value={false}
+													className={
+														classes.chatCheckbox
+													}
+												/>
+											</Zoom>
+										</Grid>
 									</Grid>
-								</Grid>
-							);
-						})}
+								);
+							})}
+						</Grid>
 					</Grid>
 				</Grid>
-			</Grid>
-			<ChatsNavBottom />
+				<ChatsNavBottom />
+			</div>
 		</React.Fragment>
 	);
 }
